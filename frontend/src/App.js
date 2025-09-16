@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import './styles/variables.css';
+import './styles/globals.css';
 import './App.css';
 import { getUsers } from './api/userApi';
 import Header from './components/Header';
