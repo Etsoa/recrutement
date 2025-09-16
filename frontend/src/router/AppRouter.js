@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // Importation des pages
 import Home from '../pages/Home';
 import CVtest from '../pages/CVtest';
+import CVList from '../pages/CVList';
 
 // Composant de layout principal
 import Layout from '../components/Layout';
@@ -93,6 +94,16 @@ const AppRouter = () => {
             element={
               <ProtectedRoute>
                 <CVtest />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Page Liste des CVs */}
+          <Route 
+            path="/cv-list" 
+            element={
+              <ProtectedRoute>
+                <CVList />
               </ProtectedRoute>
             } 
           />

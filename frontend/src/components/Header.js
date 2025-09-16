@@ -19,10 +19,16 @@ const Header = () => {
             Accueil
           </Link>
           <Link 
+            to={ROUTES.CV_LIST} 
+            className={`header__nav-item ${location.pathname === ROUTES.CV_LIST ? 'header__nav-item--active' : ''}`}
+          >
+            Liste des CVs
+          </Link>
+          <Link 
             to={ROUTES.CV} 
             className={`header__nav-item ${location.pathname === ROUTES.CV ? 'header__nav-item--active' : ''}`}
           >
-            CV
+            CV Détail
           </Link>
         </nav>
         

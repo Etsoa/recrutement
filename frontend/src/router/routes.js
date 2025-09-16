@@ -3,6 +3,7 @@ export const ROUTES = {
   // Routes principales
   HOME: '/home',
   CV: '/cv',
+  CV_LIST: '/cv-list',
 };
 
 // Métadonnées des routes pour la navigation
@@ -14,8 +15,14 @@ export const ROUTE_METADATA = {
     requiresAuth: false
   },
   [ROUTES.CV]: {
-    title: 'CV',
+    title: 'CV Détail',
     icon: 'assignment',
+    showInNav: true,
+    requiresAuth: false
+  },
+  [ROUTES.CV_LIST]: {
+    title: 'Liste des CVs',
+    icon: 'list',
     showInNav: true,
     requiresAuth: false
   }
