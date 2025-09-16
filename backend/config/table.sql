@@ -68,9 +68,7 @@ CREATE TABLE annonces (
     id_ville INTEGER REFERENCES villes(id_ville) ON DELETE CASCADE,
     age_min INTEGER,
     age_max INTEGER,
-    id_situation_matrimoniale INTEGER REFERENCES situations_matrimoniales(id_situation) ON DELETE CASCADE,
-    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE,
-    nombre_enfant INTEGER
+    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE
 );
 
 CREATE TABLE qcm_annonces (
@@ -88,7 +86,7 @@ CREATE TABLE status_annonce (
     id_status_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
     id_type_status_annonce INTEGER REFERENCES type_status_annonces(id_type_status) ON DELETE CASCADE,
-    date_changement TIMESTAMP NOT NULL,
+    date_changement DATE NOT NULL,
     id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE
 );
 
@@ -159,3 +157,162 @@ CREATE TABLE experience_tiers (
     nombre_annee INTEGER NOT NULL
 );
 
+CREATE TABLE candidats (
+    id_candidat SERIAL PRIMARY KEY,
+    id_tiers INTEGER REFERENCES tiers(id_tiers) ON DELETE CASCADE,
+    id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
+    cv VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE type_status_employes (
+    id_type_status_employe SERIAL PRIMARY KEY,
+    valeur VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE employes (
+    id_employe SERIAL PRIMARY KEY,
+    id_tiers INTEGER REFERENCES tiers(id_tiers) ON DELETE CASCADE,
+    id_type_status_employe INTEGER REFERENCES type_status_employes(id_type_status_employe) ON DELETE CASCADE,
+    id_poste INTEGER REFERENCES postes(id_poste) ON DELETE CASCADE
+);
+
+CREATE TABLE status_employes (
+    id_status_employe SERIAL PRIMARY KEY,
+    id_employe INTEGER REFERENCES employes(id_employe) ON DELETE CASCADE,
+    id_type_status_employe INTEGER REFERENCES type_status_employes(id_type_status_employe) ON DELETE CASCADE,
+    date_changement DATE NOT NULL
+);
+
+CREATE TABLE historique_poste_employes (
+    id_historique_poste_employe SERIAL PRIMARY KEY,
+    id_employe INTEGER REFERENCES employes(id_employe) ON DELETE CASCADE,
+    id_poste INTEGER REFERENCES postes(id_poste) ON DELETE CASCADE,
+    date_changement DATE NOT NULL
+);
+
+CREATE TABLE contrat_essais (
+    id_contrat_essai SERIAL PRIMARY KEY,
+    id_employe INTEGER REFERENCES employes(id_employe) ON DELETE CASCADE,
+    date_debut DATE NOT NULL,
+    duree INTEGER NOT NULL
+);
+
+CREATE TABLE envoi_qcm_candidats (
+    id_envoi_qcm_candidat SERIAL PRIMARY KEY,
+    id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
+    lien VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    date_envoi DATE NOT NULL
+);
+
+CREATE TABLE reponse_qcm_candidats (
+    id_reponse_qcm_candidat SERIAL PRIMARY KEY,
+    id_envoi_qcm_candidat INTEGER REFERENCES envoi_qcm_candidats(id_envoi_qcm_candidat) ON DELETE CASCADE,
+    id_qcm_annonce INTEGER REFERENCES qcm_annonces(id_qcm_annonce) ON DELETE CASCADE,
+    debut TIMESTAMP,
+    fin TIMESTAMP,
+    duree INTEGER,
+    score INTEGER
+);
+
+CREATE TABLE type_status_entretiens (
+    id_type_status_entretien SERIAL PRIMARY KEY,
+    valeur VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE unite_entretiens (
+    id_unite_entretien SERIAL PRIMARY KEY,
+    id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
+    id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE,
+    date_entretien DATE NOT NULL,
+    duree INTEGER NOT NULL
+);
+
+CREATE TABLE status_unite_entretiens (
+    id_status_unite_entretien SERIAL PRIMARY KEY,
+    id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
+    id_type_status_entretien INTEGER REFERENCES type_status_entretiens(id_type_status_entretien) ON DELETE CASCADE,
+    date_changement DATE NOT NULL
+);
+
+CREATE TABLE rh_entretien (
+    id_rh_entretien SERIAL PRIMARY KEY,
+    id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
+    id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
+    date_entretien DATE NOT NULL,
+    duree INTEGER NOT NULL
+);
+
+CREATE TABLE status_rh_entretien (
+    id_status_rh_entretien SERIAL PRIMARY KEY,
+    id_rh_entretien INTEGER REFERENCES rh_entretien(id_rh_entretien) ON DELETE CASCADE,
+    id_type_status_entretien INTEGER REFERENCES type_status_entretiens(id_type_status_entretien) ON DELETE CASCADE,
+    date_changement DATE NOT NULL
+);
+
+CREATE TABLE score_unite_entretiens (
+    id_score_unite_entretien SERIAL PRIMARY KEY,
+    id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
+    score INTEGER NOT NULL,
+    date_score DATE NOT NULL
+);
+
+CREATE TABLE score_rh_entretiens (
+    id_score_rh_entretien SERIAL PRIMARY KEY,
+    id_rh_entretien INTEGER REFERENCES rh_entretien(id_rh_entretien) ON DELETE CASCADE,
+    score INTEGER NOT NULL,
+    date_score DATE NOT NULL
+);
+
+CREATE TABLE type_status_suggestions (
+    id SERIAL PRIMARY KEY,
+    valeur VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE rh_suggestions (
+    id_rh_suggestion SERIAL PRIMARY KEY,
+    id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE,
+    id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
+    date_suggestion DATE NOT NULL
+);
+
+CREATE TABLE ceo_suggestions (
+    id_ceo_suggestion SERIAL PRIMARY KEY,
+    id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
+    id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
+    date_suggestion DATE NOT NULL
+);
+
+CREATE TABLE mails (
+    id_mail SERIAL PRIMARY KEY,
+    objet VARCHAR(255) NOT NULL,
+    signature VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE corps_mails (
+    id_corps_mail SERIAL PRIMARY KEY,
+    id_mail INTEGER REFERENCES mails(id_mail) ON DELETE CASCADE,
+    corps TEXT NOT NULL
+);
+
+CREATE TABLE delai_entretien (
+    valeur INTEGER PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE score_minimum_entretien (
+    valeur INTEGER PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE delai_qcm (
+    valeur INTEGER PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE score_minimum_qcm (
+    valeur INTEGER PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE pourcentage_minimum_cv (
+    valeur INTEGER PRIMARY KEY NOT NULL
+);
