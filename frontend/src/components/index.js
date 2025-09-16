@@ -12,3 +12,4 @@ export { default as Layout, Container, Section, Grid, Flex } from './Layout';
 
 // Composants spécialisés
 export { default as UserList } from './UserList';
+export { default as CV } from './CV';
