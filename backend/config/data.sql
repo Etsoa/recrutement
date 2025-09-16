@@ -90,11 +90,11 @@ INSERT INTO type_status_annonces (valeur) VALUES ('En cours de demande');
 INSERT INTO type_status_annonces (valeur) VALUES ('Publie');
 INSERT INTO type_status_annonces (valeur) VALUES ('Non publie');
 
-INSERT INTO type_status_employe (valeur) VALUES ('Actif');
-INSERT INTO type_status_employe (valeur) VALUES ('Demission');
-INSERT INTO type_status_employe (valeur) VALUES ('Renvoi');
-INSERT INTO type_status_employe (valeur) VALUES ('Retraite');
-INSERT INTO type_status_employe (valeur) VALUES ('Deces ');
+INSERT INTO type_status_employes (valeur) VALUES ('Actif');
+INSERT INTO type_status_employes (valeur) VALUES ('Demission');
+INSERT INTO type_status_employes (valeur) VALUES ('Renvoi');
+INSERT INTO type_status_employes (valeur) VALUES ('Retraite');
+INSERT INTO type_status_employes (valeur) VALUES ('Deces ');
 
 INSERT INTO type_status_entretiens (valeur) VALUES ('A venir');
 INSERT INTO type_status_entretiens (valeur) VALUES ('En attente de score');
@@ -114,3 +114,4 @@ INSERT INTO delai_qcm (valeur) VALUES (2);
 INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 
 INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
+\date_changement
