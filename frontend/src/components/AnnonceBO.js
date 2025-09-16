@@ -1,7 +1,11 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Annonce.css";
+import Button from './Button'
 
 function Annonce({ formData, showDetails, setShowDetails }) {
+    const navigate = useNavigate();
+
     return (
         <main className="annonce-main">
             <div className="annonce-container">
@@ -40,15 +44,18 @@ function Annonce({ formData, showDetails, setShowDetails }) {
                     </div>
 
                     <div className="annonce-actions">
-                        <button
-                            className="toggle-btn"
+                        <Button
                             onClick={() => setShowDetails(!showDetails)}
                         >
                             {showDetails ? "Masquer les details" : "Voir les details"}
-                        </button>
+                        </Button>
                         <div className="spacer">
-                        <button className="apply-btn">Historique</button>
-                        <button className="apply-btn">QCM</button>
+                        <Button onClick={() => navigate(`/detailQCM/?id=${formData.id}`)}>
+                            QCM
+                        </Button>         
+                        <Button onClick={() => navigate(`/historique/?id=${formData.id}`)}>
+                        Historique
+                        </Button>
                         </div>
                     </div>
                 </article>

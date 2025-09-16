@@ -1,89 +1,28 @@
 import React from "react";
-import "../styles/QCM.css";
+import { useNavigate } from "react-router-dom";
+import "../styles/Annonce.css";
+import Button from './Button'
 
-function Annonce({ formData, showDetails, setShowDetails }) {
-  return (
-    <main className="annonce-main">
-      <div className="annonce-container">
-        <header className="annonce-header">
-          <h1 className="page-title">Offres d'emploi</h1>
-          <p className="page-subtitle">Découvrez nos opportunités de carrière</p>
-        </header>
+function QCM({ formData }) {
+    const navigate = useNavigate();
 
-        <article className="annonce-card">
-          <div className="annonce-card-header">
-            <h2 className="job-title">{formData.post}</h2>
-            <span className="job-location">{formData.ville}</span>
-          </div>
-
-          <div className="annonce-summary">
-            <div className="summary-item">
-              <span className="summary-label">Tranche d'âge</span>
-              <span className="summary-value">{formData.ageMin} - {formData.ageMax} ans</span>
-            </div>
-            <div className="summary-item">
-              <span className="summary-label">Profil recherché</span>
-              <span className="summary-value">{formData.genre}</span>
-            </div>
-          </div>
-
-          <div className={`annonce-details ${showDetails ? 'show' : ''}`}>
-            <div className="details-section">
-              <h3 className="section-title">Langues</h3>
-              <div className="simple-list">
-                {formData.langues.join(" • ")}
-              </div>
-            </div>
-
-            <div className="details-section">
-              <h3 className="section-title">Qualités recherchées</h3>
-              <div className="simple-list">
-                {formData.qualites.join(" • ")}
-              </div>
-            </div>
-
-            {formData.experiences && formData.experiences.length > 0 && (
-              <div className="details-section">
-                <h3 className="section-title">Expériences requises</h3>
-                <div className="experience-list">
-                  {formData.experiences.map((exp, index) => (
-                    <div key={index} className="experience-item">
-                      <div className="experience-role">{exp.poste}</div>
-                      <div className="experience-duration">{exp.duree}</div>
-                    </div>
-                  ))}
+    return (
+        <div className="qcm-container" style={{width: "90%", maxWidth: "900px", margin: "40px auto", background: "#fff", borderRadius: "16px", boxShadow: "0 4px 16px rgba(0,0,0,0.07)", padding: "32px"}}>
+            <h2 style={{fontSize: "2rem", color: "#222", marginBottom: "24px", borderBottom: "2px solid #2ecc40", paddingBottom: "12px"}}>{formData.titre}</h2>
+            {formData.questions.map((q) => (
+                <div key={q.id_question} className="qcm-question-block" style={{marginBottom: "32px", padding: "24px", borderRadius: "12px", background: "#f8fdf8", boxShadow: "0 2px 8px rgba(46,204,64,0.05)"}}>
+                    <h3 style={{fontSize: "1.2rem", color: "#000000ff", marginBottom: "16px"}}>{q.question}</h3>
+                    <ul style={{listStyle: "none", padding: 0}}>
+                        {q.reponses.map((r) => (
+                            <li key={r.id_reponse} style={{marginBottom: "10px", padding: "10px 18px", borderRadius: "8px", background: r.correcte ? "#eafbe7" : "#f5f5f5", color: r.correcte ? "#2ecc40" : "#222", fontWeight: r.correcte ? "bold" : "normal", boxShadow: r.correcte ? "0 1px 4px rgba(46,204,64,0.08)" : "none"}}>
+                                {r.reponse} {r.correcte && <span style={{marginLeft: "8px", fontSize: "0.95em", color: "#27ae60", fontWeight: "bold"}}>✔ Correcte</span>}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-              </div>
-            )}
-
-            <div className="details-section">
-              <h3 className="section-title">Formation</h3>
-              <div className="education-info">
-                <div className="education-item">
-                  <span className="education-label">Filières :</span>
-                  <span className="education-value">{formData.filiere.join(", ")}</span>
-                </div>
-                <div className="education-item">
-                  <span className="education-label">Niveaux :</span>
-                  <span className="education-value">{formData.niveau.join(", ")}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <footer className="annonce-footer">
-            <button 
-              className="toggle-details-btn"
-              onClick={() => setShowDetails(!showDetails)}
-              aria-expanded={showDetails}
-            >
-              {showDetails ? "Masquer les détails" : "Voir plus de détails"}
-            </button>
-          </footer>
-        </article>
-      </div>
-    </main>
-  );
+            ))}
+        </div>
+    );
 }
 
-export default Annonce;
+export default QCM;

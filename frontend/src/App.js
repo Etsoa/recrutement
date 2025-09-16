@@ -2,7 +2,7 @@ import React from "react";
 import "./styles/globals.css";
 import "./styles/variables.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Annonces, Home } from "./pages";
+import { Annonces, Home, DetailQCM, Historiques } from "./pages";
 
 function App() {
   return (
@@ -10,7 +10,9 @@ function App() {
       <div className="container">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/Annonces" element={<Annonces />} />
+          <Route path="/annonces" element={<Annonces />} />
+          <Route path="/detailQCM" element={<DetailQCM />} />
+          <Route path="/historique" element={<Historiques />} />
         </Routes>
       </div>
     </Router>

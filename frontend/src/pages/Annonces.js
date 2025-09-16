@@ -19,6 +19,7 @@ function Annonces() {
   // const [niveau, setNiveau] = useState([]);
   const [listeAnnonces, setlisteAnnonces] = useState([]);
   const [formData, setFormData] = useState({
+    id: 1,
     post: "Développeur fullstack",
     ville: "Antananarivo",
     ageMin: 25,
