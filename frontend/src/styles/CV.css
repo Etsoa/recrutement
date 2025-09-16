@@ -22,6 +22,36 @@
   height: 4px;
 }
 
+/* Wrapper pour le bouton de téléchargement - en dehors du CV */
+.cv-download-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-xl);
+  padding: 0 var(--spacing-sm);
+  width: 87%;
+}
+
+.cv-download-wrapper .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.3s ease;
+}
+
+.cv-download-wrapper .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(44, 62, 80, 0.2);
+}
+
+.cv-download-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
 .cv-header {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -572,5 +602,252 @@
   
   .cv-experience-item {
     break-inside: avoid;
+  }
+  
+  .cv-download-wrapper {
+    display: none;
+  }
+  
+  .cv-evaluation-wrapper {
+    display: none;
+  }
+}
+
+/* Section d'évaluation - en dehors du CV */
+.cv-evaluation-wrapper {
+  margin-top: var(--spacing-2xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.cv-evaluation-section {
+  background: white;
+  padding: var(--spacing-2xl);
+}
+
+.cv-evaluation-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.cv-evaluation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.cv-evaluation-item {
+  background: rgb(248, 248, 248);
+  padding: var(--spacing-xl);
+  border-radius: calc(var(--border-radius) + 4px);
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.1);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.cv-evaluation-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(44, 62, 80, 0.15);
+}
+
+.cv-evaluation-item h4 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.cv-score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.cv-score-bar {
+  width: 100%;
+  height: 12px;
+  background-color: var(--color-border-light);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cv-score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-primary) 100%);
+  border-radius: 6px;
+  transition: width 0.8s ease;
+  position: relative;
+}
+
+.cv-score-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.cv-score-text {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-top: var(--spacing-sm);
+}
+
+/* Styles spécifiques pour les boutons dans la section d'évaluation */
+.cv-evaluation-item .btn {
+  min-width: 150px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cv-evaluation-item .btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.cv-score {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.cv-score-value {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+.cv-score-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-xl);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.cv-score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-success) 0%, var(--color-accent) 100%);
+  border-radius: var(--border-radius-xl);
+  transition: width 0.8s ease;
+}
+
+.cv-action-btn {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: none;
+  border-radius: var(--border-radius);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.cv-action-btn--primary {
+  background-color: var(--color-accent);
+  color: var(--color-text-light);
+}
+
+.cv-action-btn--primary:hover {
+  background-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 160, 133, 0.2);
+}
+
+.cv-action-btn--secondary {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+}
+
+.cv-action-btn--secondary:hover {
+  background-color: var(--color-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+}
+
+.cv-action-btn--accent {
+  background-color: var(--color-secondary);
+  color: var(--color-text-light);
+}
+
+.cv-action-btn--accent:hover {
+  background-color: var(--color-accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(127, 140, 141, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cv-download-wrapper {
+    padding: 0 var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .cv-download-wrapper .btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+  
+  .cv-evaluation-wrapper {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    padding: 0 var(--spacing-md);
+  }
+  
+  .cv-evaluation-section {
+    padding: var(--spacing-xl);
+  }
+  
+  .cv-evaluation-title {
+    font-size: var(--font-size-xl);
+  }
+  
+  .cv-evaluation-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+  
+  .cv-evaluation-item {
+    padding: var(--spacing-lg);
+  }
+  
+  .cv-evaluation-item h4 {
+    font-size: var(--font-size-base);
+  }
+  
+  .cv-evaluation-item .btn {
+    min-width: 130px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-xs);
+  }
+  
+  .cv-score-text {
+    font-size: var(--font-size-lg);
   }
 }

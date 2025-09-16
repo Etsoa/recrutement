@@ -31,7 +31,6 @@
 }
 
 .btn--primary:hover:not(:disabled) {
-  background-color: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);

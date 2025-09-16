@@ -81,7 +81,12 @@ const CVtest = () => {
               dateQuite: '2017-12-15',
               raisonQuite: 'Recherche d\'opportunités dans le développement web'
             }
-          ]
+          ],
+          
+          // Scores d'évaluation (simulés)
+          scoreQCM: 16,
+          scoreEntretienUnite: null, // Pas encore passé
+          scoreEntretienRH: 18
         };
 
         setCvData(data);
@@ -120,6 +125,28 @@ const CVtest = () => {
         qualites: [...(prevData.qualites || []), newQuality]
       }));
     }
+  };
+
+  // Fonctions de gestion des évaluations
+  const handleDownloadCV = () => {
+    console.log('Téléchargement du CV pour:', cvData.prenom, cvData.nom);
+    // Ici on peut implémenter la logique de téléchargement PDF
+    alert('Fonctionnalité de téléchargement à implémenter');
+  };
+
+  const handleSendQCM = () => {
+    console.log('Envoi QCM pour:', cvData.prenom, cvData.nom);
+    alert('QCM envoyé avec succès!');
+  };
+
+  const handleScheduleUnitInterview = () => {
+    console.log('Planification entretien unité pour:', cvData.prenom, cvData.nom);
+    alert('Entretien unité planifié!');
+  };
+
+  const handleScheduleRHInterview = () => {
+    console.log('Planification entretien RH pour:', cvData.prenom, cvData.nom);
+    alert('Entretien RH planifié!');
   };
 
   // Affichage de l'état de chargement
@@ -184,23 +211,14 @@ const CVtest = () => {
 
   return (
     <div>
-      {/* Informations de debug (à supprimer en production) */}
-      <div style={{ 
-        padding: '1rem', 
-        backgroundColor: 'var(--color-background)', 
-        margin: '1rem',
-        borderRadius: 'var(--border-radius)',
-        fontSize: '0.875rem',
-        color: 'var(--color-text-secondary)'
-      }}>
-        <strong>Debug Info:</strong> CV chargé avec {cvData.experiences?.length || 0} expériences, 
-        {cvData.qualites?.length || 0} qualités, {cvData.langues?.length || 0} langues
-      </div>
-
       <CV 
         {...cvData}
         showQRCode={true}
         isEditable={false}
+        onDownloadCV={handleDownloadCV}
+        onSendQCM={handleSendQCM}
+        onScheduleUnitInterview={handleScheduleUnitInterview}
+        onScheduleRHInterview={handleScheduleRHInterview}
       />
     </div>
   );

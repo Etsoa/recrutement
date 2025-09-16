@@ -14,7 +14,7 @@
 
 .layout__content {
   flex: 1;
-  padding: 0;
+  padding: var(--spacing-2xl) 0;
 }
 
 /* Container pour centrer le contenu */

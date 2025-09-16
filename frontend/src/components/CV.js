@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from './Button';
 import '../styles/CV.css';
 
 const CV = ({
@@ -23,9 +24,18 @@ const CV = ({
   filiere = '',
   niveau = '',
   
+  // Scores et évaluations
+  scoreQCM = null,
+  scoreEntretienUnite = null,
+  scoreEntretienRH = null,
+  
   // Props optionnelles pour l'affichage
   showQRCode = false,
-  isEditable = false
+  isEditable = false,
+  onDownloadCV = null,
+  onSendQCM = null,
+  onScheduleUniteInterview = null,
+  onScheduleRHInterview = null
 }) => {
   
   const getInitials = () => {
@@ -39,8 +49,24 @@ const CV = ({
   };
 
   return (
-    <div className="cv-container">
-      {/* En-tête avec photo et informations principales */}
+    <>
+      {/* Bouton de téléchargement - en dehors du CV */}
+      {onDownloadCV && (
+        <div className="cv-download-wrapper">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={onDownloadCV}
+          >
+            <svg className="cv-download-icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+            </svg>
+            Download CV
+          </Button>
+        </div>
+      )}
+
+      <div className="cv-container">{/* En-tête avec photo et informations principales */}
       <header className="cv-header">
         <div className="cv-photo-container">
           {photo ? (
@@ -254,6 +280,85 @@ const CV = ({
         </main>
       </div>
     </div>
+
+    {/* Section d'évaluation - en dehors du CV */}
+    <div className="cv-evaluation-wrapper">
+      <div className="cv-evaluation-section">
+        <h3 className="cv-evaluation-title">Évaluation du candidat</h3>
+        
+        <div className="cv-evaluation-grid">
+          <div className="cv-evaluation-item">
+            <h4>QCM Technique</h4>
+            {scoreQCM !== null ? (
+              <div className="cv-score-display">
+                <div className="cv-score-bar">
+                  <div 
+                    className="cv-score-fill"
+                    style={{ width: `${(scoreQCM / 20) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="cv-score-text">{scoreQCM}/20</span>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onSendQCM}
+              >
+                Envoyer QCM
+              </Button>
+            )}
+          </div>
+
+          <div className="cv-evaluation-item">
+            <h4>Entretien Unité</h4>
+            {scoreEntretienUnite !== null ? (
+              <div className="cv-score-display">
+                <div className="cv-score-bar">
+                  <div 
+                    className="cv-score-fill"
+                    style={{ width: `${(scoreEntretienUnite / 20) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="cv-score-text">{scoreEntretienUnite}/20</span>
+              </div>
+            ) : (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={onScheduleUniteInterview}
+              >
+                Planifier entretien
+              </Button>
+            )}
+          </div>
+
+          <div className="cv-evaluation-item">
+            <h4>Entretien RH</h4>
+            {scoreEntretienRH !== null ? (
+              <div className="cv-score-display">
+                <div className="cv-score-bar">
+                  <div 
+                    className="cv-score-fill"
+                    style={{ width: `${(scoreEntretienRH / 20) * 100}%` }}
+                  ></div>
+                </div>
+                <span className="cv-score-text">{scoreEntretienRH}/20</span>
+              </div>
+            ) : (
+              <Button
+                variant="success"
+                size="sm"
+                onClick={onScheduleRHInterview}
+              >
+                Planifier entretien RH
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+    </>
   );
 };
 
