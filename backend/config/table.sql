@@ -1,4 +1,4 @@
-CREATE TABLE genres (
++CREATE TABLE genres (
     id_genre SERIAL PRIMARY KEY,
     valeur VARCHAR(50) NOT NULL
 );
