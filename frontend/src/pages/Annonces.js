@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input, Textarea, Select, SearchInput } from "../components/Input";
 import Header from "../components/Header";
-import Annonce from "../components/Annonce";
+import Annonce from "../components/AnnonceBO";
 
 
 function Annonces() {
