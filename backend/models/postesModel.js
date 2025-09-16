@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
-const Unite = require('./unites'); // On importe le modèle Unite pour la relation
+const Unite = require('./unitesModel'); // On importe le modèle Unite pour la relation
 
 const Poste = db.define('Poste', {
   id_poste: {

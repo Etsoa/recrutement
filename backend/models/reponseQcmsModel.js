@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
-const QuestionQCM = require('./question_qcms'); // On importe le modèle QuestionQCM
+const QuestionQCM = require('./questionQcmsModel'); // On importe le modèle QuestionQCM
 
 const ReponseQCM = db.define('ReponseQCM', {
   id_reponse_qcm: {

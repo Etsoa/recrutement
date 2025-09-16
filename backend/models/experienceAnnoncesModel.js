@@ -1,11 +1,11 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Annonce = require('./annonces');
-const QuestionQCM = require('./question_qcms');
+const Annonce = require('./annoncesModel');
+const Domaine = require('./domainesModel');
 
-const QcmAnnonce = db.define('QcmAnnonce', {
-  id_qcm_annonce: {
+const ExperienceAnnonce = db.define('ExperienceAnnonce', {
+  id_experience_annonce: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -20,23 +20,27 @@ const QcmAnnonce = db.define('QcmAnnonce', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  id_question_qcm: {
+  id_domaine: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: QuestionQCM,
-      key: 'id_question_qcm'
+      model: Domaine,
+      key: 'id_domaine'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
+  },
+  nombre_annee: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
-  tableName: 'qcm_annonces',
+  tableName: 'experience_annonces',
   timestamps: true
 });
 
 // Associations
-QcmAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-QcmAnnonce.belongsTo(QuestionQCM, { foreignKey: 'id_question_qcm' });
+ExperienceAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+ExperienceAnnonce.belongsTo(Domaine, { foreignKey: 'id_domaine' });
 
-module.exports = QcmAnnonce;
+module.exports = ExperienceAnnonce;

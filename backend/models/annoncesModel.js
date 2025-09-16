@@ -1,10 +1,10 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Poste = require('./postes');
-const Ville = require('./villes');
+const Poste = require('./postesModel');
+const Ville = require('./villesModel');
 const Genre = require('./genres');
-const SituationMatrimoniale = require('./situation_matrimoniales');
+const SituationMatrimoniale = require('./situationMatrimonialesModel');
 
 const Annonce = db.define('Annonce', {
   id_annonce: {
@@ -52,11 +52,11 @@ const Annonce = db.define('Annonce', {
   },
   nombre_enfant: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true   // rendu nullable
   },
   id_situation_matrimoniale: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,  // rendu nullable
     references: {
       model: SituationMatrimoniale,
       key: 'id_situation_matrimoniale'
