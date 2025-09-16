@@ -63,3 +63,10 @@ coverage.xml
 *.dll
 *.obj
 *.class
+
+frontend/package-lock.json
+backend/package-lock.json
+frontend/package.json
+backend/package.json
+frontend/.env
+backend/.env
