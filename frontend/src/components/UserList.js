@@ -1,5 +1,4 @@
 import React from 'react';
-import Card from './Card';
 import '../styles/UserList.css';
 
 const UserList = ({ users }) => {
@@ -30,22 +29,15 @@ const UserList = ({ users }) => {
       
       <div className="user-list__grid">
         {users.map((user, index) => (
-          <Card
+          <div
             key={user.id || index}
-            title={user.name}
-            subtitle={user.email}
             className="user-card"
-            footer={
-              <div className="user-card__actions">
-                <button className="btn btn--ghost btn--sm">
-                  Voir profil
-                </button>
-                <button className="btn btn--primary btn--sm">
-                  Contacter
-                </button>
-              </div>
-            }
           >
+            <div className="user-card__header">
+              <h3 className="user-card__title">{user.name}</h3>
+              <p className="user-card__subtitle">{user.email}</p>
+            </div>
+            
             <div className="user-card__info">
               {user.phone && (
                 <div className="user-card__meta">
@@ -64,7 +56,16 @@ const UserList = ({ users }) => {
                 </div>
               )}
             </div>
-          </Card>
+            
+            <div className="user-card__actions">
+              <button className="btn btn--ghost btn--sm">
+                Voir profil
+              </button>
+              <button className="btn btn--primary btn--sm">
+                Contacter
+              </button>
+            </div>
+          </div>
         ))}
       </div>
     </div>

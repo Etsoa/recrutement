@@ -2,7 +2,6 @@
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as Button } from './Button';
-export { default as Card, JobCard, CandidateCard } from './Card';
 
 // Composants de formulaire
 export { default as Input, Textarea, Select, SearchInput } from './Input';

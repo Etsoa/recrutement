@@ -1,7 +1,7 @@
 /* CV.css - CV classe et épuré avec thème Axiom */
 .cv-container {
   max-width: 1400px;
-  margin: var(--spacing-xl) auto;
+  margin: var(--spacing-xl) auto var(--spacing-2xl) auto;
   padding: 0;
   background-color: var(--color-surface);
   box-shadow: 0 8px 32px rgba(44, 62, 80, 0.12);
@@ -615,7 +615,7 @@
 
 /* Section d'évaluation - en dehors du CV */
 .cv-evaluation-wrapper {
-  margin-top: var(--spacing-2xl);
+  margin-top: 0;
   margin-bottom: var(--spacing-2xl);
 }
 
