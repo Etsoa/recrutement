@@ -2,10 +2,10 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const RhSuggestion = require('./rhSuggestionsModel');
-const Candidat = require('./candidatsModel');
+const TypeStatusSuggestion = require('./typeStatusSuggestionsModel');
 
-const RhEntretien = db.define('RhEntretien', {
-  id_rh_entretien: {
+const StatusRhSuggestion = db.define('StatusRhSuggestion', {
+  id_status_rh_suggestion: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -20,31 +20,27 @@ const RhEntretien = db.define('RhEntretien', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  id_candidat: {
+  id_type_status_suggestion: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Candidat,
-      key: 'id_candidat'
+      model: TypeStatusSuggestion,
+      key: 'id'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  date_entretien: {
+  date_changement: {
     type: DataTypes.DATE,
-    allowNull: false
-  },
-  duree: {
-    type: DataTypes.INTEGER,
     allowNull: false
   }
 }, {
-  tableName: 'rh_entretiens',
+  tableName: 'status_rh_suggestions',
   timestamps: true
 });
 
 // Associations
-RhEntretien.belongsTo(RhSuggestion, { foreignKey: 'id_rh_suggestion' });
-RhEntretien.belongsTo(Candidat, { foreignKey: 'id_candidat' });
+StatusRhSuggestion.belongsTo(RhSuggestion, { foreignKey: 'id_rh_suggestion' });
+StatusRhSuggestion.belongsTo(TypeStatusSuggestion, { foreignKey: 'id_type_status_suggestion' });
 
-module.exports = RhEntretien;
+module.exports = StatusRhSuggestion;

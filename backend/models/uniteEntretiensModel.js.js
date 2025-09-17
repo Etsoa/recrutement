@@ -1,24 +1,14 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Candidat = require('./candidats');
-const Unite = require('./unites');
+const Candidat = require('./candidatsModel');
+const Unite = require('./unitesModel');
 
-const UniteEntretiens = db.define('UniteEntretiens', {
-  id_unite_entretiens: {
+const UniteEntretien = db.define('UniteEntretien', {
+  id_unite_entretien: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
-  },
-  id_unite: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Unite,
-      key: 'id_unite'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
   },
   id_candidat: {
     type: DataTypes.INTEGER,
@@ -30,12 +20,22 @@ const UniteEntretiens = db.define('UniteEntretiens', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
+  id_unite: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Unite,
+      key: 'id_unite'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  },
   date_entretien: {
     type: DataTypes.DATE,
     allowNull: false
   },
   duree: {
-    type: DataTypes.INTEGER, // durée en minutes
+    type: DataTypes.INTEGER,
     allowNull: false
   }
 }, {
@@ -44,7 +44,7 @@ const UniteEntretiens = db.define('UniteEntretiens', {
 });
 
 // Associations
-UniteEntretiens.belongsTo(Unite, { foreignKey: 'id_unite' });
-UniteEntretiens.belongsTo(Candidat, { foreignKey: 'id_candidat' });
+UniteEntretien.belongsTo(Candidat, { foreignKey: 'id_candidat' });
+UniteEntretien.belongsTo(Unite, { foreignKey: 'id_unite' });
 
-module.exports = UniteEntretiens;
+module.exports = UniteEntretien;

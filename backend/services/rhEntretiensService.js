@@ -1,29 +1,34 @@
-const RhEntretiens = require('../models/rhEntretiensModel');
+const RhEntretien = require('../models/rhEntretiensModel');
 
+// Créer un nouvel entretien RH
 const createRhEntretien = async (data) => {
-    return await RhEntretiens.create(data);
+  return await RhEntretien.create(data);
 };
 
+// Récupérer tous les entretiens RH
 const getAllRhEntretiens = async () => {
-    return await RhEntretiens.findAll();
+  return await RhEntretien.findAll();
 };
 
+// Récupérer un entretien RH par ID
 const getRhEntretienById = async (id) => {
-    return await RhEntretiens.findByPk(id);
+  return await RhEntretien.findByPk(id);
 };
 
+// Mettre à jour un entretien RH
 const updateRhEntretien = async (id, data) => {
-    return await RhEntretiens.update(data, { where: { id } });
+  return await RhEntretien.update(data, { where: { id_rh_entretien: id } });
 };
 
+// Supprimer un entretien RH
 const deleteRhEntretien = async (id) => {
-    return await RhEntretiens.destroy({ where: { id } });
+  return await RhEntretien.destroy({ where: { id_rh_entretien: id } });
 };
 
 module.exports = {
-    createRhEntretien,
-    getAllRhEntretiens,
-    getRhEntretienById,
-    updateRhEntretien,
-    deleteRhEntretien
+  createRhEntretien,
+  getAllRhEntretiens,
+  getRhEntretienById,
+  updateRhEntretien,
+  deleteRhEntretien
 };

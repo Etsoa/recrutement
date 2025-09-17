@@ -1,19 +1,24 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Candidat = require('./candidats');
-const Unite = require('./unites');
-const TypeStatusSuggestion = require('./typeStatusSuggestionsModel');
+const UniteEntretien = require('./uniteEntretiensModel');
+const Candidat = require('./candidatsModel');
 
-const RhSuggestions = db.define('RhSuggestions', {
+const RhSuggestion = db.define('RhSuggestion', {
   id_rh_suggestion: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  date_suggestion: {
-    type: DataTypes.DATE,
-    allowNull: false
+  id_unite_entretien: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: UniteEntretien,
+      key: 'id_unite_entretien'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   },
   id_candidat: {
     type: DataTypes.INTEGER,
@@ -25,25 +30,9 @@ const RhSuggestions = db.define('RhSuggestions', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  id_statut_suggestion: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: TypeStatusSuggestion,
-      key: 'id_type_status_suggestion'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
-  id_unite: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Unite,
-      key: 'id_unite'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+  date_suggestion: {
+    type: DataTypes.DATE,
+    allowNull: false
   }
 }, {
   tableName: 'rh_suggestions',
@@ -51,8 +40,7 @@ const RhSuggestions = db.define('RhSuggestions', {
 });
 
 // Associations
-RhSuggestions.belongsTo(Candidat, { foreignKey: 'id_candidat' });
-RhSuggestions.belongsTo(TypeStatusSuggestion, { foreignKey: 'id_statut_suggestion' });
-RhSuggestions.belongsTo(Unite, { foreignKey: 'id_unite' });
+RhSuggestion.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien' });
+RhSuggestion.belongsTo(Candidat, { foreignKey: 'id_candidat' });
 
-module.exports = RhSuggestions;
+module.exports = RhSuggestion;

@@ -1,10 +1,10 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const RhEntretiens = require('./rhEntretiensModel');
+const RhEntretien = require('./rhEntretiensModel');
 const TypeStatusEntretien = require('./typeStatusEntretiensModel');
 
-const StatusRhEntretiens = db.define('StatusRhEntretiens', {
+const StatusRhEntretien = db.define('StatusRhEntretien', {
   id_status_rh_entretien: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -14,7 +14,7 @@ const StatusRhEntretiens = db.define('StatusRhEntretiens', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: RhEntretiens,
+      model: RhEntretien,
       key: 'id_rh_entretien'
     },
     onUpdate: 'CASCADE',
@@ -40,7 +40,7 @@ const StatusRhEntretiens = db.define('StatusRhEntretiens', {
 });
 
 // Associations
-StatusRhEntretiens.belongsTo(RhEntretiens, { foreignKey: 'id_rh_entretien' });
-StatusRhEntretiens.belongsTo(TypeStatusEntretien, { foreignKey: 'id_type_status_entretien' });
+StatusRhEntretien.belongsTo(RhEntretien, { foreignKey: 'id_rh_entretien' });
+StatusRhEntretien.belongsTo(TypeStatusEntretien, { foreignKey: 'id_type_status_entretien' });
 
-module.exports = StatusRhEntretiens;
+module.exports = StatusRhEntretien;
