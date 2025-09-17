@@ -2,30 +2,6 @@ const express = require('express');
 const router = express.Router();
 const uniteController = require('../controllers/uniteController');
 
-// pour se connecter et recuperer les infos de l'unite
-router.get('/', uniteController.getAllUnites);
-// verification et retour de id
-router.post('/', uniteController.loginUnite);
-router.get('/:id', uniteController.getUniteById);
-
-// dans parametrages des besoins (CR)
-router.get('/parametres', uniteController.getAllParametres);
-
-// partie C du parametrages
-router.post('/create/genre', uniteController.createGenre);
-router.post('/create/situation_matrimoniale', uniteController.createSituationMatrimoniale);
-router.post('/create/langue', uniteController.createLangue);
-router.post('/create/filiere', uniteController.createFiliere);
-router.post('/create/niveau', uniteController.createNiveau);
-router.post('/create/qualite', uniteController.createQualite);
-router.post('/create/domaine', uniteController.createDomaine);
-router.post('/create/poste', uniteController.createPoste);
-router.post('/create/ville', uniteController.createVille);
-router.post('/create/qcm', uniteController.createQcm);
-
-// table annonce, qcm annonce, status_annonce, competences_annonce + status en attente
-router.post('/create/annonce', uniteController.createAnnonce);
-
 // liste annonce(components)
 router.get('/annonces', uniteController.getAllAnnonces);
 // fiche annonce
