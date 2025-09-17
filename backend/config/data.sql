@@ -1,10 +1,10 @@
 INSERT INTO genres (valeur) VALUES ('Homme');
 INSERT INTO genres (valeur) VALUES ('Femme');
 
-INSERT INTO situations_matrimoniales (valeur) VALUES ('Celibataire');
-INSERT INTO situations_matrimoniales (valeur) VALUES ('Marie(e)');
-INSERT INTO situations_matrimoniales (valeur) VALUES ('Divorce(e)');
-INSERT INTO situations_matrimoniales (valeur) VALUES ('Veuf(ve)');
+INSERT INTO situation_matrimoniales (valeur) VALUES ('Celibataire');
+INSERT INTO situation_matrimoniales (valeur) VALUES ('Marie(e)');
+INSERT INTO situation_matrimoniales (valeur) VALUES ('Divorce(e)');
+INSERT INTO situation_matrimoniales (valeur) VALUES ('Veuf(ve)');
 
 INSERT INTO langues (valeur) VALUES ('Malgache');
 INSERT INTO langues (valeur) VALUES ('Français');
@@ -97,8 +97,7 @@ INSERT INTO type_status_employes (valeur) VALUES ('Retraite');
 INSERT INTO type_status_employes (valeur) VALUES ('Deces ');
 
 INSERT INTO type_status_entretiens (valeur) VALUES ('A venir');
-INSERT INTO type_status_entretiens (valeur) VALUES ('En attente de score');
-INSERT INTO type_status_entretiens (valeur) VALUES ('Avec score');
+INSERT INTO type_status_entretiens (valeur) VALUES ('Termine');
 INSERT INTO type_status_entretiens (valeur) VALUES ('En attente de validation');
 
 INSERT INTO type_status_suggestions (valeur) VALUES ('Valide');
@@ -114,4 +113,3 @@ INSERT INTO delai_qcm (valeur) VALUES (2);
 INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 
 INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
-\date_changement

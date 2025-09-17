@@ -1,9 +1,9 @@
-+CREATE TABLE genres (
+CREATE TABLE genres (
     id_genre SERIAL PRIMARY KEY,
     valeur VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE situations_matrimoniales (
+CREATE TABLE situation_matrimoniales (
     id_situation SERIAL PRIMARY KEY,
     valeur VARCHAR(50) NOT NULL
 );
@@ -212,6 +212,7 @@ CREATE TABLE reponse_qcm_candidats (
     debut TIMESTAMP,
     fin TIMESTAMP,
     duree INTEGER,
+    reponse VARCHAR(255) NOT NULL,
     score INTEGER
 );
 
@@ -235,7 +236,14 @@ CREATE TABLE status_unite_entretiens (
     date_changement DATE NOT NULL
 );
 
-CREATE TABLE rh_entretien (
+CREATE TABLE score_unite_entretiens (
+    id_score_unite_entretien SERIAL PRIMARY KEY,
+    id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
+    score INTEGER NOT NULL,
+    date_score DATE NOT NULL
+);
+
+CREATE TABLE rh_entretiens (
     id_rh_entretien SERIAL PRIMARY KEY,
     id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
@@ -243,18 +251,11 @@ CREATE TABLE rh_entretien (
     duree INTEGER NOT NULL
 );
 
-CREATE TABLE status_rh_entretien (
+CREATE TABLE status_rh_entretiens (
     id_status_rh_entretien SERIAL PRIMARY KEY,
     id_rh_entretien INTEGER REFERENCES rh_entretien(id_rh_entretien) ON DELETE CASCADE,
     id_type_status_entretien INTEGER REFERENCES type_status_entretiens(id_type_status_entretien) ON DELETE CASCADE,
     date_changement DATE NOT NULL
-);
-
-CREATE TABLE score_unite_entretiens (
-    id_score_unite_entretien SERIAL PRIMARY KEY,
-    id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
-    score INTEGER NOT NULL,
-    date_score DATE NOT NULL
 );
 
 CREATE TABLE score_rh_entretiens (
@@ -316,3 +317,5 @@ CREATE TABLE score_minimum_qcm (
 CREATE TABLE pourcentage_minimum_cv (
     valeur INTEGER PRIMARY KEY NOT NULL
 );
+
+-- historique de rh_suggestions
