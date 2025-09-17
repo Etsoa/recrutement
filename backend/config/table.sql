@@ -243,9 +243,28 @@ CREATE TABLE score_unite_entretiens (
     date_score DATE NOT NULL
 );
 
+CREATE TABLE type_status_suggestions (
+    id SERIAL PRIMARY KEY,
+    valeur VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE rh_suggestions (
+    id_rh_suggestion SERIAL PRIMARY KEY,
+    id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
+    id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
+    date_suggestion DATE NOT NULL
+);
+
+CREATE TABLE status_rh_suggestions (
+    id_status_rh_suggestion SERIAL PRIMARY KEY,
+    id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
+    date_changement DATE NOT NULL
+);
+
 CREATE TABLE rh_entretiens (
     id_rh_entretien SERIAL PRIMARY KEY,
-    id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
+    id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
     date_entretien DATE NOT NULL,
     duree INTEGER NOT NULL
@@ -265,25 +284,19 @@ CREATE TABLE score_rh_entretiens (
     date_score DATE NOT NULL
 );
 
-CREATE TABLE type_status_suggestions (
-    id SERIAL PRIMARY KEY,
-    valeur VARCHAR(50) NOT NULL
-);
-
-CREATE TABLE rh_suggestions (
-    id_rh_suggestion SERIAL PRIMARY KEY,
-    id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE,
-    id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
-    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
-    date_suggestion DATE NOT NULL
-);
-
 CREATE TABLE ceo_suggestions (
     id_ceo_suggestion SERIAL PRIMARY KEY,
-    id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
+    id_rh_entretien INTEGER REFERENCES rh_entretiens(id_rh_entretien) ON DELETE CASCADE,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
     id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
     date_suggestion DATE NOT NULL
+);
+
+CREATE TABLE status_ceo_suggestions (
+    id_status_ceo_suggestion SERIAL PRIMARY KEY,
+    id_ceo_suggestion INTEGER REFERENCES ceo_suggestions(id_ceo_suggestion) ON DELETE CASCADE,
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
+    date_changement DATE NOT NULL
 );
 
 CREATE TABLE mails (
@@ -317,5 +330,3 @@ CREATE TABLE score_minimum_qcm (
 CREATE TABLE pourcentage_minimum_cv (
     valeur INTEGER PRIMARY KEY NOT NULL
 );
-
--- historique de rh_suggestions
