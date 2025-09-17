@@ -1,0 +1,102 @@
+/* variables.css: Thème Axiom - Variables globales pour un design sobre et élégant */
+:root {
+  /* === PALETTE DE COULEURS AXIOM === */
+  
+  /* Couleurs principales */
+  --color-primary: #2c3e50;           /* Bleu Ardoise foncé - Confiance et stabilité */
+  --color-primary-light: #34495e;     /* Variante plus claire */
+  --color-secondary: #7f8c8d;         /* Gris Moyen - Hiérarchie subtile */
+  --color-secondary-light: #95a5a6;   /* Gris plus clair */
+  
+  /* Couleur d'accent */
+  --color-accent: #16a085;            /* Vert Sage discret - Actions importantes */
+  --color-accent-hover: #27ae60;      /* Hover state */
+  
+  /* États et messages */
+  --color-success: #27ae60;           /* Vert sage - Succès */
+  --color-danger: #e74c3c;            /* Rouge discret - Erreurs */
+  --color-warning: #f39c12;           /* Orange tamisé - Alertes */
+  --color-info: #3498db;              /* Bleu information */
+  
+  /* Arrière-plans */
+  --color-background: #f8f9fa;        /* Blanc cassé - Arrière-plan principal */
+  --color-background-alt: #ecf0f1;    /* Gris très clair - Sections alternées */
+  --color-surface: #ffffff;           /* Blanc pur - Cartes et surfaces */
+  
+  /* Textes */
+  --color-text: #2c3e50;              /* Texte principal - Noir très foncé */
+  --color-text-secondary: #7f8c8d;    /* Texte secondaire - Gris moyen */
+  --color-text-light: #ffffff;        /* Texte sur fond foncé */
+  --color-text-muted: #95a5a6;        /* Texte atténué */
+  
+  /* Bordures */
+  --color-border: #ecf0f1;            /* Bordures subtiles */
+  --color-border-light: #bdc3c7;      /* Bordures plus marquées */
+  --color-border-focus: var(--color-accent); /* Bordures au focus */
+  
+  /* === TYPOGRAPHIE === */
+  
+  /* Polices */
+  --font-heading: 'Lora', 'Playfair Display', 'Cormorant Garamond', serif;
+  --font-body: 'Inter', 'Open Sans', 'Lato', 'Raleway', sans-serif;
+  
+  /* Tailles de police */
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-base: 1rem;    /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+  --font-size-2xl: 1.5rem;   /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem;  /* 36px */
+  
+  /* Poids des polices */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* === ESPACEMENTS === */
+  
+  --spacing-xs: 0.25rem;   /* 4px */
+  --spacing-sm: 0.5rem;    /* 8px */
+  --spacing-md: 1rem;      /* 16px */
+  --spacing-lg: 1.5rem;    /* 24px */
+  --spacing-xl: 2rem;      /* 32px */
+  --spacing-2xl: 3rem;     /* 48px */
+  --spacing-3xl: 4rem;     /* 64px */
+  
+  /* === FORMES ET EFFETS === */
+  
+  /* Rayons de bordure - Coins légèrement arrondis */
+  --border-radius-sm: 2px;
+  --border-radius: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+  --border-radius-xl: 12px;
+  
+  /* Transitions douces */
+  --transition-fast: 0.15s ease;
+  --transition: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  
+  /* Ombres subtiles */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* === COMPOSANTS SPÉCIFIQUES === */
+  
+  /* Hauteurs standards */
+  --height-input: 2.5rem;   /* 40px */
+  --height-button: 2.25rem; /* 36px */
+  --height-button-lg: 3rem; /* 48px */
+  
+  /* Largeurs de conteneurs */
+  --container-sm: 576px;
+  --container-md: 768px;
+  --container-lg: 992px;
+  --container-xl: 1200px;
+}

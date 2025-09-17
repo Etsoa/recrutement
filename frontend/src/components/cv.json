@@ -1,0 +1,61 @@
+{
+  "nom": "RAKOTO",
+  "prenom": "Jean",
+  "dateNaissance": "1990-05-15",
+  "cin": "101 234 567 890",
+  "email": "jean.rakoto@email.com",
+  "contact": "+261 34 12 456 78",
+  "ville": "Antananarivo",
+  "photo": null,
+  "genre": "Masculin",
+  "nombreEnfants": 2,
+  "situationMatrimoniale": "Marié",
+  "filiere": "Informatique",
+  "niveau": "Master en Génie Logiciel",
+  "langues": [
+    "Français",
+    "Anglais",
+    "Malagasy"
+  ],
+  "qualites": [
+    "Dynamique",
+    "Autonome",
+    "Esprit d'équipe",
+    "Organisé",
+    "Créatif",
+    "Rigoureux"
+  ],
+  "experiences": [
+    {
+      "poste": "Développeur Full Stack",
+      "entreprise": "TechSolutions Madagascar",
+      "dateDebut": "Mars 2020",
+      "dateFin": "Présent",
+      "description": "Développement d'applications web avec React, Node.js et MongoDB. Gestion de projets en équipe agile."
+    },
+    {
+      "poste": "Développeur Frontend",
+      "entreprise": "Digital Agency Mada",
+      "dateDebut": "Juin 2018",
+      "dateFin": "Février 2020",
+      "description": "Création d'interfaces utilisateur responsive avec HTML, CSS, JavaScript et React."
+    }
+  ],
+  "passifEntreprises": [
+    {
+      "poste": "Stagiaire Développeur",
+      "entreprise": "StartUp Innovation",
+      "dateQuite": "2018-05-30",
+      "raisonQuite": "Fin de stage - Obtention d'un poste permanent ailleurs"
+    },
+    {
+      "poste": "Assistant IT",
+      "entreprise": "Entreprise Locale",
+      "dateQuite": "2017-12-15",
+      "raisonQuite": "Recherche d'opportunités dans le développement web"
+    }
+  ],
+  "scoreQCM": 16,
+  "scoreEntretienUnite": null,
+  "scoreEntretienRH": 18
+}

@@ -1,12 +1,43 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { ROUTES } from '../router/routes';
+import '../styles/Header.css';
 
 const Header = () => {
+  const location = useLocation();
+
   return (
-    <header style={{ backgroundColor: '#282c34', padding: '20px', color: 'white' }}>
-      <h1>Recrutement App</h1>
-      <nav>
-        <span>Hello World Application</span>
-      </nav>
+    <header className="header">
+      <div className="header__container">
+        <h1 className="header__logo">Axiom</h1>
+        
+        <nav className="header__nav">
+          <Link 
+            to={ROUTES.HOME} 
+            className={`header__nav-item ${location.pathname === ROUTES.HOME ? 'header__nav-item--active' : ''}`}
+          >
+            Accueil
+          </Link>
+          <Link 
+            to={ROUTES.CV_LIST} 
+            className={`header__nav-item ${location.pathname === ROUTES.CV_LIST ? 'header__nav-item--active' : ''}`}
+          >
+            Liste des CVs
+          </Link>
+          <Link 
+            to={ROUTES.CV} 
+            className={`header__nav-item ${location.pathname === ROUTES.CV ? 'header__nav-item--active' : ''}`}
+          >
+            CV Détail
+          </Link>
+        </nav>
+        
+        <div className="header__actions">
+          <button className="btn btn--ghost">
+            Profil
+          </button>
+        </div>
+      </div>
     </header>
   );
 };
