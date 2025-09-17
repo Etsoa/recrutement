@@ -12,13 +12,13 @@ const Unite = db.define('Unite', {
     allowNull: false,
     unique: true
   },
-  mot_de_passe: {
+  motdepasse: {
     type: DataTypes.STRING,
     allowNull: false
   }
 }, {
   tableName: 'unites',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Unite;

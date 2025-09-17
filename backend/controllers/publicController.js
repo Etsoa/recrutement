@@ -1,3 +1,19 @@
+exports.qcmQuestions = async (req, res) => {
+  try {
+    res.json({ message: "Questions QCM envoyées !" });
+  } catch (err) {
+    res.status(500).json({ message: "Erreur serveur", error: err });
+  }
+};
+
+exports.qcmReponses = async (req, res) => {
+  try {
+    res.json({ message: "Réponses QCM reçues !" });
+  } catch (err) {
+    res.status(500).json({ message: "Erreur serveur", error: err });
+  }
+};
+
 exports.getAllPublics = async (req, res) => {
   try {
     const data = []; // récupérer depuis la base
