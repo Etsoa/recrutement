@@ -1,23 +1,23 @@
-const Niveaux = require('../models/niveauxModel');
+const Niveau = require('../models/niveauxModel');
 
 const createNiveau = async (data) => {
-    return await Niveaux.create(data);
+    return await Niveau.create(data);
 };
 
 const getAllNiveaux = async () => {
-    return await Niveaux.findAll();
+    return await Niveau.findAll();
 };
 
 const getNiveauById = async (id) => {
-    return await Niveaux.findByPk(id);
+    return await Niveau.findByPk(id);
 };
 
 const updateNiveau = async (id, data) => {
-    return await Niveaux.update(data, { where: { id } });
+    return await Niveau.update(data, { where: { id } });
 };
 
 const deleteNiveau = async (id) => {
-    return await Niveaux.destroy({ where: { id } });
+    return await Niveau.destroy({ where: { id } });
 };
 
 module.exports = {

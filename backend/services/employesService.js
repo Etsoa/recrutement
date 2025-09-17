@@ -1,23 +1,23 @@
-const Employes = require('../models/employesModel');
+const Employe = require('../models/employesModel');
 
 const createEmploye = async (data) => {
-    return await Employes.create(data);
+    return await Employe.create(data);
 };
 
 const getAllEmployes = async () => {
-    return await Employes.findAll();
+    return await Employe.findAll();
 };
 
 const getEmployeById = async (id) => {
-    return await Employes.findByPk(id);
+    return await Employe.findByPk(id);
 };
 
 const updateEmploye = async (id, data) => {
-    return await Employes.update(data, { where: { id } });
+    return await Employe.update(data, { where: { id } });
 };
 
 const deleteEmploye = async (id) => {
-    return await Employes.destroy({ where: { id } });
+    return await Employe.destroy({ where: { id } });
 };
 
 module.exports = {

@@ -1,23 +1,23 @@
-const HistoriquePosteEmployes = require('../models/historiquePosteEmployesModel');
+const HistoriquePosteEmploye = require('../models/historiquePosteEmployesModel');
 
 const createHistoriquePosteEmploye = async (data) => {
-    return await HistoriquePosteEmployes.create(data);
+    return await HistoriquePosteEmploye.create(data);
 };
 
 const getAllHistoriquePosteEmployes = async () => {
-    return await HistoriquePosteEmployes.findAll();
+    return await HistoriquePosteEmploye.findAll();
 };
 
 const getHistoriquePosteEmployeById = async (id) => {
-    return await HistoriquePosteEmployes.findByPk(id);
+    return await HistoriquePosteEmploye.findByPk(id);
 };
 
 const updateHistoriquePosteEmploye = async (id, data) => {
-    return await HistoriquePosteEmployes.update(data, { where: { id } });
+    return await HistoriquePosteEmploye.update(data, { where: { id } });
 };
 
 const deleteHistoriquePosteEmploye = async (id) => {
-    return await HistoriquePosteEmployes.destroy({ where: { id } });
+    return await HistoriquePosteEmploye.destroy({ where: { id } });
 };
 
 module.exports = {

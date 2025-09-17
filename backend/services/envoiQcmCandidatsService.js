@@ -1,23 +1,23 @@
-const EnvoiQcmCandidats = require('../models/envoiQcmCandidatsModel');
+const EnvoiQcmCandidat = require('../models/envoiQcmCandidatsModel');
 
 const createEnvoiQcmCandidat = async (data) => {
-    return await EnvoiQcmCandidats.create(data);
+    return await EnvoiQcmCandidat.create(data);
 };
 
 const getAllEnvoiQcmCandidats = async () => {
-    return await EnvoiQcmCandidats.findAll();
+    return await EnvoiQcmCandidat.findAll();
 };
 
 const getEnvoiQcmCandidatById = async (id) => {
-    return await EnvoiQcmCandidats.findByPk(id);
+    return await EnvoiQcmCandidat.findByPk(id);
 };
 
 const updateEnvoiQcmCandidat = async (id, data) => {
-    return await EnvoiQcmCandidats.update(data, { where: { id } });
+    return await EnvoiQcmCandidat.update(data, { where: { id } });
 };
 
 const deleteEnvoiQcmCandidat = async (id) => {
-    return await EnvoiQcmCandidats.destroy({ where: { id } });
+    return await EnvoiQcmCandidat.destroy({ where: { id } });
 };
 
 module.exports = {

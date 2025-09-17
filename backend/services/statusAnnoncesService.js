@@ -1,23 +1,23 @@
-const StatusAnnonces = require('../models/statusAnnoncesModel');
+const StatusAnnonce = require('../models/statusAnnoncesModel');
 
 const createStatusAnnonce = async (data) => {
-    return await StatusAnnonces.create(data);
+    return await StatusAnnonce.create(data);
 };
 
 const getAllStatusAnnonces = async () => {
-    return await StatusAnnonces.findAll();
+    return await StatusAnnonce.findAll();
 };
 
 const getStatusAnnonceById = async (id) => {
-    return await StatusAnnonces.findByPk(id);
+    return await StatusAnnonce.findByPk(id);
 };
 
 const updateStatusAnnonce = async (id, data) => {
-    return await StatusAnnonces.update(data, { where: { id } });
+    return await StatusAnnonce.update(data, { where: { id } });
 };
 
 const deleteStatusAnnonce = async (id) => {
-    return await StatusAnnonces.destroy({ where: { id } });
+    return await StatusAnnonce.destroy({ where: { id } });
 };
 
 module.exports = {

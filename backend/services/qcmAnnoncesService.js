@@ -1,23 +1,23 @@
-const QcmAnnonces = require('../models/qcmAnnoncesModel');
+const QcmAnnonce = require('../models/qcmAnnoncesModel');
 
 const createQcmAnnonce = async (data) => {
-    return await QcmAnnonces.create(data);
+    return await QcmAnnonce.create(data);
 };
 
 const getAllQcmAnnonces = async () => {
-    return await QcmAnnonces.findAll();
+    return await QcmAnnonce.findAll();
 };
 
 const getQcmAnnonceById = async (id) => {
-    return await QcmAnnonces.findByPk(id);
+    return await QcmAnnonce.findByPk(id);
 };
 
 const updateQcmAnnonce = async (id, data) => {
-    return await QcmAnnonces.update(data, { where: { id } });
+    return await QcmAnnonce.update(data, { where: { id } });
 };
 
 const deleteQcmAnnonce = async (id) => {
-    return await QcmAnnonces.destroy({ where: { id } });
+    return await QcmAnnonce.destroy({ where: { id } });
 };
 
 module.exports = {

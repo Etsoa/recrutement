@@ -1,23 +1,23 @@
-const Genres = require('../models/genresModel');
+const Genre = require('../models/genresModel');
 
 const createGenre = async (data) => {
-    return await Genres.create(data);
+    return await Genre.create(data);
 };
 
 const getAllGenres = async () => {
-    return await Genres.findAll();
+    return await Genre.findAll();
 };
 
 const getGenreById = async (id) => {
-    return await Genres.findByPk(id);
+    return await Genre.findByPk(id);
 };
 
 const updateGenre = async (id, data) => {
-    return await Genres.update(data, { where: { id } });
+    return await Genre.update(data, { where: { id } });
 };
 
 const deleteGenre = async (id) => {
-    return await Genres.destroy({ where: { id } });
+    return await Genre.destroy({ where: { id } });
 };
 
 module.exports = {

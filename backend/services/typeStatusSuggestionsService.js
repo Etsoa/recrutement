@@ -1,23 +1,23 @@
-const TypeStatusSuggestions = require('../models/typeStatusSuggestionsModel');
+const TypeStatusSuggestion = require('../models/typeStatusSuggestionsModel');
 
 const createTypeStatusSuggestion = async (data) => {
-    return await TypeStatusSuggestions.create(data);
+    return await TypeStatusSuggestion.create(data);
 };
 
 const getAllTypeStatusSuggestions = async () => {
-    return await TypeStatusSuggestions.findAll();
+    return await TypeStatusSuggestion.findAll();
 };
 
 const getTypeStatusSuggestionById = async (id) => {
-    return await TypeStatusSuggestions.findByPk(id);
+    return await TypeStatusSuggestion.findByPk(id);
 };
 
 const updateTypeStatusSuggestion = async (id, data) => {
-    return await TypeStatusSuggestions.update(data, { where: { id } });
+    return await TypeStatusSuggestion.update(data, { where: { id } });
 };
 
 const deleteTypeStatusSuggestion = async (id) => {
-    return await TypeStatusSuggestions.destroy({ where: { id } });
+    return await TypeStatusSuggestion.destroy({ where: { id } });
 };
 
 module.exports = {

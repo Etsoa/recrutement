@@ -1,23 +1,23 @@
-const Annonces = require('../models/annoncesModel');
+const Annonce = require('../models/annoncesModel');
 
 const createAnnonce = async (data) => {
-    return await Annonces.create(data);
+    return await Annonce.create(data);
 };
 
 const getAllAnnonces = async () => {
-    return await Annonces.findAll();
+    return await Annonce.findAll();
 };
 
 const getAnnonceById = async (id) => {
-    return await Annonces.findByPk(id);
+    return await Annonce.findByPk(id);
 };
 
 const updateAnnonce = async (id, data) => {
-    return await Annonces.update(data, { where: { id } });
+    return await Annonce.update(data, { where: { id } });
 };
 
 const deleteAnnonce = async (id) => {
-    return await Annonces.destroy({ where: { id } });
+    return await Annonce.destroy({ where: { id } });
 };
 
 module.exports = {

@@ -1,23 +1,23 @@
-const ExperienceAnnonces = require('../models/experienceAnnoncesModel');
+const ExperienceAnnonce = require('../models/experienceAnnoncesModel');
 
 const createExperienceAnnonce = async (data) => {
-    return await ExperienceAnnonces.create(data);
+    return await ExperienceAnnonce.create(data);
 };
 
 const getAllExperienceAnnonces = async () => {
-    return await ExperienceAnnonces.findAll();
+    return await ExperienceAnnonce.findAll();
 };
 
 const getExperienceAnnonceById = async (id) => {
-    return await ExperienceAnnonces.findByPk(id);
+    return await ExperienceAnnonce.findByPk(id);
 };
 
 const updateExperienceAnnonce = async (id, data) => {
-    return await ExperienceAnnonces.update(data, { where: { id } });
+    return await ExperienceAnnonce.update(data, { where: { id } });
 };
 
 const deleteExperienceAnnonce = async (id) => {
-    return await ExperienceAnnonces.destroy({ where: { id } });
+    return await ExperienceAnnonce.destroy({ where: { id } });
 };
 
 module.exports = {

@@ -1,23 +1,23 @@
-const TypeStatusEmployes = require('../models/typeStatusEmployesModel');
+const TypeStatusEmploye = require('../models/typeStatusEmployesModel');
 
 const createTypeStatusEmploye = async (data) => {
-    return await TypeStatusEmployes.create(data);
+    return await TypeStatusEmploye.create(data);
 };
 
 const getAllTypeStatusEmployes = async () => {
-    return await TypeStatusEmployes.findAll();
+    return await TypeStatusEmploye.findAll();
 };
 
 const getTypeStatusEmployeById = async (id) => {
-    return await TypeStatusEmployes.findByPk(id);
+    return await TypeStatusEmploye.findByPk(id);
 };
 
 const updateTypeStatusEmploye = async (id, data) => {
-    return await TypeStatusEmployes.update(data, { where: { id } });
+    return await TypeStatusEmploye.update(data, { where: { id } });
 };
 
 const deleteTypeStatusEmploye = async (id) => {
-    return await TypeStatusEmployes.destroy({ where: { id } });
+    return await TypeStatusEmploye.destroy({ where: { id } });
 };
 
 module.exports = {

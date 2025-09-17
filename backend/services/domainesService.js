@@ -1,23 +1,23 @@
-const Domaines = require('../models/domainesModel');
+const Domaine = require('../models/domainesModel');
 
 const createDomaine = async (data) => {
-    return await Domaines.create(data);
+    return await Domaine.create(data);
 };
 
 const getAllDomaines = async () => {
-    return await Domaines.findAll();
+    return await Domaine.findAll();
 };
 
 const getDomaineById = async (id) => {
-    return await Domaines.findByPk(id);
+    return await Domaine.findByPk(id);
 };
 
 const updateDomaine = async (id, data) => {
-    return await Domaines.update(data, { where: { id } });
+    return await Domaine.update(data, { where: { id } });
 };
 
 const deleteDomaine = async (id) => {
-    return await Domaines.destroy({ where: { id } });
+    return await Domaine.destroy({ where: { id } });
 };
 
 module.exports = {

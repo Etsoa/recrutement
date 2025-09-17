@@ -122,7 +122,7 @@ CREATE TABLE tiers (
     prenom VARCHAR(100) NOT NULL,
     date_naissance DATE NOT NULL,
     id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE,
-    id_situation_matrimoniale INTEGER REFERENCES situations_matrimoniales(id_situation) ON DELETE CASCADE,
+    id_situation_matrimoniale INTEGER REFERENCES situation_matrimoniales(id_situation) ON DELETE CASCADE,
     nombre_enfants INTEGER,
     contact VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
@@ -272,14 +272,14 @@ CREATE TABLE rh_entretiens (
 
 CREATE TABLE status_rh_entretiens (
     id_status_rh_entretien SERIAL PRIMARY KEY,
-    id_rh_entretien INTEGER REFERENCES rh_entretien(id_rh_entretien) ON DELETE CASCADE,
+    id_rh_entretien INTEGER REFERENCES rh_entretiens(id_rh_entretien) ON DELETE CASCADE,
     id_type_status_entretien INTEGER REFERENCES type_status_entretiens(id_type_status_entretien) ON DELETE CASCADE,
     date_changement DATE NOT NULL
 );
 
 CREATE TABLE score_rh_entretiens (
     id_score_rh_entretien SERIAL PRIMARY KEY,
-    id_rh_entretien INTEGER REFERENCES rh_entretien(id_rh_entretien) ON DELETE CASCADE,
+    id_rh_entretien INTEGER REFERENCES rh_entretiens(id_rh_entretien) ON DELETE CASCADE,
     score INTEGER NOT NULL,
     date_score DATE NOT NULL
 );

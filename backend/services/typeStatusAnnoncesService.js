@@ -1,23 +1,23 @@
-const TypeStatusAnnonces = require('../models/typeStatusAnnoncesModel');
+const TypeStatusAnnonce = require('../models/typeStatusAnnoncesModel');
 
 const createTypeStatusAnnonce = async (data) => {
-    return await TypeStatusAnnonces.create(data);
+    return await TypeStatusAnnonce.create(data);
 };
 
 const getAllTypeStatusAnnonces = async () => {
-    return await TypeStatusAnnonces.findAll();
+    return await TypeStatusAnnonce.findAll();
 };
 
 const getTypeStatusAnnonceById = async (id) => {
-    return await TypeStatusAnnonces.findByPk(id);
+    return await TypeStatusAnnonce.findByPk(id);
 };
 
 const updateTypeStatusAnnonce = async (id, data) => {
-    return await TypeStatusAnnonces.update(data, { where: { id } });
+    return await TypeStatusAnnonce.update(data, { where: { id } });
 };
 
 const deleteTypeStatusAnnonce = async (id) => {
-    return await TypeStatusAnnonces.destroy({ where: { id } });
+    return await TypeStatusAnnonce.destroy({ where: { id } });
 };
 
 module.exports = {

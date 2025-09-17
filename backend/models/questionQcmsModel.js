@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const QuestionQCM = db.define('QuestionQCM', {
+const QuestionQcm = db.define('QuestionQcm', {
   id_question_qcm: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -16,4 +16,4 @@ const QuestionQCM = db.define('QuestionQCM', {
   timestamps: true
 });
 
-module.exports = QuestionQCM;
+module.exports = QuestionQcm;

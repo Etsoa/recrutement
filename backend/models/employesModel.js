@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const Poste = require('./postes');
-const Tiers = require('./tiers');
+const Tiers = require('./tiersModel');
 const TypeStatusEmploye = require('./typeStatusEmployesModel');
 
 const Employe = db.define('Employe', {

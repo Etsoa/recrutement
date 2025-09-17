@@ -1,23 +1,23 @@
-const SituationMatrimoniales = require('../models/situationMatrimonialesModel');
+const SituationMatrimoniale = require('../models/situationMatrimonialesModel');
 
 const createSituationMatrimoniale = async (data) => {
-    return await SituationMatrimoniales.create(data);
+    return await SituationMatrimoniale.create(data);
 };
 
 const getAllSituationMatrimoniales = async () => {
-    return await SituationMatrimoniales.findAll();
+    return await SituationMatrimoniale.findAll();
 };
 
 const getSituationMatrimonialeById = async (id) => {
-    return await SituationMatrimoniales.findByPk(id);
+    return await SituationMatrimoniale.findByPk(id);
 };
 
 const updateSituationMatrimoniale = async (id, data) => {
-    return await SituationMatrimoniales.update(data, { where: { id } });
+    return await SituationMatrimoniale.update(data, { where: { id } });
 };
 
 const deleteSituationMatrimoniale = async (id) => {
-    return await SituationMatrimoniales.destroy({ where: { id } });
+    return await SituationMatrimoniale.destroy({ where: { id } });
 };
 
 module.exports = {

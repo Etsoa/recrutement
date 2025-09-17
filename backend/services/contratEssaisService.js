@@ -1,23 +1,23 @@
-const ContratEssais = require('../models/contratEssaisModel');
+const ContratEssai = require('../models/contratEssaisModel');
 
 const createContratEssai = async (data) => {
-    return await ContratEssais.create(data);
+    return await ContratEssai.create(data);
 };
 
 const getAllContratEssais = async () => {
-    return await ContratEssais.findAll();
+    return await ContratEssai.findAll();
 };
 
 const getContratEssaiById = async (id) => {
-    return await ContratEssais.findByPk(id);
+    return await ContratEssai.findByPk(id);
 };
 
 const updateContratEssai = async (id, data) => {
-    return await ContratEssais.update(data, { where: { id } });
+    return await ContratEssai.update(data, { where: { id } });
 };
 
 const deleteContratEssai = async (id) => {
-    return await ContratEssais.destroy({ where: { id } });
+    return await ContratEssai.destroy({ where: { id } });
 };
 
 module.exports = {

@@ -1,23 +1,23 @@
-const Qualites = require('../models/qualitesModel');
+const Qualite = require('../models/qualitesModel');
 
 const createQualite = async (data) => {
-    return await Qualites.create(data);
+    return await Qualite.create(data);
 };
 
 const getAllQualites = async () => {
-    return await Qualites.findAll();
+    return await Qualite.findAll();
 };
 
 const getQualiteById = async (id) => {
-    return await Qualites.findByPk(id);
+    return await Qualite.findByPk(id);
 };
 
 const updateQualite = async (id, data) => {
-    return await Qualites.update(data, { where: { id } });
+    return await Qualite.update(data, { where: { id } });
 };
 
 const deleteQualite = async (id) => {
-    return await Qualites.destroy({ where: { id } });
+    return await Qualite.destroy({ where: { id } });
 };
 
 module.exports = {

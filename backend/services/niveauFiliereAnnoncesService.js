@@ -1,23 +1,23 @@
 const NiveauFiliereAnnonces = require('../models/niveauFiliereAnnoncesModel');
 
 const createNiveauFiliereAnnonce = async (data) => {
-    return await NiveauFiliereAnnonces.create(data);
+    return await NiveauFiliereAnnonce.create(data);
 };
 
 const getAllNiveauFiliereAnnonces = async () => {
-    return await NiveauFiliereAnnonces.findAll();
+    return await NiveauFiliereAnnonce.findAll();
 };
 
 const getNiveauFiliereAnnonceById = async (id) => {
-    return await NiveauFiliereAnnonces.findByPk(id);
+    return await NiveauFiliereAnnonce.findByPk(id);
 };
 
 const updateNiveauFiliereAnnonce = async (id, data) => {
-    return await NiveauFiliereAnnonces.update(data, { where: { id } });
+    return await NiveauFiliereAnnonce.update(data, { where: { id } });
 };
 
 const deleteNiveauFiliereAnnonce = async (id) => {
-    return await NiveauFiliereAnnonces.destroy({ where: { id } });
+    return await NiveauFiliereAnnonce.destroy({ where: { id } });
 };
 
 module.exports = {

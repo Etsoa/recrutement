@@ -1,23 +1,23 @@
-const TypeStatusEntretiens = require('../models/typeStatusEntretiensModel');
+const TypeStatusEntretien = require('../models/typeStatusEntretiensModel');
 
 const createTypeStatusEntretien = async (data) => {
-    return await TypeStatusEntretiens.create(data);
+    return await TypeStatusEntretien.create(data);
 };
 
 const getAllTypeStatusEntretiens = async () => {
-    return await TypeStatusEntretiens.findAll();
+    return await TypeStatusEntretien.findAll();
 };
 
 const getTypeStatusEntretienById = async (id) => {
-    return await TypeStatusEntretiens.findByPk(id);
+    return await TypeStatusEntretien.findByPk(id);
 };
 
 const updateTypeStatusEntretien = async (id, data) => {
-    return await TypeStatusEntretiens.update(data, { where: { id } });
+    return await TypeStatusEntretien.update(data, { where: { id } });
 };
 
 const deleteTypeStatusEntretien = async (id) => {
-    return await TypeStatusEntretiens.destroy({ where: { id } });
+    return await TypeStatusEntretien.destroy({ where: { id } });
 };
 
 module.exports = {

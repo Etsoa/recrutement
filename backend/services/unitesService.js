@@ -1,23 +1,23 @@
-const Unites = require('../models/unitesModel');
+const Unite = require('../models/unitesModel');
 
 const createUnite = async (data) => {
-    return await Unites.create(data);
+    return await Unite.create(data);
 };
 
 const getAllUnites = async () => {
-    return await Unites.findAll();
+    return await Unite.findAll();
 };
 
 const getUniteById = async (id) => {
-    return await Unites.findByPk(id);
+    return await Unite.findByPk(id);
 };
 
 const updateUnite = async (id, data) => {
-    return await Unites.update(data, { where: { id } });
+    return await Unite.update(data, { where: { id } });
 };
 
 const deleteUnite = async (id) => {
-    return await Unites.destroy({ where: { id } });
+    return await Unite.destroy({ where: { id } });
 };
 
 module.exports = {

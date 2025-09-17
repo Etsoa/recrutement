@@ -1,23 +1,23 @@
-const LangueAnnonces = require('../models/langueAnnoncesModel');
+const LangueAnnonce = require('../models/langueAnnoncesModel');
 
 const createLangueAnnonce = async (data) => {
-    return await LangueAnnonces.create(data);
+    return await LangueAnnonce.create(data);
 };
 
 const getAllLangueAnnonces = async () => {
-    return await LangueAnnonces.findAll();
+    return await LangueAnnonce.findAll();
 };
 
 const getLangueAnnonceById = async (id) => {
-    return await LangueAnnonces.findByPk(id);
+    return await LangueAnnonce.findByPk(id);
 };
 
 const updateLangueAnnonce = async (id, data) => {
-    return await LangueAnnonces.update(data, { where: { id } });
+    return await LangueAnnonce.update(data, { where: { id } });
 };
 
 const deleteLangueAnnonce = async (id) => {
-    return await LangueAnnonces.destroy({ where: { id } });
+    return await LangueAnnonce.destroy({ where: { id } });
 };
 
 module.exports = {

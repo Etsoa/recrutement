@@ -1,23 +1,23 @@
-const ReponseQcmCandidats = require('../models/reponseQcmCandidatsModel');
+const ReponseQcmCandidat = require('../models/reponseQcmCandidatsModel');
 
 const createReponseQcmCandidat = async (data) => {
-    return await ReponseQcmCandidats.create(data);
+    return await ReponseQcmCandidat.create(data);
 };
 
 const getAllReponseQcmCandidats = async () => {
-    return await ReponseQcmCandidats.findAll();
+    return await ReponseQcmCandidat.findAll();
 };
 
 const getReponseQcmCandidatById = async (id) => {
-    return await ReponseQcmCandidats.findByPk(id);
+    return await ReponseQcmCandidat.findByPk(id);
 };
 
 const updateReponseQcmCandidat = async (id, data) => {
-    return await ReponseQcmCandidats.update(data, { where: { id } });
+    return await ReponseQcmCandidat.update(data, { where: { id } });
 };
 
 const deleteReponseQcmCandidat = async (id) => {
-    return await ReponseQcmCandidats.destroy({ where: { id } });
+    return await ReponseQcmCandidat.destroy({ where: { id } });
 };
 
 module.exports = {

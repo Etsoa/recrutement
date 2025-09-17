@@ -3,7 +3,7 @@ const db = require('../config/db');
 
 const Employe = require('./employesModel');
 
-const ContratEssais = db.define('ContratEssais', {
+const ContratEssai = db.define('ContratEssai', {
   id_contrat_essai: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -33,6 +33,6 @@ const ContratEssais = db.define('ContratEssais', {
 });
 
 // Associations
-ContratEssais.belongsTo(Employe, { foreignKey: 'id_employe' });
+ContratEssai.belongsTo(Employe, { foreignKey: 'id_employe' });
 
-module.exports = ContratEssais;
+module.exports = ContratEssai;

@@ -1,23 +1,23 @@
-const CorpsMails = require('../models/corpsMailsModel');
+const CorpsMail = require('../models/corpsMailsModel');
 
 const createCorpsMail = async (data) => {
-    return await CorpsMails.create(data);
+    return await CorpsMail.create(data);
 };
 
 const getAllCorpsMails = async () => {
-    return await CorpsMails.findAll();
+    return await CorpsMail.findAll();
 };
 
 const getCorpsMailById = async (id) => {
-    return await CorpsMails.findByPk(id);
+    return await CorpsMail.findByPk(id);
 };
 
 const updateCorpsMail = async (id, data) => {
-    return await CorpsMails.update(data, { where: { id } });
+    return await CorpsMail.update(data, { where: { id } });
 };
 
 const deleteCorpsMail = async (id) => {
-    return await CorpsMails.destroy({ where: { id } });
+    return await CorpsMail.destroy({ where: { id } });
 };
 
 module.exports = {

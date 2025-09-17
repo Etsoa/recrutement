@@ -1,23 +1,23 @@
-const ScoreRhEntretiens = require('../models/scoreRhEntretiensModel');
+const ScoreRhEntretien = require('../models/scoreRhEntretiensModel');
 
 const createScoreRhEntretien = async (data) => {
-    return await ScoreRhEntretiens.create(data);
+    return await ScoreRhEntretien.create(data);
 };
 
 const getAllScoreRhEntretiens = async () => {
-    return await ScoreRhEntretiens.findAll();
+    return await ScoreRhEntretien.findAll();
 };
 
 const getScoreRhEntretienById = async (id) => {
-    return await ScoreRhEntretiens.findByPk(id);
+    return await ScoreRhEntretien.findByPk(id);
 };
 
 const updateScoreRhEntretien = async (id, data) => {
-    return await ScoreRhEntretiens.update(data, { where: { id } });
+    return await ScoreRhEntretien.update(data, { where: { id } });
 };
 
 const deleteScoreRhEntretien = async (id) => {
-    return await ScoreRhEntretiens.destroy({ where: { id } });
+    return await ScoreRhEntretien.destroy({ where: { id } });
 };
 
 module.exports = {

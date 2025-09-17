@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
-const QuestionQCM = require('./questionQcmsModel'); // On importe le modèle QuestionQCM
+const QuestionQcm = require('./questionQcmsModel'); // On importe le modèle QuestionQCM
 
-const ReponseQCM = db.define('ReponseQCM', {
+const ReponseQcm = db.define('ReponseQcm', {
   id_reponse_qcm: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -32,6 +32,6 @@ const ReponseQCM = db.define('ReponseQCM', {
 });
 
 // Association Sequelize
-ReponseQCM.belongsTo(QuestionQCM, { foreignKey: 'id_question_qcm' });
+ReponseQcm.belongsTo(QuestionQcm, { foreignKey: 'id_question_qcm' });
 
-module.exports = ReponseQCM;
+module.exports = ReponseQcm;
