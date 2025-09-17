@@ -2,23 +2,22 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const db = require('./config/db');
-const userRoutes = require('./routes/userRoutes');
+const publicRoutes = require('./routes/publicRoutes');
+const uniteRoutes = require('./routes/uniteRoutes');
+const rhRoutes = require('./routes/rhRoutes');
+const ceoRoutes = require('./routes/ceoRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Routes
-app.get('/', (req, res) => {
-  res.json({ message: 'Hello World from Backend!' });
-});
+app.use('/api/public', publicRoutes);
+app.use('/api/unite', uniteRoutes);
+app.use('/api/rh', rhRoutes);
+app.use('/api/ceo', ceoRoutes);
 
-app.use('/api/users', userRoutes);
-
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
