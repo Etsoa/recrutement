@@ -36,7 +36,7 @@ CREATE TABLE domaines (
 CREATE TABLE unites (
     id_unite SERIAL PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    motdepasse VARCHAR(100) NOT NULL
+    mot_de_passe VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE postes (
@@ -109,7 +109,7 @@ CREATE TABLE qualite_annonces (
     id_qualite INTEGER REFERENCES qualites(id_qualite) ON DELETE CASCADE
 );
 
-CREATE TABLE experience_annonce (
+CREATE TABLE experience_annonces (
     id_experience_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
     id_domaine INTEGER REFERENCES domaines(id_domaine) ON DELETE CASCADE,
@@ -154,7 +154,8 @@ CREATE TABLE experience_tiers (
     id_experience_tiers SERIAL PRIMARY KEY,
     id_tiers INTEGER REFERENCES tiers(id_tiers) ON DELETE CASCADE,
     id_domaine INTEGER REFERENCES domaines(id_domaine) ON DELETE CASCADE,
-    nombre_annee INTEGER NOT NULL
+    date_debut DATE NOT NULL,
+    date_fin DATE
 );
 
 CREATE TABLE candidats (
@@ -244,7 +245,7 @@ CREATE TABLE score_unite_entretiens (
 );
 
 CREATE TABLE type_status_suggestions (
-    id SERIAL PRIMARY KEY,
+    id_type_status_suggestion SERIAL PRIMARY KEY,
     valeur VARCHAR(50) NOT NULL
 );
 
@@ -258,7 +259,7 @@ CREATE TABLE rh_suggestions (
 CREATE TABLE status_rh_suggestions (
     id_status_rh_suggestion SERIAL PRIMARY KEY,
     id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
-    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id_type_status_suggestion) ON DELETE CASCADE,
     date_changement DATE NOT NULL
 );
 
@@ -295,7 +296,7 @@ CREATE TABLE ceo_suggestions (
 CREATE TABLE status_ceo_suggestions (
     id_status_ceo_suggestion SERIAL PRIMARY KEY,
     id_ceo_suggestion INTEGER REFERENCES ceo_suggestions(id_ceo_suggestion) ON DELETE CASCADE,
-    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id_type_status_suggestion) ON DELETE CASCADE,
     date_changement DATE NOT NULL
 );
 
@@ -329,4 +330,8 @@ CREATE TABLE score_minimum_qcm (
 
 CREATE TABLE pourcentage_minimum_cv (
     valeur INTEGER PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE adresse_mail (
+    valeur VARCHAR(100) PRIMARY KEY NOT NULL
 );

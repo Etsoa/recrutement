@@ -29,7 +29,7 @@ const ContratEssai = db.define('ContratEssai', {
   }
 }, {
   tableName: 'contrat_essais',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

@@ -36,7 +36,7 @@ const StatusRhEntretien = db.define('StatusRhEntretien', {
   }
 }, {
   tableName: 'status_rh_entretiens',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

@@ -36,7 +36,7 @@ const StatusCeoSuggestion = db.define('StatusCeoSuggestion', {
   }
 }, {
   tableName: 'status_ceo_suggestions',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

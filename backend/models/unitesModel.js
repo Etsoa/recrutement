@@ -18,7 +18,7 @@ const Unite = db.define('Unite', {
   }
 }, {
   tableName: 'unites',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Unite;

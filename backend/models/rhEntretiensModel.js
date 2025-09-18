@@ -40,7 +40,7 @@ const RhEntretien = db.define('RhEntretien', {
   }
 }, {
   tableName: 'rh_entretiens',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

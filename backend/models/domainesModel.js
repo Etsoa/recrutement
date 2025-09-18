@@ -14,7 +14,7 @@ const Domaine = db.define('Domaine', {
   }
 }, {
   tableName: 'domaines',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Domaine;

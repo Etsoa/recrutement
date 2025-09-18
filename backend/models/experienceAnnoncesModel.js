@@ -4,7 +4,7 @@ const db = require('../config/db');
 const Annonce = require('./annoncesModel');
 const Domaine = require('./domainesModel');
 
-const ExperienceAnnonce = db.define('ExperienceAnnonce', {
+const ExperienceAnnonce = db.define('ExperienceAnnonces', {
   id_experience_annonce: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -36,7 +36,7 @@ const ExperienceAnnonce = db.define('ExperienceAnnonce', {
   }
 }, {
   tableName: 'experience_annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

@@ -3,7 +3,7 @@ const db = require('../config/db');
 
 const Poste = require('./postesModel');
 const Ville = require('./villesModel');
-const Genre = require('./genres');
+const Genre = require('./genresModel');
 
 const Annonce = db.define('Annonce', {
   id_annonce: {
@@ -51,7 +51,7 @@ const Annonce = db.define('Annonce', {
   }
 }, {
   tableName: 'annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations Sequelize

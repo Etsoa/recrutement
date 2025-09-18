@@ -3,16 +3,16 @@ const router = express.Router();
 const publicController = require('../controllers/publicController');
 
 // liste des annonces 
-router.get('/annonces', uniteController.getAllAnnonces);
+router.get('/annonces', publicController.getAllAnnonces);
 
 // fiche annonce
-router.get('/annonces/:id', uniteController.getAnnonceById);
+router.get('/annonces/:id', publicController.getAnnonceById);
 // dans parametrages pour remplir le dossier
-router.get('/parametres', uniteController.getAllParametres);
+router.get('/parametres', publicController.getAllParametres);
 
 // creer tiers + candidats ou candidats eulements is cin existant
 // si cv par rapport a pourcentage_minimum_cv a annonce alors : envoi de qcm sinon attente de validation manuelle
-router.post('/create/candidat', uniteController.createCandidat);
+router.post('/create/candidat', publicController.createCandidat);
 
 // entrer de token, verfication si non utilise(reponse_qcm vide) et envoie du bon qcm selon annonce
 router.post('/qcm/questions', publicController.qcmQuestions);

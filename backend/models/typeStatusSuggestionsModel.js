@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const TypeStatusSuggestion = db.define('TypeStatusSuggestion', {
-  id_type_status_suggestion: {
+  id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -14,7 +14,7 @@ const TypeStatusSuggestion = db.define('TypeStatusSuggestion', {
   }
 }, {
   tableName: 'type_status_suggestions',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = TypeStatusSuggestion;

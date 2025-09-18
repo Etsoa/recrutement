@@ -32,7 +32,7 @@ const QualiteAnnonce = db.define('QualiteAnnonce', {
   }
 }, {
   tableName: 'qualite_annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

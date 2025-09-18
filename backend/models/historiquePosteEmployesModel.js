@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const Employe = require('./employesModel');
-const Poste = require('./postes');
+const Poste = require('./postesModel');
 
 const HistoriquePosteEmploye = db.define('HistoriquePosteEmploye', {
   id_historique_poste_employe: {
@@ -36,7 +36,7 @@ const HistoriquePosteEmploye = db.define('HistoriquePosteEmploye', {
   }
 }, {
   tableName: 'historique_poste_employes',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

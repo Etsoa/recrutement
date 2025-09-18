@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const UniteEntretien = require('./uniteEntretiensModel');
+const UniteEntretien = require('./uniteEntretiensModel.js');
 
 const ScoreUniteEntretien = db.define('ScoreUniteEntretien', {
   id_score_unite_entretien: {
@@ -29,7 +29,7 @@ const ScoreUniteEntretien = db.define('ScoreUniteEntretien', {
   }
 }, {
   tableName: 'score_unite_entretiens',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

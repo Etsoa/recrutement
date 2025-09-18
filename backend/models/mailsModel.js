@@ -17,7 +17,7 @@ const Mail = db.define('Mail', {
   }
 }, {
   tableName: 'mails',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Mail;

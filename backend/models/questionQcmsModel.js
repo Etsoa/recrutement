@@ -13,7 +13,7 @@ const QuestionQcm = db.define('QuestionQcm', {
   }
 }, {
   tableName: 'question_qcms',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = QuestionQcm;

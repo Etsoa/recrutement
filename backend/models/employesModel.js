@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Poste = require('./postes');
+const Poste = require('./postesModel');
 const Tiers = require('./tiersModel');
 const TypeStatusEmploye = require('./typeStatusEmployesModel');
 
@@ -43,7 +43,7 @@ const Employe = db.define('Employe', {
   }
 }, {
   tableName: 'employes',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

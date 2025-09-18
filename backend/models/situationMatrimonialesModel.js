@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const SituationMatrimoniale = db.define('SituationMatrimoniale', {
-  id_situation_matrimoniale: {
+  id_situation: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -14,7 +14,7 @@ const SituationMatrimoniale = db.define('SituationMatrimoniale', {
   }
 }, {
   tableName: 'situation_matrimoniales',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = SituationMatrimoniale;
