@@ -289,7 +289,7 @@ CREATE TABLE ceo_suggestions (
     id_ceo_suggestion SERIAL PRIMARY KEY,
     id_rh_entretien INTEGER REFERENCES rh_entretiens(id_rh_entretien) ON DELETE CASCADE,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
-    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id) ON DELETE CASCADE,
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id_type_status_suggestion) ON DELETE CASCADE,
     date_suggestion DATE NOT NULL
 );
 
