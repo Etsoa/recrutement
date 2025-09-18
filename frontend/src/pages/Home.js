@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { getUsers } from "../api/userApi";
 import Header from "../components/Header";
-import UserList from "../components/UserList";
 
 
 function Home() {
@@ -29,7 +28,6 @@ function Home() {
       <main className="App-main">
         <h1>Hello World Annonce</h1>
         <p>{message}</p>
-        <UserList users={users} />
       </main>
     </div>
   );

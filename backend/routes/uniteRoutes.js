@@ -5,12 +5,12 @@ const uniteController = require('../controllers/uniteController');
 // liste annonce(components)
 router.get('/annonces', uniteController.getAllAnnonces);
 // fiche annonce
-router.get('/annonces/:id', uniteController.getAnnonceById);
+router.get('/annonce', uniteController.getAnnonceById);
 // table envoi qcm candidat(email)
 router.post('/create/qcm_candidat', uniteController.createQcmCandidat);
-
 // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
 router.post('create/unite_entretien', uniteController.createUniteEntretien);
+
 // liste d entretiens par jour
 router.get('unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);
 // modifier entretien unite a la date
@@ -25,4 +25,4 @@ router.post('/suggest/rh', uniteController.suggestToRh);
 // liste suggestions
 router.get('/suggest/', uniteController.getAllRhSuggestions);
 
-module.exports = router;
+module.exports = router;  

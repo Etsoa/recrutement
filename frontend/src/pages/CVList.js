@@ -10,7 +10,7 @@ const CVList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Simulation de chargement des données des CVs
+  // Simulation de chargement des données des CVs q
   useEffect(() => {
     const loadCVList = async () => {
       try {
