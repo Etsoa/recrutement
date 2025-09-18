@@ -1,0 +1,112 @@
+/* AnnonceMiniature.css - Miniature d'annonce de poste */
+.annonce-miniature {
+  background: white;
+  border: 1px solid rgba(44, 62, 80, 0.1);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 280px;
+  height: 260px;
+  min-width: 280px;
+  max-width: 280px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.annonce-miniature:hover {
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.15);
+  border-color: rgba(22, 160, 133, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Header - Infos principales */
+.annonce-miniature__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-height: 0;
+}
+
+.annonce-miniature__poste {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.annonce-miniature__genre,
+.annonce-miniature__age,
+.annonce-miniature__ville {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.annonce-miniature__ville {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
+}
+
+.annonce-miniature__ville::before {
+  content: '📍';
+  font-size: var(--font-size-xs);
+  margin-right: 4px;
+}
+
+/* Footer avec bouton */
+.annonce-miniature__footer {
+  flex-shrink: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.annonce-miniature__footer .btn {
+  width: 100%;
+  height: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .annonce-miniature {
+    width: 300px !important;
+    height: 240px !important;
+    padding: var(--spacing-xl);
+  }
+  
+  .annonce-miniature__poste {
+    font-size: var(--font-size-base);
+  }
+}
+
+@media (max-width: 480px) {
+  .annonce-miniature {
+    width: 280px !important;
+    height: 220px !important;
+    padding: var(--spacing-lg);
+  }
+}
+
+/* Animation */
+.annonce-miniature--animation-delay-0 { animation-delay: 0s; }
+.annonce-miniature--animation-delay-1 { animation-delay: 0.1s; }
+.annonce-miniature--animation-delay-2 { animation-delay: 0.2s; }

@@ -14,6 +14,7 @@ import Historiques from '../pages/Historiques';
 import CVtest from '../pages/CVtest';
 import CVList from '../pages/CVList';
 import Users from '../pages/Users';
+import AnnonceList from '../pages/AnnonceList';
 
 // Configuration des routes
 const AppRouter = () => {
@@ -28,6 +29,7 @@ const AppRouter = () => {
           <Route path="/cv" element={<CVtest />} />
           <Route path="/cv-list" element={<CVList />} />
           <Route path="/users" element={<Users />} />
+          <Route path="/annonces-list" element={<AnnonceList />} />
         </Routes>
       </Layout>
     </Router>
