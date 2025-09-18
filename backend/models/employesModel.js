@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Poste = require('./postes');
+const Poste = require('./postesModel');
 const Tiers = require('./tiersModel');
 const TypeStatusEmploye = require('./typeStatusEmployesModel');
 

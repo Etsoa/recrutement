@@ -53,11 +53,11 @@ INSERT INTO domaines (valeur) VALUES ('Agriculture');
 INSERT INTO domaines (valeur) VALUES ('Informatique');
 INSERT INTO domaines (valeur) VALUES ('Transport');
 
-INSERT INTO unites (nom, motdepasse) VALUES ('Direction Generale', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Ressources Humaines', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Comptabilite', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Production', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Commercial', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Direction Generale', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Ressources Humaines', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Comptabilite', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Production', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Commercial', 'azerty');
 
 INSERT INTO postes (valeur, id_unite) VALUES ('Directeur General', 1);
 INSERT INTO postes (valeur, id_unite) VALUES ('Assistant Direction', 1);
@@ -113,3 +113,11 @@ INSERT INTO delai_qcm (valeur) VALUES (2);
 INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 
 INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
+
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES ('Rakoto', 'Jean', '1990-01-01', 1, 1, 0, '0341234567', 'jean.rakoto@email.com', 'AA123456', 1, 'photo.jpg')
+RETURNING id_tiers;
+
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
+VALUES (1, 1, 4) 
+RETURNING id_employe;

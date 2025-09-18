@@ -3,10 +3,10 @@ const router = express.Router();
 const rhController = require('../controllers/rhController');
 
 // email + mdp a verfieer par rapport au post retour true/false
-// router.post('/', rhController.loginRh);
+router.post('/', rhController.loginRh);
 
 // anonces a valier ou invalider dans status
-// router.get('/create/annonce', rhController.createAnnonce);
+router.get('/create/annonce', rhController.createAnnonce);
 
 // les suggestions des unites sont des demandes de entretien avec rh pour qu ce dernier decide de ce qu il faut faire
 // router.get('/suggestions', rhController.getAllSuggests);

@@ -24,7 +24,6 @@ const updateUniteEntretien = async (id, data) => {
 const deleteUniteEntretien = async (id) => {
   return await UniteEntretien.destroy({ where: { id_unite_entretien: id } });
 };
-
 module.exports = {
   createUniteEntretien,
   getAllUniteEntretiens,

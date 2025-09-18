@@ -1,3 +1,6 @@
+const rhService = require('../services/rhService');
+const annonceService = require('../services/annoncesService');
+
 exports.getAllRhs = async (req, res) => {
   try {
     const data = []; // récupérer depuis la base
@@ -8,15 +11,40 @@ exports.getAllRhs = async (req, res) => {
 };
 
 exports.loginRh = async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    if (username === 'admin' && password === '1234') {
-      res.json({ message: 'Connexion réussie', data: { token: 'fake-jwt-token' }, success: true });
-    } else {
-      res.status(401).json({ message: 'Nom ou mot de passe incorrect', data: null, success: false });
+    const { email, password } = req.body;
+
+    try {
+        const rh = await rhService.loginRh(email, password);
+        if (rh) {
+            res.json({ message: 'Connexion réussie', data: { rh, token: 'fake-jwt-token' }, success: true });
+        } else {
+            res.status(401).json({ message: 'Email ou mot de passe incorrect', data: null, success: false });
+        }
+    } catch (err) {
+        res.status(500).json({ message: 'Erreur serveur', data: null, success: false });
     }
+};
+
+exports.createAnnonce = async (req, res) => {
+  try {
+    const { id_poste, id_ville, age_min, age_max, id_genre } = req.query;
+
+    if (!id_poste || !id_ville || !id_genre) {
+      return res.status(400).json({ message: 'Données manquantes', success: false });
+    }
+
+    const newAnnonce = await annonceService.createAnnonce({
+      id_poste,
+      id_ville,
+      age_min: age_min || null,
+      age_max: age_max || null,
+      id_genre
+    });
+
+    res.json({ message: 'Annonce créée', data: newAnnonce, success: true });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur lors de la connexion', data: null, success: false });
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur', data: null, success: false });
   }
 };
 

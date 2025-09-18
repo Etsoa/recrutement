@@ -36,7 +36,7 @@ CREATE TABLE domaines (
 CREATE TABLE unites (
     id_unite SERIAL PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    motdepasse VARCHAR(100) NOT NULL
+    mot_de_passe VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE postes (
