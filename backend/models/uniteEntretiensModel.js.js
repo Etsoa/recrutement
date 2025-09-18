@@ -40,7 +40,7 @@ const UniteEntretien = db.define('UniteEntretien', {
   }
 }, {
   tableName: 'unite_entretiens',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

@@ -14,7 +14,7 @@ const Qualite = db.define('Qualite', {
   }
 }, {
   tableName: 'qualites',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Qualite;

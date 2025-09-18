@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const Tiers = require('./tiersModel');
-const Annonce = require('./annonces');
+const Annonce = require('./annoncesModel');
 
 const Candidat = db.define('Candidat', {
   id_candidat: {
@@ -36,7 +36,7 @@ const Candidat = db.define('Candidat', {
   }
 }, {
   tableName: 'candidats',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

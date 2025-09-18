@@ -43,7 +43,7 @@ const Employe = db.define('Employe', {
   }
 }, {
   tableName: 'employes',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

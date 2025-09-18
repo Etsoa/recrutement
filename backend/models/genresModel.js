@@ -14,7 +14,7 @@ const Genre = db.define('Genre', {
   }
 }, {
   tableName: 'genres',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Genre;

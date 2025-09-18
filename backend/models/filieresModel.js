@@ -14,7 +14,7 @@ const Filiere = db.define('Filiere', {
   }
 }, {
   tableName: 'filieres',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Filiere;

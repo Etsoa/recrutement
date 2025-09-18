@@ -43,7 +43,7 @@ const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
   }
 }, {
   tableName: 'niveau_filiere_annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

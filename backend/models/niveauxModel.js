@@ -14,7 +14,7 @@ const Niveau = db.define('Niveau', {
   }
 }, {
   tableName: 'niveaux',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Niveau;

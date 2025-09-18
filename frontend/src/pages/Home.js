@@ -25,7 +25,6 @@ function Home() {
 
   return (
     <div>
-      <Header />
       <main className="App-main">
         <h1>Hello World Annonce</h1>
         <p>{message}</p>

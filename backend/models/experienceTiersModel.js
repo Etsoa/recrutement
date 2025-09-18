@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const Tiers = require('./tiersModel');
-const Domaine = require('./domaines');
+const Domaine = require('./domainesModel');
 
 const ExperienceTiers = db.define('ExperienceTiers', {
   id_experience_tiers: {
@@ -30,13 +30,17 @@ const ExperienceTiers = db.define('ExperienceTiers', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  nombre_annee: {
-    type: DataTypes.INTEGER,
+  date_debut: {
+    type: DataTypes.DATEONLY,
     allowNull: false
+  },
+  date_fin: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
   }
 }, {
   tableName: 'experience_tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

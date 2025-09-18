@@ -25,7 +25,7 @@ const CorpsMail = db.define('CorpsMail', {
   }
 }, {
   tableName: 'corps_mails',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

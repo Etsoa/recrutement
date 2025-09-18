@@ -36,7 +36,7 @@ const StatusRhSuggestion = db.define('StatusRhSuggestion', {
   }
 }, {
   tableName: 'status_rh_suggestions',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

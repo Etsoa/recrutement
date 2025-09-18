@@ -1,9 +1,9 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Filiere = require('./filieres');
-const Niveau = require('./niveaux');
-const Tiers = require('./tiers');
+const Filiere = require('./filieresModel');
+const Niveau = require('./niveauxModel');
+const Tiers = require('./tiersModel');
 
 const NiveauFiliereTiers = db.define('NiveauFiliereTiers', {
   id_niveau_filiere_tiers: {
@@ -43,7 +43,7 @@ const NiveauFiliereTiers = db.define('NiveauFiliereTiers', {
   }
 }, {
   tableName: 'niveau_filiere_tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

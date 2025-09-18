@@ -2,19 +2,14 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const DelaiQcm = db.define('DelaiQcm', {
-  id_delai_qcm: {
+  valeur: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
-  },
-  valeur: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false
   }
 }, {
   tableName: 'delai_qcm',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = DelaiQcm;

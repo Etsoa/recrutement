@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Tiers = require('./tiers');
-const Qualite = require('./qualites');
+const Tiers = require('./tiersModel');
+const Qualite = require('./qualitesModel');
 
 const QualiteTiers = db.define('QualiteTiers', {
   id_qualite_tiers: {
@@ -32,7 +32,7 @@ const QualiteTiers = db.define('QualiteTiers', {
   }
 }, {
   tableName: 'qualite_tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

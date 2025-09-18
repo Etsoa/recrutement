@@ -1,8 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Candidat = require('./candidats');
-const Employe = require('./employesModel');
+const Candidat = require('./candidatsModel');
 
 const EnvoiQcmCandidat = db.define('EnvoiQcmCandidat', {
   id_envoi_qcm_candidat: {
@@ -44,7 +43,7 @@ const EnvoiQcmCandidat = db.define('EnvoiQcmCandidat', {
   }
 }, {
   tableName: 'envoi_qcm_candidats',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

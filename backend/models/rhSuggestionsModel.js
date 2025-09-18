@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const UniteEntretien = require('./uniteEntretiensModel');
+const UniteEntretien = require('./uniteEntretiensModel.js');
 const Candidat = require('./candidatsModel');
 
 const RhSuggestion = db.define('RhSuggestion', {
@@ -36,7 +36,7 @@ const RhSuggestion = db.define('RhSuggestion', {
   }
 }, {
   tableName: 'rh_suggestions',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations
