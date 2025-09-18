@@ -36,7 +36,7 @@ const StatusAnnonce = db.define('StatusAnnonce', {
   }
 }, {
   tableName: 'status_annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

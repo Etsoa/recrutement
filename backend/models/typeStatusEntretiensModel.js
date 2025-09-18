@@ -14,7 +14,7 @@ const TypeStatusEntretien = db.define('TypeStatusEntretien', {
   }
 }, {
   tableName: 'type_status_entretiens',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = TypeStatusEntretien;

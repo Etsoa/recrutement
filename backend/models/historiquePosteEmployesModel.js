@@ -36,7 +36,7 @@ const HistoriquePosteEmploye = db.define('HistoriquePosteEmploye', {
   }
 }, {
   tableName: 'historique_poste_employes',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

@@ -25,6 +25,15 @@ exports.loginRh = async (req, res) => {
     }
 };
 
+exports.getAllSuggests = async (req, res) => {
+  try {
+    const suggestions = await rhService.getAllSuggests();
+    res.json({ message: 'Suggestions récupérées', data: suggestions, success: true });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur', data: null, success: false });
+  }
+};
+
 exports.createAnnonce = async (req, res) => {
   try {
     const { id_poste, id_ville, age_min, age_max, id_genre } = req.query;

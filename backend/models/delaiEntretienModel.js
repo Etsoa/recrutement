@@ -14,7 +14,7 @@ const DelaiEntretien = db.define('DelaiEntretien', {
   }
 }, {
   tableName: 'delai_entretien',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = DelaiEntretien;

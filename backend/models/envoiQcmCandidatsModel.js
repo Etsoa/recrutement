@@ -44,7 +44,7 @@ const EnvoiQcmCandidat = db.define('EnvoiQcmCandidat', {
   }
 }, {
   tableName: 'envoi_qcm_candidats',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

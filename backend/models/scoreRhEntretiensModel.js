@@ -29,7 +29,7 @@ const ScoreRhEntretien = db.define('ScoreRhEntretien', {
   }
 }, {
   tableName: 'score_rh_entretiens',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

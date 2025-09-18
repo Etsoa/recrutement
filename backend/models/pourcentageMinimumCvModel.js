@@ -13,7 +13,7 @@ const PourcentageMinimumCv = db.define('PourcentageMinimumCv', {
   }
 }, {
   tableName: 'pourcentage_minimum_cv',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = PourcentageMinimumCv;

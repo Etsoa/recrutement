@@ -25,7 +25,7 @@ const Poste = db.define('Poste', {
   }
 }, {
   tableName: 'postes',
-  timestamps: true
+  timestamps: false
 });
 
 Poste.belongsTo(Unite, { foreignKey: 'id_unite' });

@@ -48,7 +48,7 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   }
 }, {
   tableName: 'reponse_qcm_candidats',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

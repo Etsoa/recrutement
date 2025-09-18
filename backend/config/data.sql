@@ -114,6 +114,8 @@ INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 
 INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
 
+
+
 INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
 VALUES ('Rakoto', 'Jean', '1990-01-01', 1, 1, 0, '0341234567', 'jean.rakoto@email.com', 'AA123456', 1, 'photo.jpg')
 RETURNING id_tiers;
@@ -121,3 +123,27 @@ RETURNING id_tiers;
 INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
 VALUES (1, 1, 4) 
 RETURNING id_employe;
+
+
+-- Crée un tiers (si ce n'est pas déjà fait)
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES ('Andrian', 'Hery', '1992-05-12', 1, 1, 0, '0349876543', 'hery.andrian@email.com', 'BB654321', 2, 'photo2.jpg')
+RETURNING id_tiers;
+
+-- Crée un candidat lié à ce tiers
+INSERT INTO candidats (id_tiers, id_annonce, cv)
+VALUES (2, 1, 'cv_hery.pdf')
+RETURNING id_candidat;
+
+-- Crée un entretien pour l'unité RH (id_unite = 2)
+INSERT INTO unite_entretiens (id_candidat, id_unite, date_entretien, duree)
+VALUES (1, 2, '2025-09-25', 60)
+RETURNING id_unite_entretien;
+
+-- Crée une suggestion RH pour ce candidat et son entretien
+INSERT INTO rh_suggestions (id_unite_entretien, id_candidat, date_suggestion)
+VALUES (2, 1, '2025-09-18')
+RETURNING id_rh_suggestion;
+
+INSERT INTO status_rh_suggestions (id_rh_suggestion, id_type_status_suggestion, date_changement)
+VALUES (3, 3, '2025-09-18');

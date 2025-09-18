@@ -13,7 +13,7 @@ const ScoreMinimumQcm = db.define('ScoreMinimumQcm', {
   }
 }, {
   tableName: 'score_minimum_qcm',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = ScoreMinimumQcm;

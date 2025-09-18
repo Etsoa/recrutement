@@ -14,7 +14,7 @@ const TypeStatusEmploye = db.define('TypeStatusEmploye', {
   }
 }, {
   tableName: 'type_status_employes',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = TypeStatusEmploye;

@@ -36,7 +36,7 @@ const ExperienceAnnonce = db.define('ExperienceAnnonce', {
   }
 }, {
   tableName: 'experience_annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

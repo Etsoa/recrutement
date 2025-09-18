@@ -40,11 +40,11 @@ const UniteEntretien = db.define('UniteEntretien', {
   }
 }, {
   tableName: 'unite_entretiens',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations
 UniteEntretien.belongsTo(Candidat, { foreignKey: 'id_candidat' });
-UniteEntretien.belongsTo(Unite, { foreignKey: 'id_unite' });
+UniteEntretien.belongsTo(Unite, { foreignKey: 'id_unite', as: 'unite' });
 
 module.exports = UniteEntretien;

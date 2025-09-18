@@ -43,7 +43,7 @@ const NiveauFiliereTiers = db.define('NiveauFiliereTiers', {
   }
 }, {
   tableName: 'niveau_filiere_tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

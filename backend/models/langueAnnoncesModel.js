@@ -32,7 +32,7 @@ const LangueAnnonce = db.define('LangueAnnonce', {
   }
 }, {
   tableName: 'langue_annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

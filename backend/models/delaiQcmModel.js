@@ -14,7 +14,7 @@ const DelaiQcm = db.define('DelaiQcm', {
   }
 }, {
   tableName: 'delai_qcm',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = DelaiQcm;

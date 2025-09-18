@@ -36,11 +36,12 @@ const RhSuggestion = db.define('RhSuggestion', {
   }
 }, {
   tableName: 'rh_suggestions',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations
-RhSuggestion.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien' });
-RhSuggestion.belongsTo(Candidat, { foreignKey: 'id_candidat' });
+RhSuggestion.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien', as: 'entretien' });
+RhSuggestion.belongsTo(Candidat, { foreignKey: 'id_candidat', as: 'candidat' });
+
 
 module.exports = RhSuggestion;

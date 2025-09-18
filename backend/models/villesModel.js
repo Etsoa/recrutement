@@ -14,7 +14,7 @@ const Ville = db.define('Ville', {
   }
 }, {
   tableName: 'villes',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Ville;

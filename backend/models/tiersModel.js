@@ -65,7 +65,7 @@ const Tiers = db.define('Tiers', {
   }
 }, {
   tableName: 'tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations
