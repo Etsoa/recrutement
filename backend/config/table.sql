@@ -82,7 +82,7 @@ CREATE TABLE type_status_annonces (
     valeur VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE status_annonce (
+CREATE TABLE status_annonces (
     id_status_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
     id_type_status_annonce INTEGER REFERENCES type_status_annonces(id_type_status) ON DELETE CASCADE,
@@ -109,7 +109,7 @@ CREATE TABLE qualite_annonces (
     id_qualite INTEGER REFERENCES qualites(id_qualite) ON DELETE CASCADE
 );
 
-CREATE TABLE experience_annonce (
+CREATE TABLE experience_annonces (
     id_experience_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
     id_domaine INTEGER REFERENCES domaines(id_domaine) ON DELETE CASCADE,
@@ -154,7 +154,8 @@ CREATE TABLE experience_tiers (
     id_experience_tiers SERIAL PRIMARY KEY,
     id_tiers INTEGER REFERENCES tiers(id_tiers) ON DELETE CASCADE,
     id_domaine INTEGER REFERENCES domaines(id_domaine) ON DELETE CASCADE,
-    nombre_annee INTEGER NOT NULL
+    date_debut DATE NOT NULL,
+    date_fin DATE NULL
 );
 
 CREATE TABLE candidats (
@@ -244,7 +245,7 @@ CREATE TABLE score_unite_entretiens (
 );
 
 CREATE TABLE type_status_suggestions (
-    id SERIAL PRIMARY KEY,
+    id_type_status_suggestion SERIAL PRIMARY KEY,
     valeur VARCHAR(50) NOT NULL
 );
 

@@ -30,9 +30,13 @@ const ExperienceTiers = db.define('ExperienceTiers', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  nombre_annee: {
-    type: DataTypes.INTEGER,
+  date_debut: {
+    type: DataTypes.DATEONLY,
     allowNull: false
+  },
+  date_fin: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
   }
 }, {
   tableName: 'experience_tiers',
