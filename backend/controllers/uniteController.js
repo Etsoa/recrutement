@@ -1,19 +1,22 @@
+const traitementAnnonceService = require('../services/unite/traitementAnnoncesService');
+
 exports.getAllAnnonces = async (req, res) => {
   try {
-    const data = []; // récupérer depuis la base
+    const data = await traitementAnnonceService.getAllAnnonces();
     res.json({ 
-      message: 'Liste des unités récupérée avec succès',
+      message: 'Liste des annonces récupérée avec succès',
       data: data,
       success: true
     });
   } catch (err) {
     res.status(500).json({ 
-      message: 'Erreur lors de la récupération des unités',
+      message: 'Erreur lors de la récupération des annonces',
       data: null,
       success: false
     });
   }
 };
+
 
 // exports.loginUnite = async (req, res) => {
 //   try {
@@ -25,5 +28,34 @@ exports.getAllAnnonces = async (req, res) => {
 //     }
 //   } catch (err) {
 //     res.status(500).json({ message: 'Erreur serveur lors de la connexion', data: null, success: false });
+//   }
+// };
+
+// exports.getAnnonceById = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+    
+//     const annonce = await annoncesService.getAnnonceCompleteById(id);
+    
+//     if (!annonce) {
+//       return res.status(404).json({
+//         message: 'Annonce non trouvée',
+//         data: null,
+//         success: false
+//       });
+//     }
+    
+//     res.json({ 
+//       message: 'Annonce récupérée avec succès', 
+//       data: annonce, 
+//       success: true 
+//     });
+//   } catch (err) {
+//     console.error('Erreur getAnnonceById:', err);
+//     res.status(500).json({ 
+//       message: 'Erreur lors de la récupération de l\'annonce', 
+//       data: null, 
+//       success: false 
+//     });
 //   }
 // };
