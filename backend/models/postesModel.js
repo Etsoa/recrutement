@@ -10,8 +10,7 @@ const Poste = db.define('Poste', {
   },
   valeur: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false
   },
   id_unite: {
     type: DataTypes.INTEGER,

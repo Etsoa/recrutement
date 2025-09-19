@@ -12,7 +12,7 @@ const Unite = db.define('Unite', {
     allowNull: false,
     unique: true
   },
-  motdepasse: {
+  mot_de_passe: {
     type: DataTypes.STRING,
     allowNull: false
   }

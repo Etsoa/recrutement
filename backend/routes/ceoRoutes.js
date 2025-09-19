@@ -10,4 +10,8 @@ const ceoController = require('../controllers/ceoController');
 
 // employe cree, status employe actif, contrat d essai verfiier et ajouter, email de contrat envoyer
 // router.post('recruter', ceoController.recruter);
+
+//liste des emqloyes status machin machin sous forme d'arbre qar unite
+// router.get('/employes', ceoController.getAllEmployes);
+
 module.exports = router;
