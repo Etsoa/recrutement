@@ -11,6 +11,8 @@ const StatusRhEntretien = require('../models/statusRhEntretiensModel');
 const RhEntretiensView = require('../models/rhEntretiensViewModel');
 const { Op } = require('sequelize');
 
+const ScoreRhEntretien = require('../models/scoreRhEntretiensModel'); // Assure-toi que le modèle existe
+
 const loginRh = async (email) => {
   return await RhView.findOne({ where: { email } });
 };
@@ -178,14 +180,31 @@ const getProchaineDisponibilite = async (id_rh, date_depart) => {
   return null; // aucune dispo trouvée
 };
 
-module.exports = { 
-  loginRh, 
-  getAllSuggests, 
-  createRhEntretien, 
+const createScoreRhEntretien = async ({ id_rh_entretien, score, date_score }) => {
+  if (!id_rh_entretien || score == null) {
+    throw new Error('id_rh_entretien et score sont obligatoires');
+  }
+
+  const scoreDate = date_score ? new Date(date_score) : new Date();
+
+  const nouveauScore = await ScoreRhEntretien.create({
+    id_rh_entretien,
+    score,
+    date_score: scoreDate
+  });
+
+  return nouveauScore;
+};
+
+module.exports = {
+  loginRh,
+  getAllSuggests,
+  createRhEntretien,
   getEntretiensParJour, 
   updateDateRhEntretien,
   updateStatusRhEntretien, 
   getDisponibilitesRh,
   updateDateStatusRhEntretien, 
-  getProchaineDisponibilite
+  getProchaineDisponibilite, 
+  createScoreRhEntretien
 };

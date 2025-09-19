@@ -30,7 +30,7 @@ router.post('/prochaine_disponibilite/rh', rhController.getProchaineDisponibilit
 
 
 // ajouter score dans score_rh_entretien
-// router.post('/create/score/rh_entretien', rhController.createScoreRhEntretien);
+router.post('/create/score/rh_entretien', rhController.createScoreRhEntretien);
 
 
 // suggestion au ceo

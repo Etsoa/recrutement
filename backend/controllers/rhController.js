@@ -226,3 +226,24 @@ exports.getProchaineDisponibiliteRh = async (req, res) => {
     res.status(500).json({ message: err.message, data: null, success: false });
   }
 };
+
+exports.createScoreRhEntretien = async (req, res) => {
+  try {
+    const { id_rh_entretien, score, date_score } = req.body;
+
+    if (!id_rh_entretien || score == null) {
+      return res.status(400).json({ message: 'id_rh_entretien et score sont requis', data: null, success: false });
+    }
+
+    const newScore = await rhService.createScoreRhEntretien({ id_rh_entretien, score, date_score });
+
+    res.status(201).json({
+      message: 'Score RH entretien ajouté avec succès',
+      data: newScore,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message, data: null, success: false });
+  }
+};
