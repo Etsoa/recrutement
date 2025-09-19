@@ -5,11 +5,6 @@ const db = require('../config/db');
 const Poste = require('./postesModel');
 const Ville = require('./villesModel');
 const Genre = require('./genresModel');
-const LangueAnnonce = require('./langueAnnoncesModel');
-const QualiteAnnonce = require('./qualiteAnnoncesModel');
-const ExperienceAnnonce = require('./experienceAnnoncesModel');
-const NiveauFiliereAnnonce = require('./niveauFiliereAnnoncesModel');
-const StatusAnnonce = require('./statusAnnoncesModel');
 
 const Annonce = db.define('Annonce', {
   id_annonce: {
@@ -49,12 +44,5 @@ const Annonce = db.define('Annonce', {
 Annonce.belongsTo(Poste, { foreignKey: 'id_poste' });
 Annonce.belongsTo(Ville, { foreignKey: 'id_ville' });
 Annonce.belongsTo(Genre, { foreignKey: 'id_genre' });
-
-// ✅ Associations inverse pour tous les liens
-Annonce.hasMany(LangueAnnonce, { foreignKey: 'id_annonce' });
-Annonce.hasMany(QualiteAnnonce, { foreignKey: 'id_annonce' });
-Annonce.hasMany(ExperienceAnnonce, { foreignKey: 'id_annonce' });
-Annonce.hasMany(NiveauFiliereAnnonce, { foreignKey: 'id_annonce' });
-Annonce.hasMany(StatusAnnonce, { foreignKey: 'id_annonce' });
 
 module.exports = Annonce;
