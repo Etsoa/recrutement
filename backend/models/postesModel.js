@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
-const Unite = require('./unitesModel'); // On importe le modèle Unite pour la relation
+const Unite = require('./unitesModel');
 
 const Poste = db.define('Poste', {
   id_poste: {
@@ -10,7 +10,7 @@ const Poste = db.define('Poste', {
   },
   valeur: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   id_unite: {
     type: DataTypes.INTEGER,

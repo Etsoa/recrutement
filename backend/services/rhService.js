@@ -156,6 +156,28 @@ const updateDateStatusRhEntretien = async (id_rh_entretien, id_type_status_entre
   return status;
 };
 
+const getProchaineDisponibilite = async (id_rh, date_depart) => {
+  const startDate = new Date(date_depart);
+
+  for (let dayOffset = 0; dayOffset < 30; dayOffset++) { // 30 prochains jours max
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + dayOffset);
+
+    const dayOfWeek = date.getDay(); // 0 = dimanche, 6 = samedi
+    if (dayOfWeek === 0 || dayOfWeek === 6) continue; // ignorer le week-end
+
+    const dateStr = date.toISOString().split('T')[0];
+
+    // récupérer les horaires libres pour ce jour
+    const horairesLibres = await getDisponibilitesRh(id_rh, dateStr);
+    if (horairesLibres.length > 0) {
+      return `${dateStr} ${horairesLibres[0]}:00`; // renvoyer juste 1 créneau
+    }
+  }
+
+  return null; // aucune dispo trouvée
+};
+
 module.exports = { 
   loginRh, 
   getAllSuggests, 
@@ -164,5 +186,6 @@ module.exports = {
   updateDateRhEntretien,
   updateStatusRhEntretien, 
   getDisponibilitesRh,
-  updateDateStatusRhEntretien
+  updateDateStatusRhEntretien, 
+  getProchaineDisponibilite
 };

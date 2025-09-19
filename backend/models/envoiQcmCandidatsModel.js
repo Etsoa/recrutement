@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Candidat = require('./candidats');
+const Candidat = require('./candidatsModel');
 const Employe = require('./employesModel');
 
 const EnvoiQcmCandidat = db.define('EnvoiQcmCandidat', {

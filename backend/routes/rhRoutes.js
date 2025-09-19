@@ -26,6 +26,7 @@ router.post('/update/status/rh_entretien', rhController.updateStatusRhEntretien)
 // Nouvelles fonctionnalités combinées
 router.post('/disponibilites/rh', rhController.getDisponibilitesRh);  // pour vérifier les créneaux libres
 router.post('/reserve/rh_entretien', rhController.reserveEntretienRh); // mettre à jour date + statut
+router.post('/prochaine_disponibilite/rh', rhController.getProchaineDisponibiliteRh); // pour vérifier la prochaine disponibilité
 
 
 // ajouter score dans score_rh_entretien

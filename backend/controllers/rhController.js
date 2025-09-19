@@ -202,3 +202,27 @@ exports.reserveEntretienRh = async (req, res) => {
     res.status(500).json({ message: err.message, success: false });
   }
 };
+
+exports.getProchaineDisponibiliteRh = async (req, res) => {
+  try {
+    const { id_rh, date_depart } = req.body; 
+    if (!id_rh || !date_depart) {
+      return res.status(400).json({ message: 'ID RH ou date de départ manquante', data: null, success: false });
+    }
+
+    const prochaineDisponibilite = await rhService.getProchaineDisponibilite(id_rh, date_depart);
+
+    if (!prochaineDisponibilite) {
+      return res.status(404).json({ message: 'Aucun créneau disponible prochainement', data: null, success: false });
+    }
+
+    res.json({
+      message: 'Prochaine date/heure disponible trouvée',
+      data: { date_disponible: prochaineDisponibilite },
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message, data: null, success: false });
+  }
+};

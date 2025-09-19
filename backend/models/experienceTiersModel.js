@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const Tiers = require('./tiersModel');
-const Domaine = require('./domaines');
+const Domaine = require('./domainesModel');
 
 const ExperienceTiers = db.define('ExperienceTiers', {
   id_experience_tiers: {

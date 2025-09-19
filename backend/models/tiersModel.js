@@ -3,6 +3,8 @@ const db = require('../config/db');
 
 const Ville = require('./villesModel');
 const Genre = require('./genresModel');
+const SituationMatrimoniale = require('./situationMatrimonialesModel');
+
 
 const Tiers = db.define('Tiers', {
   id_tiers: {
@@ -71,5 +73,6 @@ const Tiers = db.define('Tiers', {
 // Associations
 Tiers.belongsTo(Ville, { foreignKey: 'id_ville' });
 Tiers.belongsTo(Genre, { foreignKey: 'id_genre' });
+Tiers.belongsTo(SituationMatrimoniale, { foreignKey: 'id_situation_matrimoniale' });
 
 module.exports = Tiers;

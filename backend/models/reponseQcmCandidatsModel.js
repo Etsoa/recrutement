@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const EnvoiQcmCandidat = require('./envoiQcmCandidatsModel');
-const QcmAnnonce = require('./qcm_annonces');
+const QcmAnnonce = require('./qcmAnnoncesModel');
 
 const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   id_reponse_qcm_candidat: {
