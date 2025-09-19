@@ -46,7 +46,7 @@ const StatusAnnonce = db.define('StatusAnnonce', {
     onDelete: 'CASCADE'
   }
 }, {
-  tableName: 'status_annonce',
+  tableName: 'status_annonces',
   timestamps: false
 });
 

@@ -4,8 +4,10 @@ const uniteController = require('../controllers/uniteController');
 
 // liste annonce(components)
 router.get('/annonces', uniteController.getAllAnnonces);
-// // fiche annonce
-// router.get('/annonce', uniteController.getAnnonceById);
+
+// fiche annonce
+router.get('/annonce/:id', uniteController.getAnnonceById);
+
 // // table envoi qcm candidat(email)
 // router.post('/create/qcm_candidat', uniteController.createQcmCandidat);
 // // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 

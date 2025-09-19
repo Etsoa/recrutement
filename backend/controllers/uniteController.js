@@ -17,6 +17,35 @@ exports.getAllAnnonces = async (req, res) => {
   }
 };
 
+const { getAnnonceById } = require('../services/unite/traitementAnnoncesService');
+
+exports.getAnnonceById = async (req, res) => {
+  try {
+    const id = req.params.id; // ID depuis l'URL
+    const data = await getAnnonceById(id);
+    if (!data) {
+      return res.status(404).json({
+        message: 'Annonce non trouvée',
+        data: null,
+        success: false
+      });
+    }
+    res.json({
+      message: 'Annonce récupérée avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération de l\'annonce',
+      data: null,
+      success: false
+    });
+  }
+};
+
+
 
 // exports.loginUnite = async (req, res) => {
 //   try {
@@ -30,6 +59,7 @@ exports.getAllAnnonces = async (req, res) => {
 //     res.status(500).json({ message: 'Erreur serveur lors de la connexion', data: null, success: false });
 //   }
 // };
+
 
 // exports.getAnnonceById = async (req, res) => {
 //   try {
@@ -59,3 +89,4 @@ exports.getAllAnnonces = async (req, res) => {
 //     });
 //   }
 // };
+

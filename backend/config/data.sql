@@ -113,3 +113,33 @@ INSERT INTO delai_qcm (valeur) VALUES (2);
 INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 
 INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
+
+
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (1, 1, 30, 55, 1); -- Directeur General, Antananarivo, Homme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (2, 2, 25, 50, 2); -- Assistant Direction, Fianarantsoa, Femme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (4, 1, 28, 45, 1); -- Responsable RH, Antananarivo, Homme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (5, 3, 22, 40, 2); -- Assistant RH, Toamasina, Femme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (7, 4, 35, 60, 1); -- Chef Comptable, Mahajanga, Homme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (10, 5, 25, 45, 2); -- Ouvrier, Toliara, Femme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (13, 6, 30, 50, 1); -- Responsable Commercial, Antsiranana, Homme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (15, 1, 22, 35, 2); -- Commercial, Antananarivo, Femme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (16, 2, 24, 38, 1); -- Assistant Commercial, Fianarantsoa, Homme
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) VALUES (3, 3, 27, 45, 2); -- Secretaire Direction, Toamasina, Femme
+
+-- Pour l'annonce 1
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite)
+VALUES 
+(1, 1, '2025-09-01', 1),  -- "En cours de demande" par RH
+(1, 2, '2025-09-05', 1);  -- "Publie" par Direction Generale
+
+-- Pour l'annonce 2
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite)
+VALUES 
+(2, 1, '2025-09-02', 2),  -- "En cours de demande" par RH
+(2, 3, '2025-09-06', 2);  -- "Non publie" par Direction Generale
+
+-- Pour l'annonce 3
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite)
+VALUES 
+(3, 2, '2025-09-03', 1),  -- "Publie" par RH
+(3, 2, '2025-09-07', 1);  -- "Publie" par Direction Generale

@@ -82,7 +82,7 @@ CREATE TABLE type_status_annonces (
     valeur VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE status_annonce (
+CREATE TABLE status_annonces (
     id_status_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
     id_type_status_annonce INTEGER REFERENCES type_status_annonces(id_type_status) ON DELETE CASCADE,
