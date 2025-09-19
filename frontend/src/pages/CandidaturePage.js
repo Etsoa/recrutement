@@ -1,0 +1,388 @@
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import Button from '../components/Button';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
+import AnnonceCard from '../components/AnnonceCard';
+import StepIndicator from '../components/candidature/StepIndicator';
+import PersonalInfoStep from '../components/candidature/PersonalInfoStep';
+import ProfessionalStep from '../components/candidature/ProfessionalStep';
+import CompetencesStep from '../components/candidature/CompetencesStep';
+import UploadsStep from '../components/candidature/UploadsStep';
+import SummaryStep from '../components/candidature/SummaryStep';
+import '../styles/CandidaturePage.css';
+
+const CandidaturePage = () => {
+  const { annonceId } = useParams();
+  const navigate = useNavigate();
+  
+  // État pour l'étape courante
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 5;
+  
+  // États pour l'annonce
+  const [annonce, setAnnonce] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  // États du formulaire global
+  const [formData, setFormData] = useState({
+    // Informations personnelles
+    nom: '',
+    prenom: '',
+    date_naissance: '',
+    genre: '',
+    email: '',
+    telephone: '',
+    adresse: '',
+    ville: '',
+    situation_matrimoniale: '',
+    nombre_enfants: '',
+    
+    // Formation
+    niveau: '',
+    filiere: '',
+    etablissement: '',
+    annee_obtention: '',
+    
+    // Expériences
+    experiences: [],
+    
+    // Langues
+    langues: [],
+    
+    // Qualités
+    qualites: [],
+    
+    // Motivation
+    motivation: '',
+    
+    // Fichiers
+    photo: null,
+    cv: null
+  });
+  
+  // État pour les erreurs de validation
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Charger les données de l'annonce
+  useEffect(() => {
+    const loadAnnonce = async () => {
+      try {
+        setLoading(true);
+        
+        // TODO: Remplacer par un appel API réel
+        // const response = await fetch(`/api/annonces/${annonceId}`);
+        // const annonceData = await response.json();
+        
+        // Pour l'instant, utilisation de données test avec l'ID de l'annonce
+        const mockAnnonce = {
+          id_annonce: annonceId,
+          Poste: { valeur: `Développeur Full Stack` },
+          Ville: { valeur: "Antananarivo" },
+          Genre: { valeur: "Tous genres" },
+          age_min: 25,
+          age_max: 35,
+          ExperienceAnnonces: [
+            {
+              nombre_annee: 3,
+              Domaine: { valeur: "Développement Web" }
+            },
+            {
+              nombre_annee: 2,
+              Domaine: { valeur: "Base de données" }
+            }
+          ],
+          LangueAnnonces: [
+            { Langue: { valeur: "Français" } },
+            { Langue: { valeur: "Anglais" } },
+            { Langue: { valeur: "Malagasy" } }
+          ],
+          QualiteAnnonces: [
+            { Qualite: { valeur: "Autonome" } },
+            { Qualite: { valeur: "Rigoureux" } },
+            { Qualite: { valeur: "Créatif" } }
+          ],
+          NiveauFiliereAnnonces: [
+            {
+              Niveau: { valeur: "Licence" },
+              Filiere: { valeur: "Informatique" }
+            }
+          ],
+          date_publication: new Date().toISOString().split('T')[0],
+          date_limite: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+        };
+        
+        setAnnonce(mockAnnonce);
+      } catch (err) {
+        setError('Erreur lors du chargement de l\'annonce');
+        console.error('Erreur de chargement de l\'annonce:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (annonceId) {
+      loadAnnonce();
+    } else {
+      setError('ID d\'annonce manquant');
+      setLoading(false);
+    }
+  }, [annonceId]);
+
+  // Mettre à jour les données du formulaire
+  const updateFormData = (newData) => {
+    setFormData(prev => ({ ...prev, ...newData }));
+    // Nettoyer les erreurs des champs modifiés
+    if (errors) {
+      const newErrors = { ...errors };
+      Object.keys(newData).forEach(key => {
+        if (newErrors[key]) {
+          delete newErrors[key];
+        }
+      });
+      setErrors(newErrors);
+    }
+  };
+
+  // Validation par étape
+  const validateStep = (step) => {
+    const newErrors = {};
+    
+    switch (step) {
+      case 1: // Informations personnelles
+        if (!formData.nom?.trim()) newErrors.nom = 'Le nom est requis';
+        if (!formData.prenom?.trim()) newErrors.prenom = 'Le prénom est requis';
+        if (!formData.date_naissance) newErrors.date_naissance = 'La date de naissance est requise';
+        if (!formData.genre) newErrors.genre = 'Le genre est requis';
+        if (!formData.email?.trim()) newErrors.email = 'L\'email est requis';
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          newErrors.email = 'Format d\'email invalide';
+        }
+        if (!formData.telephone?.trim()) newErrors.telephone = 'Le téléphone est requis';
+        if (!formData.adresse?.trim()) newErrors.adresse = 'L\'adresse est requise';
+        if (!formData.ville) newErrors.ville = 'La ville est requise';
+        break;
+        
+      case 2: // Formation
+        if (!formData.niveau) newErrors.niveau = 'Le niveau d\'études est requis';
+        if (!formData.filiere) newErrors.filiere = 'La filière est requise';
+        break;
+        
+      case 3: // Compétences (pas de validation obligatoire)
+        break;
+        
+      case 4: // Téléchargements
+        if (!formData.cv) newErrors.cv = 'Le CV est requis';
+        break;
+        
+      case 5: // Récapitulatif (validation finale)
+        // Réexécuter toutes les validations
+        return validateStep(1) && validateStep(2) && validateStep(4);
+      default:
+        // Cas par défaut pour les étapes non reconnues
+        break;
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Navigation entre les étapes
+  const goToNextStep = () => {
+    if (validateStep(currentStep)) {
+      if (currentStep < totalSteps) {
+        setCurrentStep(currentStep + 1);
+      }
+    }
+  };
+
+  const goToPreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  // Soumission du formulaire
+  const handleSubmit = async () => {
+    if (!validateStep(5)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // Préparer les données pour l'envoi
+      const submissionData = new FormData();
+      
+      // Ajouter toutes les données du formulaire
+      Object.keys(formData).forEach(key => {
+        if (key === 'experiences' || key === 'langues' || key === 'qualites') {
+          submissionData.append(key, JSON.stringify(formData[key]));
+        } else if (formData[key] !== null && formData[key] !== '') {
+          submissionData.append(key, formData[key]);
+        }
+      });
+      
+      submissionData.append('annonce_id', annonceId);
+
+      // Simulation de l'envoi (à remplacer par un appel API)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Succès
+      alert('Candidature envoyée avec succès !');
+      navigate('/annonces');
+      
+    } catch (err) {
+      alert('Erreur lors de l\'envoi de la candidature');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Rendu du composant d'étape actuel
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <PersonalInfoStep
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 2:
+        return (
+          <ProfessionalStep
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 3:
+        return (
+          <CompetencesStep
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 4:
+        return (
+          <UploadsStep
+            formData={formData}
+            updateFormData={updateFormData}
+            errors={errors}
+          />
+        );
+      case 5:
+        return (
+          <SummaryStep
+            formData={formData}
+            annonceData={annonce}
+            errors={errors}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="candidature-page">
+        <LoadingSpinner message="Chargement de l'annonce..." size="large" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="candidature-page">
+        <ErrorMessage
+          title="Erreur de chargement"
+          message={error}
+          onBack={() => navigate('/annonces')}
+          onRetry={() => window.location.reload()}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="candidature-page">
+      <div className="candidature-container">
+        {/* Titre principal */}
+        <div className="page-title">
+          <h1>Information candidature</h1>
+          <p className="page-subtitle">Complétez votre candidature en 5 étapes</p>
+        </div>
+
+        {/* Aperçu de l'annonce */}
+        {annonce && (
+          <AnnonceCard 
+            annonce={annonce}
+            hideActions={true}
+          />
+        )}
+
+        {/* Indicateur d'étapes */}
+        <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
+
+        {/* Contenu de l'étape courante */}
+        <div className="step-container">
+          {renderCurrentStep()}
+        </div>
+
+        {/* Navigation */}
+        <div className="step-navigation">
+          <div className="nav-buttons">
+            {currentStep > 1 && (
+              <Button 
+                onClick={goToPreviousStep}
+                variant="secondary"
+                disabled={isSubmitting}
+              >
+                ← Précédent
+              </Button>
+            )}
+            
+            <div className="nav-spacer"></div>
+            
+            {currentStep < totalSteps ? (
+              <Button 
+                onClick={goToNextStep}
+                variant="primary"
+                disabled={isSubmitting}
+              >
+                Suivant →
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleSubmit}
+                variant="primary"
+                disabled={isSubmitting || !formData.cv}
+                className="submit-button"
+              >
+                {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma candidature'}
+              </Button>
+            )}
+          </div>
+        </div>
+        
+        {/* Indicateurs de progression */}
+        <div className="progress-info">
+          {currentStep === totalSteps && (
+            <div className="final-check">
+              {!formData.cv && (
+                <p className="warning">⚠️ CV requis pour envoyer votre candidature</p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CandidaturePage;

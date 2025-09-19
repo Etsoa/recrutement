@@ -1,10 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Annonce = require('./annoncesModel');
-const Filiere = require('./filieresModel');
-const Niveau = require('./niveauxModel');
-
 const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
   id_niveau_filiere_annonce: {
     type: DataTypes.INTEGER,
@@ -15,7 +11,7 @@ const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Annonce,
+      model: 'annonces',
       key: 'id_annonce'
     },
     onUpdate: 'CASCADE',
@@ -25,7 +21,7 @@ const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Filiere,
+      model: 'filieres',
       key: 'id_filiere'
     },
     onUpdate: 'CASCADE',
@@ -35,7 +31,7 @@ const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Niveau,
+      model: 'niveaux',
       key: 'id_niveau'
     },
     onUpdate: 'CASCADE',
@@ -46,9 +42,11 @@ const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
   timestamps: false
 });
 
-// Associations
-NiveauFiliereAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-NiveauFiliereAnnonce.belongsTo(Filiere, { foreignKey: 'id_filiere' });
-NiveauFiliereAnnonce.belongsTo(Niveau, { foreignKey: 'id_niveau' });
+// Associations avec lazy loading
+NiveauFiliereAnnonce.associate = function(models) {
+  NiveauFiliereAnnonce.belongsTo(models.Annonce, { foreignKey: 'id_annonce' });
+  NiveauFiliereAnnonce.belongsTo(models.Filiere, { foreignKey: 'id_filiere' });
+  NiveauFiliereAnnonce.belongsTo(models.Niveau, { foreignKey: 'id_niveau' });
+};
 
 module.exports = NiveauFiliereAnnonce;

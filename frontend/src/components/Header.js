@@ -19,6 +19,12 @@ const Header = () => {
             Accueil
           </Link>
           <Link 
+            to={ROUTES.ANNONCES} 
+            className={`header__nav-item ${location.pathname === ROUTES.ANNONCES ? 'header__nav-item--active' : ''}`}
+          >
+            Offres d'emploi
+          </Link>
+          <Link 
             to={ROUTES.CV_LIST} 
             className={`header__nav-item ${location.pathname === ROUTES.CV_LIST ? 'header__nav-item--active' : ''}`}
           >

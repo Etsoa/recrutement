@@ -1,0 +1,344 @@
+/* CandidaturePage.css - Design épuré et professionnel */
+
+.candidature-page {
+  min-height: 100vh;
+  background: var(--color-background);
+  padding: var(--spacing-2xl) var(--spacing-lg);
+}
+
+.candidature-container {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+/* ===== TITRE PRINCIPAL ===== */
+.page-title {
+  text-align: center;
+  margin-bottom: var(--spacing-3xl);
+}
+
+.page-title h1 {
+  font-size: var(--font-size-3xl);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.page-subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+}
+
+/* ===== APERÇU DE L'ANNONCE (identique à AnnonceCard) ===== */
+.annonce-preview {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-3xl);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.annonce-preview::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
+}
+
+.annonce-preview:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(22, 160, 133, 0.2);
+}
+
+.annonce-header {
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.annonce-preview h1 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin: 0 0 var(--spacing-md) 0;
+  line-height: 1.2;
+}
+
+.annonce-preview h2 {
+  font-size: var(--font-size-lg);
+  color: var(--color-accent);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--spacing-md);
+}
+
+.annonce-details {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  margin-top: var(--spacing-md);
+}
+
+.annonce-details span {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: var(--color-background-alt);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  border: 1px solid transparent;
+  transition: var(--transition);
+}
+
+.annonce-details span:hover {
+  border-color: var(--color-accent);
+  background: var(--color-background);
+}
+
+/* ===== CONTENU DES ÉTAPES CENTRÉ ===== */
+.step-content {
+  background: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  margin-bottom: var(--spacing-2xl);
+  box-shadow: var(--shadow);
+  margin-top: var(--spacing-3xl);
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.step-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.step-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+}
+
+/* ===== FORMULAIRES EN DEUX COLONNES ===== */
+.form-grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.form-grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.form-group label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  transition: var(--transition);
+  background: var(--color-surface);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+}
+
+.form-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-xs);
+}
+
+/* ===== LISTES DYNAMIQUES ÉPURÉES ===== */
+.dynamic-list {
+  margin-top: var(--spacing-lg);
+}
+
+.list-item {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-end;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+}
+
+.list-item .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.list-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+/* ===== UPLOAD DE FICHIERS ÉPURÉ ===== */
+.file-upload {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  text-align: center;
+  transition: var(--transition);
+  background: var(--color-background-alt);
+}
+
+.file-upload:hover {
+  border-color: var(--color-accent);
+  background: rgba(22, 160, 133, 0.05);
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.upload-icon {
+  font-size: var(--font-size-3xl);
+  color: var(--color-text-secondary);
+}
+
+.file-info {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ===== RÉCAPITULATIF ÉPURÉ ===== */
+.summary-section {
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-xl);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.summary-title {
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.summary-content {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.summary-item {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--spacing-md);
+  align-items: start;
+}
+
+.summary-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.summary-value {
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+/* ===== NAVIGATION ÉPURÉE - BOUTON À DROITE ===== */
+.step-navigation {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: var(--spacing-xl);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--spacing-2xl);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.nav-spacer {
+  flex: 1;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .candidature-page {
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+  
+  .form-grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .list-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .summary-item {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+  
+  .step-navigation {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .nav-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -69,5 +69,27 @@
     order: 3;
     width: 100%;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .header__nav-item {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .header__nav {
+    gap: var(--spacing-xs);
+  }
+  
+  .header__nav-item {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs);
+  }
+  
+  .header__logo {
+    font-size: var(--font-size-xl);
   }
 }

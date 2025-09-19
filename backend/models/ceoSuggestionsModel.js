@@ -36,7 +36,7 @@ const CeoSuggestion = db.define('CeoSuggestion', {
     allowNull: false,
     references: {
       model: TypeStatusSuggestion,
-      key: 'id'
+      key: 'id_type_status_suggestion'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'

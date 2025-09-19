@@ -1,9 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Tiers = require('./tiersModel');
-const Annonce = require('./annoncesModel');
-
 const Candidat = db.define('Candidat', {
   id_candidat: {
     type: DataTypes.INTEGER,
@@ -14,7 +11,7 @@ const Candidat = db.define('Candidat', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Tiers,
+      model: 'tiers',
       key: 'id_tiers'
     },
     onUpdate: 'CASCADE',
@@ -24,7 +21,7 @@ const Candidat = db.define('Candidat', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Annonce,
+      model: 'annonces',
       key: 'id_annonce'
     },
     onUpdate: 'CASCADE',
@@ -39,8 +36,10 @@ const Candidat = db.define('Candidat', {
   timestamps: false
 });
 
-// Associations
-Candidat.belongsTo(Tiers, { foreignKey: 'id_tiers' });
-Candidat.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+// Associations avec lazy loading
+Candidat.associate = function(models) {
+  Candidat.belongsTo(models.Tiers, { foreignKey: 'id_tiers' });
+  Candidat.belongsTo(models.Annonce, { foreignKey: 'id_annonce' });
+};
 
 module.exports = Candidat;

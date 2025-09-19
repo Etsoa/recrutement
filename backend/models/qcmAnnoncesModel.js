@@ -1,9 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Annonce = require('./annoncesModel');
-const QuestionQCM = require('./questionQcmsModel');
-
 const QcmAnnonce = db.define('QcmAnnonce', {
   id_qcm_annonce: {
     type: DataTypes.INTEGER,
@@ -14,7 +11,7 @@ const QcmAnnonce = db.define('QcmAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Annonce,
+      model: 'annonces',
       key: 'id_annonce'
     },
     onUpdate: 'CASCADE',
@@ -24,8 +21,8 @@ const QcmAnnonce = db.define('QcmAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: QuestionQCM,
-      key: 'id_question_qcm'
+      model: 'question_qcms',
+      key: 'id_question'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
@@ -35,8 +32,10 @@ const QcmAnnonce = db.define('QcmAnnonce', {
   timestamps: false
 });
 
-// Associations
-QcmAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-QcmAnnonce.belongsTo(QuestionQCM, { foreignKey: 'id_question_qcm' });
+// Associations avec lazy loading
+QcmAnnonce.associate = function(models) {
+  QcmAnnonce.belongsTo(models.Annonce, { foreignKey: 'id_annonce' });
+  QcmAnnonce.belongsTo(models.QuestionQcm, { foreignKey: 'id_question_qcm', targetKey: 'id_question' });
+};
 
 module.exports = QcmAnnonce;

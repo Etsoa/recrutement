@@ -1,0 +1,315 @@
+/* CandidatureStep.css - Styles épurés et centrés pour les étapes */
+
+/* ===== CONTENEUR PRINCIPAL CENTRÉ ===== */
+.candidature-step {
+  background: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  margin: 0 auto var(--spacing-2xl) auto;
+  box-shadow: var(--shadow);
+  max-width: 700px;
+  margin-top: var(--spacing-3xl);
+}
+
+/* ===== EN-TÊTE D'ÉTAPE ===== */
+.step-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.step-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.step-description {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+/* ===== FORMULAIRES ===== */
+.form-grid {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+
+.form-grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg) var(--spacing-xl);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.form-group label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-base);
+  font-family: var(--font-body);
+  transition: var(--transition);
+  background: var(--color-surface);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(22, 160, 133, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-error {
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-xs);
+}
+
+/* ===== LISTES DYNAMIQUES ===== */
+.dynamic-section {
+  margin-top: var(--spacing-xl);
+}
+
+.section-title {
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.dynamic-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.list-item {
+  padding: var(--spacing-md);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  position: relative;
+}
+
+.list-item-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.remove-btn {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: var(--color-danger);
+  color: var(--color-text-light);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: var(--transition);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-btn:hover {
+  background: #c0392b;
+}
+
+.add-item-btn {
+  margin-top: var(--spacing-md);
+}
+
+/* ===== UPLOAD DE FICHIERS ===== */
+.file-upload-section {
+  margin-top: var(--spacing-xl);
+}
+
+.file-upload {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
+  transition: var(--transition);
+  background: var(--color-background-alt);
+  cursor: pointer;
+}
+
+.file-upload:hover {
+  border-color: var(--color-accent);
+  background: rgba(22, 160, 133, 0.05);
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.upload-icon {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-secondary);
+}
+
+.upload-text {
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.upload-hint {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.file-info {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--color-surface);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.file-details {
+  flex: 1;
+}
+
+.file-name {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.file-size {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+/* ===== RÉCAPITULATIF ===== */
+.summary-section {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+}
+
+.summary-title {
+  font-size: var(--font-size-base);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+  font-weight: var(--font-weight-semibold);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.summary-content {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.summary-item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: var(--spacing-sm);
+  align-items: start;
+  padding: var(--spacing-xs) 0;
+}
+
+.summary-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.summary-value {
+  color: var(--color-text);
+  font-size: var(--font-size-xs);
+  line-height: 1.3;
+}
+
+/* ===== NAVIGATION - BOUTONS À DROITE ===== */
+.step-navigation {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--spacing-xl);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .candidature-step {
+    padding: var(--spacing-lg);
+    margin: 0 var(--spacing-sm) var(--spacing-xl) var(--spacing-sm);
+    max-width: none;
+  }
+  
+  .form-grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .list-item-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .summary-item {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+  
+  .step-navigation {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .candidature-step {
+    padding: var(--spacing-md);
+  }
+  
+  .file-upload {
+    padding: var(--spacing-lg);
+  }
+}

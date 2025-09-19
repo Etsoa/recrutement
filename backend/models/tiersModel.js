@@ -23,33 +23,6 @@ const Tiers = db.define('Tiers', {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
-  cin: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: true,
-    unique: true,
-    validate: {
-      isEmail: true
-    }
-  },
-  photo: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  id_ville: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Ville,
-      key: 'id_ville'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
   id_genre: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -85,6 +58,25 @@ const Tiers = db.define('Tiers', {
     validate: {
       isEmail: true
     }
+  },
+  cin: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true
+  },
+  id_ville: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Ville,
+      key: 'id_ville'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  },
+  photo: {
+    type: DataTypes.STRING,
+    allowNull: false
   }
 }, {
   tableName: 'tiers',

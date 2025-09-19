@@ -1,10 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Poste = require('./postesModel');
-const Ville = require('./villesModel');
-const Genre = require('./genresModel');
-
 const Annonce = db.define('Annonce', {
   id_annonce: {
     type: DataTypes.INTEGER,
@@ -15,7 +11,7 @@ const Annonce = db.define('Annonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Poste,
+      model: 'postes',
       key: 'id_poste'
     },
     onUpdate: 'CASCADE',
@@ -25,7 +21,7 @@ const Annonce = db.define('Annonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Ville,
+      model: 'villes',
       key: 'id_ville'
     },
     onUpdate: 'CASCADE',
@@ -43,7 +39,7 @@ const Annonce = db.define('Annonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Genre,
+      model: 'genres',
       key: 'id_genre'
     },
     onUpdate: 'CASCADE',
@@ -54,9 +50,21 @@ const Annonce = db.define('Annonce', {
   timestamps: false
 });
 
-// Associations Sequelize
-Annonce.belongsTo(Poste, { foreignKey: 'id_poste' });
-Annonce.belongsTo(Ville, { foreignKey: 'id_ville' });
-Annonce.belongsTo(Genre, { foreignKey: 'id_genre' });
+// Associations avec lazy loading pour éviter les dépendances circulaires
+Annonce.associate = function(models) {
+  // Relations belongsTo
+  Annonce.belongsTo(models.Poste, { foreignKey: 'id_poste' });
+  Annonce.belongsTo(models.Ville, { foreignKey: 'id_ville' });
+  Annonce.belongsTo(models.Genre, { foreignKey: 'id_genre' });
+  
+  // Relations hasMany
+  Annonce.hasMany(models.StatusAnnonce, { foreignKey: 'id_annonce' });
+  Annonce.hasMany(models.NiveauFiliereAnnonce, { foreignKey: 'id_annonce' });
+  Annonce.hasMany(models.LangueAnnonce, { foreignKey: 'id_annonce' });
+  Annonce.hasMany(models.QualiteAnnonce, { foreignKey: 'id_annonce' });
+  Annonce.hasMany(models.ExperienceAnnonce, { foreignKey: 'id_annonce' });
+  Annonce.hasMany(models.QcmAnnonce, { foreignKey: 'id_annonce' });
+  Annonce.hasMany(models.Candidat, { foreignKey: 'id_annonce' });
+};
 
 module.exports = Annonce;

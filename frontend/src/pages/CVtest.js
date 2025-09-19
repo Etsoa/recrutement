@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CV } from '../components';
+import ErrorMessage from '../components/ErrorMessage';
 
 // Page de test pour le composant CV
 const CVtest = () => {
@@ -180,32 +181,11 @@ const CVtest = () => {
   // Affichage de l'erreur
   if (error) {
     return (
-      <div style={{
-        padding: '2rem',
-        textAlign: 'center',
-        color: 'var(--color-danger)',
-        backgroundColor: 'var(--color-surface)',
-        border: '1px solid var(--color-danger)',
-        borderRadius: 'var(--border-radius)',
-        margin: '2rem'
-      }}>
-        <h3>Erreur de chargement</h3>
-        <p>{error}</p>
-        <button 
-          onClick={() => window.location.reload()}
-          style={{
-            marginTop: '1rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: 'var(--color-accent)',
-            color: 'white',
-            border: 'none',
-            borderRadius: 'var(--border-radius)',
-            cursor: 'pointer'
-          }}
-        >
-          Réessayer
-        </button>
-      </div>
+      <ErrorMessage
+        title="Erreur de chargement"
+        message={error}
+        onRetry={() => window.location.reload()}
+      />
     );
   }
 

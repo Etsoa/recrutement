@@ -1,6 +1,5 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
-const Unite = require('./unitesModel'); // On importe le modèle Unite pour la relation
 
 const Poste = db.define('Poste', {
   id_poste: {
@@ -10,14 +9,13 @@ const Poste = db.define('Poste', {
   },
   valeur: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false
   },
   id_unite: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Unite,
+      model: 'unites',
       key: 'id_unite'
     },
     onUpdate: 'CASCADE',
@@ -27,6 +25,12 @@ const Poste = db.define('Poste', {
   tableName: 'postes',
   timestamps: false
 });
+
+// Associations avec lazy loading
+Poste.associate = function(models) {
+  Poste.belongsTo(models.Unite, { foreignKey: 'id_unite' });
+  Poste.hasMany(models.Annonce, { foreignKey: 'id_poste' });
+};
 
 Poste.belongsTo(Unite, { foreignKey: 'id_unite' });
 

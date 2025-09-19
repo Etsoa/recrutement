@@ -1,9 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const EnvoiQcmCandidat = require('./envoiQcmCandidatsModel');
-const QcmAnnonce = require('./qcmAnnoncesModel');
-
 const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   id_reponse_qcm_candidat: {
     type: DataTypes.INTEGER,
@@ -14,7 +11,7 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: EnvoiQcmCandidat,
+      model: 'envoi_qcm_candidats',
       key: 'id_envoi_qcm_candidat'
     },
     onUpdate: 'CASCADE',
@@ -24,7 +21,7 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: QcmAnnonce,
+      model: 'qcm_annonces',
       key: 'id_qcm_annonce'
     },
     onUpdate: 'CASCADE',
@@ -32,27 +29,33 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   },
   debut: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: true
   },
   fin: {
     type: DataTypes.DATE,
+    allowNull: true
+  },
+  duree: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  reponse: {
+    type: DataTypes.STRING,
     allowNull: false
   },
   score: {
     type: DataTypes.INTEGER,
     allowNull: true
-  },
-  duree: {
-    type: DataTypes.INTEGER, // durée en secondes
-    allowNull: false
   }
 }, {
   tableName: 'reponse_qcm_candidats',
   timestamps: false
 });
 
-// Associations
-ReponseQcmCandidat.belongsTo(EnvoiQcmCandidat, { foreignKey: 'id_envoi_qcm_candidat' });
-ReponseQcmCandidat.belongsTo(QcmAnnonce, { foreignKey: 'id_qcm_annonce' });
+// Associations avec lazy loading
+ReponseQcmCandidat.associate = function(models) {
+  ReponseQcmCandidat.belongsTo(models.EnvoiQcmCandidat, { foreignKey: 'id_envoi_qcm_candidat' });
+  ReponseQcmCandidat.belongsTo(models.QcmAnnonce, { foreignKey: 'id_qcm_annonce' });
+};
 
 module.exports = ReponseQcmCandidat;

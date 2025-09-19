@@ -1,10 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Annonce = require('./annoncesModel');
-const Domaine = require('./domainesModel');
-
-const ExperienceAnnonce = db.define('ExperienceAnnonces', {
+const ExperienceAnnonce = db.define('ExperienceAnnonce', {
   id_experience_annonce: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -14,7 +11,7 @@ const ExperienceAnnonce = db.define('ExperienceAnnonces', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Annonce,
+      model: 'annonces',
       key: 'id_annonce'
     },
     onUpdate: 'CASCADE',
@@ -24,7 +21,7 @@ const ExperienceAnnonce = db.define('ExperienceAnnonces', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: Domaine,
+      model: 'domaines',
       key: 'id_domaine'
     },
     onUpdate: 'CASCADE',
@@ -39,8 +36,10 @@ const ExperienceAnnonce = db.define('ExperienceAnnonces', {
   timestamps: false
 });
 
-// Associations
-ExperienceAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-ExperienceAnnonce.belongsTo(Domaine, { foreignKey: 'id_domaine' });
+// Associations avec lazy loading
+ExperienceAnnonce.associate = function(models) {
+  ExperienceAnnonce.belongsTo(models.Annonce, { foreignKey: 'id_annonce' });
+  ExperienceAnnonce.belongsTo(models.Domaine, { foreignKey: 'id_domaine' });
+};
 
 module.exports = ExperienceAnnonce;

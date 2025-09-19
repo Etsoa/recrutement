@@ -29,7 +29,7 @@ LEFT JOIN (
     FROM status_annonce 
     ORDER BY id_annonce, date_changement DESC
 ) sa ON a.id_annonce = sa.id_annonce
-LEFT JOIN type_status_annonces tsa ON sa.id_type_status_annonce = tsa.id_type_status;
+LEFT JOIN type_status_annonces tsa ON sa.id_type_status_annonce = tsa.id_type_status_annonce;
 
 -- Vue pour les formations requises par annonce
 CREATE OR REPLACE VIEW v_annonces_formations AS
@@ -68,7 +68,7 @@ SELECT
     d.valeur AS domaine,
     ea.nombre_annee,
     d.id_domaine
-FROM experience_annonce ea
+FROM experience_annonces ea
 JOIN domaines d ON ea.id_domaine = d.id_domaine;
 
 -- Vue complète des annonces avec tous les détails
@@ -176,7 +176,14 @@ SELECT
         JSON_AGG(
             DISTINCT JSONB_BUILD_OBJECT(
                 'domaine', d.valeur, 
-                'nombre_annee', et.nombre_annee,
+                'date_debut', et.date_debut,
+                'date_fin', et.date_fin,
+                'nombre_annee', CASE 
+                    WHEN et.date_fin IS NOT NULL THEN 
+                        EXTRACT(YEAR FROM et.date_fin) - EXTRACT(YEAR FROM et.date_debut)
+                    ELSE 
+                        EXTRACT(YEAR FROM CURRENT_DATE) - EXTRACT(YEAR FROM et.date_debut)
+                END,
                 'id_domaine', d.id_domaine
             )
         ) FILTER (WHERE d.valeur IS NOT NULL), 
@@ -216,7 +223,7 @@ JOIN v_annonces_base ab ON c.id_annonce = ab.id_annonce;
 -- Vue pour les questions QCM avec leurs réponses
 CREATE OR REPLACE VIEW v_questions_qcm_complete AS
 SELECT 
-    qq.id_question,
+    qq.id_question_qcm,
     qq.intitule,
     JSON_AGG(
         JSONB_BUILD_OBJECT(
@@ -226,18 +233,18 @@ SELECT
         ) ORDER BY rq.id_reponse_qcm
     ) AS reponses
 FROM question_qcms qq
-JOIN reponse_qcms rq ON qq.id_question = rq.id_question_qcm
-GROUP BY qq.id_question, qq.intitule;
+JOIN reponse_qcms rq ON qq.id_question_qcm = rq.id_question_qcm
+GROUP BY qq.id_question_qcm, qq.intitule;
 
 -- Vue pour les QCM d'une annonce spécifique
 CREATE OR REPLACE VIEW v_qcm_par_annonce AS
 SELECT 
     qa.id_annonce,
-    qc.id_question,
+    qc.id_question_qcm,
     qc.intitule,
     qc.reponses
 FROM qcm_annonces qa
-JOIN v_questions_qcm_complete qc ON qa.id_question_qcm = qc.id_question;
+JOIN v_questions_qcm_complete qc ON qa.id_question_qcm = qc.id_question_qcm;
 
 -- Vue pour l'envoi de QCM avec informations candidat
 CREATE OR REPLACE VIEW v_envoi_qcm_complete AS

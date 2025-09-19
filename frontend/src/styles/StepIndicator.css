@@ -1,0 +1,1032 @@
+/* StepIndicator.css - (1) ——— (2) ——— (3) ——— (4) ——— (5) avec titres en bas *//* StepIndicator.css - Divs circulaires côte à côte *//* StepIndicator.css - Chronologie horizontale avec divs côte à côte *//* StepIndicator.css - Chronologie de gauche à droite *//* StepIndicator.css - Indicateur horizontal épuré avec chiffres *//* StepIndicator.css - Indicateur d'étapes épuré et professionnel */.step-indicator {
+
+
+
+/* ===== CONTENEUR PRINCIPAL ===== */
+
+.step-indicator {
+
+  display: flex;/* ===== CONTENEUR PRINCIPAL - DIVS CÔTE À CÔTE ===== */
+
+  justify-content: center;
+
+  align-items: flex-start;.step-indicator {
+
+  margin: var(--spacing-3xl) 0;
+
+  gap: var(--spacing-xl);  display: flex;/* ===== CONTENEUR PRINCIPAL ===== */
+
+  position: relative;
+
+  max-width: 700px;  justify-content: center;
+
+  margin-left: auto;
+
+  margin-right: auto;  align-items: center;
+
+  margin: var(--spacing-3xl) 0;
+
+/* ===== LIGNE DE CONNEXION ENTRE LES CERCLES ===== */
+
+.step-indicator::before {  gap: var(--spacing-lg);  display: flex;.step-indicator {
+
+  content: '';
+
+  position: absolute;  position: relative;
+
+  top: 22px;
+
+  left: 22px;}  justify-content: center;
+
+  right: 22px;
+
+  height: 2px;
+
+  background: var(--color-border);
+
+  z-index: 1;/* ===== LIGNE DE CONNEXION ===== */  align-items: center;  display: flex;
+
+}
+
+.step-indicator::before {
+
+/* ===== CHAQUE ÉTAPE - COLONNE AVEC CERCLE ET TITRE ===== */
+
+.step-item {  content: '';  margin: var(--spacing-3xl) 0;
+
+  display: flex;
+
+  flex-direction: column;  position: absolute;
+
+  align-items: center;
+
+  position: relative;  top: 50%;  padding: var(--spacing-xl) 0;  justify-content: space-between;.step-indicator {  width: 100%;
+
+  z-index: 2;
+
+  flex: 1;  left: 60px;
+
+}
+
+  right: 60px;  position: relative;
+
+/* ===== CERCLE AVEC CHIFFRE CENTRÉ - BORDURE COLOR-ACCENT ===== */
+
+.step-circle {  height: 2px;
+
+  width: 44px;
+
+  height: 44px;  background: var(--color-border);  max-width: 800px;  align-items: center;
+
+  border-radius: 50%;
+
+  border: 2px solid var(--color-accent);  z-index: 1;
+
+  background: var(--color-surface);
+
+  display: flex;}  margin-left: auto;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: var(--font-size-base);
+
+  font-weight: var(--font-weight-bold);/* ===== DIV CIRCULAIRE AVEC CHIFFRE CENTRÉ ===== */  margin-right: auto;  margin: var(--spacing-3xl) 0;  display: flex;
+
+  color: var(--color-accent);
+
+  transition: var(--transition);.step-item {
+
+  box-shadow: var(--shadow-sm);
+
+  margin-bottom: var(--spacing-sm);  position: relative;}
+
+}
+
+  z-index: 2;
+
+/* ===== TITRES EN BAS DE CHAQUE CERCLE ===== */
+
+.step-label {}  padding: var(--spacing-xl) 0;
+
+  font-size: var(--font-size-sm);
+
+  color: var(--color-text-secondary);
+
+  text-align: center;
+
+  line-height: 1.3;.step-circle {/* ===== LIGNE DE CONNEXION - CHRONOLOGIE ===== */
+
+  font-weight: var(--font-weight-medium);
+
+  max-width: 100px;  width: 44px;
+
+}
+
+  height: 44px;.step-indicator::before {  position: relative;  justify-content: center;.step-indicator {  padding: var(--spacing-lg) 0;
+
+/* ===== ÉTATS DES ÉTAPES ===== */
+
+  border-radius: 50%;
+
+/* Étape actuelle - mise en évidence */
+
+.step-item.current .step-circle {  border: 2px solid var(--color-accent);  content: '';
+
+  background: var(--color-accent);
+
+  color: white;  background: var(--color-surface);
+
+  border-color: var(--color-accent);
+
+  transform: scale(1.1);  display: flex;  position: absolute;}
+
+  box-shadow: var(--shadow);
+
+}  align-items: center;
+
+
+
+.step-item.current .step-label {  justify-content: center;  top: 22px; /* Centre des cercles (44px/2) */
+
+  color: var(--color-accent);
+
+  font-weight: var(--font-weight-semibold);  font-size: var(--font-size-base);
+
+}
+
+  font-weight: var(--font-weight-bold);  left: 22px; /* Début du premier cercle */  align-items: center;
+
+/* Étapes complétées - style validé */
+
+.step-item.completed .step-circle {  color: var(--color-accent);
+
+  background: var(--color-success);
+
+  border-color: var(--color-success);  transition: var(--transition);  right: 22px; /* Fin du dernier cercle */
+
+  color: white;
+
+}  box-shadow: var(--shadow-sm);
+
+
+
+.step-item.completed .step-label {}  height: 2px;/* Ligne de connexion - chronologie */
+
+  color: var(--color-success);
+
+}
+
+
+
+/* Ligne de progression verte pour étapes complétées *//* Masquer les labels */  background: var(--color-border);
+
+.step-item.completed::after {
+
+  content: '';.step-label {
+
+  position: absolute;
+
+  top: 22px;  display: none;  z-index: 1;.step-indicator::before {  margin: var(--spacing-2xl) 0;  display: flex;  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+
+  left: 50%;
+
+  width: 100%;}
+
+  height: 2px;
+
+  background: var(--color-success);}
+
+  z-index: 1;
+
+}/* ===== ÉTATS ===== */
+
+
+
+/* Supprimer la ligne après la dernière étape *//* Étape actuelle */  content: '';
+
+.step-item:last-child::after {
+
+  display: none;.step-item.current .step-circle {
+
+}
+
+  background: var(--color-accent);/* ===== ÉLÉMENTS D'ÉTAPES - DIVS CÔTE À CÔTE ===== */
+
+/* Étapes en attente - style par défaut */
+
+.step-item.pending .step-circle {  color: white;
+
+  border-color: var(--color-border);
+
+  color: var(--color-text-secondary);  transform: scale(1.1);.step-item {  position: absolute;  padding: var(--spacing-lg) 0;
+
+  background: var(--color-surface);
+
+}  box-shadow: var(--shadow);
+
+
+
+.step-item.pending .step-label {}  display: flex;
+
+  color: var(--color-text-secondary);
+
+}
+
+
+
+/* ===== RESPONSIVE ===== *//* Étapes complétées */  flex-direction: column;  top: 50%;
+
+@media (max-width: 768px) {
+
+  .step-indicator {.step-item.completed .step-circle {
+
+    gap: var(--spacing-md);
+
+    margin: var(--spacing-xl) var(--spacing-md);  background: var(--color-success);  align-items: center;
+
+  }
+
+    border-color: var(--color-success);
+
+  .step-circle {
+
+    width: 36px;  color: white;  position: relative;  left: 80px;  position: relative;  justify-content: center;  border-radius: var(--border-radius-lg);
+
+    height: 36px;
+
+    font-size: var(--font-size-sm);}
+
+  }
+
+    z-index: 2;
+
+  .step-indicator::before {
+
+    top: 18px;/* Étapes en attente */
+
+    left: 18px;
+
+    right: 18px;.step-item.pending .step-circle {  flex: 1;  right: 80px;
+
+  }
+
+    border-color: var(--color-border);
+
+  .step-item.completed::after {
+
+    top: 18px;  color: var(--color-text-secondary);  max-width: 120px;
+
+  }
+
+  }
+
+  .step-label {
+
+    font-size: var(--font-size-xs);}  height: 2px;  max-width: 600px;
+
+    max-width: 80px;
+
+  }/* ===== RESPONSIVE ===== */
+
+}
+
+@media (max-width: 768px) {
+
+@media (max-width: 480px) {
+
+  .step-indicator {  .step-indicator {
+
+    gap: var(--spacing-sm);
+
+  }    gap: var(--spacing-md);/* ===== CERCLES AVEC CHIFFRES - BORDURE COLOR-ACCENT ===== */  background: var(--color-border);
+
+  
+
+  .step-circle {  }
+
+    width: 32px;
+
+    height: 32px;  .step-circle {
+
+    font-size: var(--font-size-xs);
+
+  }  .step-circle {
+
+  
+
+  .step-indicator::before {    width: 36px;  width: 44px;  z-index: 1;  margin-left: auto;  align-items: center;  margin-bottom: var(--spacing-xl);
+
+    top: 16px;
+
+    left: 16px;    height: 36px;
+
+    right: 16px;
+
+  }    font-size: var(--font-size-sm);  height: 44px;
+
+  
+
+  .step-item.completed::after {  }
+
+    top: 16px;
+
+  }    border-radius: 50%;}
+
+  
+
+  .step-label {  .step-indicator::before {
+
+    font-size: var(--font-size-xs);
+
+    max-width: 70px;    left: 48px;  border: 2px solid var(--color-accent);
+
+  }
+
+}    right: 48px;
+
+  }  background: var(--color-surface);  margin-right: auto;
+
+}
+
+  display: flex;
+
+@media (max-width: 480px) {
+
+  .step-indicator {  align-items: center;.step-item {
+
+    gap: var(--spacing-sm);
+
+  }  justify-content: center;
+
+  
+
+  .step-circle {  font-size: var(--font-size-base);  display: flex;}  margin: var(--spacing-3xl) 0;  box-shadow: var(--shadow-md);
+
+    width: 32px;
+
+    height: 32px;  font-weight: var(--font-weight-bold);
+
+    font-size: var(--font-size-xs);
+
+  }  color: var(--color-accent);  flex-direction: column;
+
+  
+
+  .step-indicator::before {  margin-bottom: var(--spacing-sm);
+
+    left: 40px;
+
+    right: 40px;  transition: var(--transition);  align-items: center;
+
+  }
+
+}  box-shadow: var(--shadow-sm);
+
+}  position: relative;
+
+
+
+/* ===== LABELS DES ÉTAPES ===== */  z-index: 2;.step-indicator::before {  padding: var(--spacing-xl) 0;}
+
+.step-label {
+
+  font-size: var(--font-size-sm);  flex: 1;
+
+  color: var(--color-text-secondary);
+
+  text-align: center;  text-decoration: none;  content: '';
+
+  line-height: 1.3;
+
+  font-weight: var(--font-weight-medium);}
+
+  max-width: 100px;
+
+}  position: absolute;  position: relative;
+
+
+
+/* ===== ÉTATS DES ÉTAPES ===== */.step-circle {
+
+
+
+/* Étape actuelle - mise en évidence */  width: 44px;  top: 50%;
+
+.step-item.current .step-circle {
+
+  background: var(--color-accent);  height: 44px;
+
+  color: var(--color-surface);
+
+  border-color: var(--color-accent);  border-radius: 50%;  left: 20%;}.steps-container {
+
+  transform: scale(1.1);
+
+  box-shadow: var(--shadow);  display: flex;
+
+}
+
+  align-items: center;  right: 20%;
+
+.step-item.current .step-label {
+
+  color: var(--color-accent);  justify-content: center;
+
+  font-weight: var(--font-weight-semibold);
+
+}  font-size: var(--font-size-base);  height: 2px;  display: flex;
+
+
+
+/* Étapes complétées - style validé */  font-weight: var(--font-weight-bold);
+
+.step-item.completed .step-circle {
+
+  background: var(--color-success);  margin-bottom: var(--spacing-sm);  background: var(--color-border);
+
+  border-color: var(--color-success);
+
+  color: white;  transition: var(--transition);
+
+}
+
+  background: var(--color-surface);  z-index: 1;.step-indicator::before {  justify-content: center;
+
+.step-item.completed .step-label {
+
+  color: var(--color-success);  border: 2px solid var(--color-border);
+
+  font-weight: var(--font-weight-medium);
+
+}  color: var(--color-text-secondary);}
+
+
+
+/* Ligne de progression pour étapes complétées */  box-shadow: var(--shadow-sm);
+
+.step-item.completed::after {
+
+  content: '';}  content: '';  align-items: center;
+
+  position: absolute;
+
+  top: 22px;
+
+  left: 50%;
+
+  width: calc(100% - 22px);.step-item.current .step-circle {.step-item {
+
+  height: 2px;
+
+  background: var(--color-success);  background: var(--color-accent);
+
+  z-index: 1;
+
+}  border-color: var(--color-accent);  display: flex;  position: absolute;  position: relative;
+
+
+
+/* Supprimer la ligne après la dernière étape */  color: var(--color-text-light);
+
+.step-item:last-child::after {
+
+  display: none;  box-shadow: var(--shadow);  flex-direction: column;
+
+}
+
+}
+
+/* Étapes en attente - style par défaut */
+
+.step-item.pending .step-circle {  align-items: center;  top: 50%;  max-width: 800px;
+
+  border-color: var(--color-border);
+
+  color: var(--color-text-secondary);.step-item.completed .step-circle {
+
+  background: var(--color-surface);
+
+}  background: var(--color-success);  position: relative;
+
+
+
+.step-item.pending .step-label {  border-color: var(--color-success);
+
+  color: var(--color-text-secondary);
+
+}  color: var(--color-text-light);  z-index: 2;  left: 15%;  margin: 0 auto;
+
+
+
+/* ===== RESPONSIVE ===== */  box-shadow: var(--shadow-sm);
+
+@media (max-width: 768px) {
+
+  .step-indicator {}  flex: 1;
+
+    margin: var(--spacing-xl) 0;
+
+    padding: var(--spacing-lg) var(--spacing-sm);
+
+    max-width: 100%;
+
+  }.step-label {  max-width: 120px;  right: 15%;  padding: 0 var(--spacing-md);
+
+  
+
+  .step-circle {  font-size: var(--font-size-xs);
+
+    width: 36px;
+
+    height: 36px;  color: var(--color-text-secondary);  text-decoration: none;
+
+    font-size: var(--font-size-sm);
+
+  }  text-align: center;
+
+  
+
+  .step-indicator::before {  font-weight: var(--font-weight-medium);}  height: 2px;}
+
+    top: 18px;
+
+    left: 18px;  line-height: 1.2;
+
+    right: 18px;
+
+  }  max-width: 90px;
+
+  
+
+  .step-label {}
+
+    font-size: var(--font-size-xs);
+
+    max-width: 80px;.step-circle {  background: var(--color-border);
+
+  }
+
+  .step-item.current .step-label {
+
+  .step-item.completed::after {
+
+    top: 18px;  color: var(--color-accent);  width: 40px;
+
+  }
+
+    font-weight: var(--font-weight-semibold);
+
+  .step-item.current .step-circle {
+
+    transform: scale(1.05);}  height: 40px;  z-index: 1;.step-wrapper {
+
+  }
+
+}
+
+
+
+@media (max-width: 480px) {.step-item.completed .step-label {  border-radius: 50%;
+
+  .step-indicator {
+
+    margin: var(--spacing-lg) 0;  color: var(--color-success);
+
+    padding: var(--spacing-md) var(--spacing-xs);
+
+  }  font-weight: var(--font-weight-semibold);  display: flex;}  display: flex;
+
+  
+
+  .step-circle {}
+
+    width: 32px;
+
+    height: 32px;  align-items: center;
+
+    font-size: var(--font-size-xs);
+
+  }/* ===== RESPONSIVE ===== */
+
+  
+
+  .step-indicator::before {@media (max-width: 768px) {  justify-content: center;  flex-direction: column;
+
+    top: 16px;
+
+    left: 16px;  .step-indicator {
+
+    right: 16px;
+
+  }    margin: var(--spacing-2xl) 0;  font-size: var(--font-size-base);
+
+  
+
+  .step-label {    padding: var(--spacing-md) 0;
+
+    font-size: var(--font-size-xs);
+
+    max-width: 70px;  }  font-weight: var(--font-weight-semibold);.step-item {  align-items: center;
+
+  }
+
+    
+
+  .step-item.completed::after {
+
+    top: 16px;  .step-indicator::before {  margin-bottom: var(--spacing-sm);
+
+  }
+
+}    left: 60px;
+
+    right: 60px;  transition: var(--transition);  display: flex;  position: relative;
+
+  }
+
+    background: var(--color-surface);
+
+  .step-circle {
+
+    width: 38px;  border: 2px solid var(--color-border);  flex-direction: column;  flex: 1;
+
+    height: 38px;
+
+    font-size: var(--font-size-sm);  color: var(--color-text-secondary);
+
+  }
+
+  }  align-items: center;}
+
+  .step-label {
+
+    font-size: 10px;
+
+    max-width: 80px;
+
+  }.step-item.current .step-circle {  position: relative;
+
+}
+
+  background: var(--color-accent);
+
+@media (max-width: 480px) {
+
+  .step-indicator::before {  border-color: var(--color-accent);  z-index: 2;.step-circle {
+
+    left: 40px;
+
+    right: 40px;  color: var(--color-text-light);
+
+  }
+
+  }  flex: 1;  width: 60px;
+
+  .step-circle {
+
+    width: 32px;
+
+    height: 32px;
+
+    font-size: var(--font-size-sm);.step-item.completed .step-circle {  max-width: 140px;  height: 60px;
+
+  }
+
+    background: var(--color-success);
+
+  .step-label {
+
+    font-size: 9px;  border-color: var(--color-success);  text-decoration: none;  border-radius: 50%;
+
+    max-width: 70px;
+
+  }  color: var(--color-text-light);
+
+}
+}}  background: rgba(255, 255, 255, 0.2);
+
+
+
+.step-label {  border: 2px solid rgba(255, 255, 255, 0.3);
+
+  font-size: var(--font-size-xs);
+
+  color: var(--color-text-secondary);.step-circle {  display: flex;
+
+  text-align: center;
+
+  font-weight: var(--font-weight-medium);  width: 48px;  align-items: center;
+
+  line-height: 1.2;
+
+  max-width: 100px;  height: 48px;  justify-content: center;
+
+}
+
+  border-radius: 50%;  position: relative;
+
+.step-item.current .step-label {
+
+  color: var(--color-accent);  display: flex;  transition: all 0.3s ease;
+
+  font-weight: var(--font-weight-semibold);
+
+}  align-items: center;  cursor: pointer;
+
+
+
+.step-item.completed .step-label {  justify-content: center;  margin-bottom: var(--spacing-sm);
+
+  color: var(--color-success);
+
+}  font-size: var(--font-size-lg);}
+
+
+
+/* ===== RESPONSIVE ===== */  font-weight: var(--font-weight-semibold);
+
+@media (max-width: 768px) {
+
+  .step-indicator {  margin-bottom: var(--spacing-sm);.step-circle.current {
+
+    max-width: 500px;
+
+    margin: var(--spacing-xl) auto;  transition: var(--transition);  background: var(--color-white);
+
+  }
+
+    background: var(--color-surface);  border-color: var(--color-white);
+
+  .step-indicator::before {
+
+    left: 15%;  border: 2px solid var(--color-border);  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.3);
+
+    right: 15%;
+
+  }  color: var(--color-text-secondary);  transform: scale(1.1);
+
+  
+
+  .step-item {}}
+
+    max-width: 100px;
+
+  }
+
+  
+
+  .step-circle {.step-item.current .step-circle {.step-circle.completed {
+
+    width: 36px;
+
+    height: 36px;  background: var(--color-accent);  background: var(--color-success);
+
+    font-size: var(--font-size-sm);
+
+  }  border-color: var(--color-accent);  border-color: var(--color-success);
+
+  
+
+  .step-label {  color: var(--color-text-light);}
+
+    font-size: 10px;
+
+    max-width: 80px;  box-shadow: 0 0 0 4px rgba(22, 160, 133, 0.1);
+
+  }
+
+}}.step-circle.completed .step-icon {
+
+
+
+@media (max-width: 480px) {  display: none;
+
+  .step-indicator {
+
+    max-width: 400px;.step-item.completed .step-circle {}
+
+  }
+
+    background: var(--color-success);
+
+  .step-item {
+
+    max-width: 80px;  border-color: var(--color-success);.step-circle.completed .step-number {
+
+  }
+
+    color: var(--color-text-light);  display: none;
+
+  .step-circle {
+
+    width: 32px;}}
+
+    height: 32px;
+
+    font-size: var(--font-size-sm);
+
+  }
+
+  .step-item.pending .step-circle {.step-circle.completed::after {
+
+  .step-label {
+
+    font-size: 9px;  background: var(--color-background-alt);  content: '✓';
+
+    max-width: 70px;
+
+  }  border-color: var(--color-border);  color: var(--color-white);
+
+}
+  color: var(--color-text-muted);  font-size: 24px;
+
+}  font-weight: bold;
+
+}
+
+.step-label {
+
+  font-size: var(--font-size-sm);.step-icon {
+
+  color: var(--color-text-secondary);  font-size: 24px;
+
+  text-align: center;  display: block;
+
+  font-weight: var(--font-weight-medium);}
+
+  line-height: 1.3;
+
+}.step-circle.current .step-icon {
+
+  display: none;
+
+.step-item.current .step-label {}
+
+  color: var(--color-primary);
+
+  font-weight: var(--font-weight-semibold);.step-number {
+
+}  font-size: 18px;
+
+  font-weight: bold;
+
+.step-item.completed .step-label {  color: var(--color-white);
+
+  color: var(--color-success);  display: none;
+
+}}
+
+
+
+.step-progress {.step-circle.current .step-number {
+
+  text-align: center;  display: block;
+
+  margin-top: var(--spacing-lg);  color: var(--color-primary);
+
+  color: var(--color-text-secondary);}
+
+  font-size: var(--font-size-sm);
+
+}.step-label {
+
+  text-align: center;
+
+/* ===== RESPONSIVE ===== */  margin-top: var(--spacing-xs);
+
+@media (max-width: 768px) {}
+
+  .step-indicator {
+
+    flex-wrap: wrap;.step-title {
+
+    gap: var(--spacing-lg);  font-size: var(--font-size-sm);
+
+    margin: var(--spacing-2xl) 0;  font-weight: 600;
+
+  }  color: var(--color-white);
+
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  .step-indicator::before {}
+
+    display: none;
+
+  }.step-line {
+
+    position: absolute;
+
+  .step-item {  top: 30px;
+
+    max-width: 120px;  left: calc(50% + 30px);
+
+  }  right: calc(-50% + 30px);
+
+    height: 2px;
+
+  .step-circle {  background: rgba(255, 255, 255, 0.3);
+
+    width: 40px;  transition: all 0.3s ease;
+
+    height: 40px;  z-index: -1;
+
+    font-size: var(--font-size-base);}
+
+  }
+
+  .step-line.completed {
+
+  .step-label {  background: var(--color-success);
+
+    font-size: var(--font-size-xs);}
+
+  }
+
+}.progress-text {
+
+  text-align: center;
+
+@media (max-width: 480px) {  margin-top: var(--spacing-md);
+
+  .step-indicator {  font-size: var(--font-size-sm);
+
+    flex-direction: column;  color: var(--color-white);
+
+    gap: var(--spacing-md);  font-weight: 500;
+
+  }  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  }
+
+  .step-item {
+
+    flex-direction: row;/* Responsive Design */
+
+    max-width: 100%;@media (max-width: 768px) {
+
+    gap: var(--spacing-md);  .steps-container {
+
+    text-align: left;    padding: 0 var(--spacing-sm);
+
+  }  }
+
+  
+
+  .step-circle {  .step-circle {
+
+    margin-bottom: 0;    width: 50px;
+
+  }    height: 50px;
+
+    }
+
+  .step-label {
+
+    text-align: left;  .step-icon {
+
+    margin: 0;    font-size: 20px;
+
+  }  }
+
+}
+  .step-number {
+    font-size: 16px;
+  }
+
+  .step-title {
+    font-size: var(--font-size-xs);
+  }
+
+  .step-line {
+    top: 25px;
+    left: calc(50% + 25px);
+    right: calc(-50% + 25px);
+  }
+}
+
+@media (max-width: 480px) {
+  .step-circle {
+    width: 40px;
+    height: 40px;
+  }
+
+  .step-icon {
+    font-size: 16px;
+  }
+
+  .step-number {
+    font-size: 14px;
+  }
+
+  .step-title {
+    font-size: 10px;
+  }
+
+  .step-line {
+    top: 20px;
+    left: calc(50% + 20px);
+    right: calc(-50% + 20px);
+  }
+}

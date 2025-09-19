@@ -102,6 +102,21 @@ export const api = {
         return response.json();
       });
   },
+
+  // Services pour les annonces
+  annonces: {
+    // Récupérer toutes les annonces actives
+    getAll: () => apiCall('/public/annonces'),
+    
+    // Récupérer une annonce par son ID
+    getById: (id) => apiCall(`/public/annonces/${id}`),
+    
+    // Créer une candidature
+    createCandidat: (candidatData) => apiCall('/public/candidats', {
+      method: 'POST',
+      body: JSON.stringify(candidatData),
+    }),
+  },
 };
 
 // Helper pour gérer les tokens d'authentification

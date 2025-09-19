@@ -9,6 +9,7 @@ import Layout from '../components/Layout';
 // Importation des pages
 import Home from '../pages/Home';
 import Annonces from '../pages/Annonces';
+import CandidaturePage from '../pages/CandidaturePage';
 import DetailQCM from '../pages/DetailQCM';
 import Historiques from '../pages/Historiques';
 import CVtest from '../pages/CVtest';
@@ -23,6 +24,7 @@ const AppRouter = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/annonces" element={<Annonces />} />
+          <Route path="/candidature/:annonceId" element={<CandidaturePage />} />
           <Route path="/detailQCM" element={<DetailQCM />} />
           <Route path="/historique" element={<Historiques />} />
           <Route path="/cv" element={<CVtest />} />

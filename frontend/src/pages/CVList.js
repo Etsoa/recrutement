@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import CVMiniature from '../components/CVMiniature';
 import Button from '../components/Button';
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
 import '../styles/CVList.css';
 
 const CVList = () => {
@@ -232,10 +234,7 @@ const CVList = () => {
   if (loading) {
     return (
       <div className="cv-list__loading">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Chargement des CVs...</p>
-        </div>
+        <LoadingSpinner message="Chargement des CVs..." size="large" />
       </div>
     );
   }
@@ -243,16 +242,11 @@ const CVList = () => {
   if (error) {
     return (
       <div className="cv-list__error">
-        <div className="error-state">
-          <h3>Erreur de chargement</h3>
-          <p>{error}</p>
-          <Button 
-            variant="primary"
-            onClick={() => window.location.reload()}
-          >
-            Réessayer
-          </Button>
-        </div>
+        <ErrorMessage
+          title="Erreur de chargement"
+          message={error}
+          onRetry={() => window.location.reload()}
+        />
       </div>
     );
   }
