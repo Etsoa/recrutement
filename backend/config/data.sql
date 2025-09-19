@@ -115,35 +115,58 @@ INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
 
 
-
+-- 1️⃣ Tiers pour l'employé
 INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
 VALUES ('Rakoto', 'Jean', '1990-01-01', 1, 1, 0, '0341234567', 'jean.rakoto@email.com', 'AA123456', 1, 'photo.jpg')
 RETURNING id_tiers;
+-- id_tiers = 1
 
+-- 2️⃣ Employé
 INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
-VALUES (1, 1, 4) 
+VALUES (1, 1, 4)
 RETURNING id_employe;
+-- id_employe = 1
 
-
--- Crée un tiers (si ce n'est pas déjà fait)
+-- 3️⃣ Tiers pour le candidat
 INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
 VALUES ('Andrian', 'Hery', '1992-05-12', 1, 1, 0, '0349876543', 'hery.andrian@email.com', 'BB654321', 2, 'photo2.jpg')
 RETURNING id_tiers;
+-- id_tiers = 2
 
--- Crée un candidat lié à ce tiers
+-- 4️⃣ Créer l’annonce (obligatoire pour le candidat)
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre)
+VALUES (1, 2, 20, 40, 1)
+RETURNING id_annonce;
+-- id_annonce = 1
+
+-- 5️⃣ Candidat
 INSERT INTO candidats (id_tiers, id_annonce, cv)
 VALUES (2, 1, 'cv_hery.pdf')
 RETURNING id_candidat;
+-- id_candidat = 1
 
--- Crée un entretien pour l'unité RH (id_unite = 2)
+-- 6️⃣ Entretien pour l’unité RH
 INSERT INTO unite_entretiens (id_candidat, id_unite, date_entretien, duree)
 VALUES (1, 2, '2025-09-25', 60)
 RETURNING id_unite_entretien;
+-- id_unite_entretien = 1
 
--- Crée une suggestion RH pour ce candidat et son entretien
+-- 7️⃣ Suggestion RH
 INSERT INTO rh_suggestions (id_unite_entretien, id_candidat, date_suggestion)
-VALUES (2, 1, '2025-09-18')
+VALUES (1, 1, '2025-09-18')
 RETURNING id_rh_suggestion;
+-- id_rh_suggestion = 1
 
+-- 8️⃣ Statut de la suggestion RH
 INSERT INTO status_rh_suggestions (id_rh_suggestion, id_type_status_suggestion, date_changement)
-VALUES (3, 3, '2025-09-18');
+VALUES (1, 1, '2025-09-18');
+
+-- 9️⃣ Suggestion CEO
+INSERT INTO ceo_suggestions (id_rh_entretien, id_candidat, id_type_status_suggestion, date_suggestion)
+VALUES (1, 1, 1, '2025-09-19')
+RETURNING id_ceo_suggestion;
+-- id_ceo_suggestion = 1
+
+--  🔹 Statut de la suggestion CEO
+INSERT INTO status_ceo_suggestions (id_ceo_suggestion, id_type_status_suggestion, date_changement)
+VALUES (1, 1, '2025-09-19');

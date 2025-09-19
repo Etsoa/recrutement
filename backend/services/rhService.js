@@ -14,7 +14,7 @@ const { Op } = require('sequelize');
 const ScoreRhEntretien = require('../models/scoreRhEntretiensModel'); 
 
 const CeoSuggestions = require('../models/ceoSuggestionsModel');
-const StatusCeoSuggestions = require('../models/statusCeoSuggestionsModel');
+const StatusCeoSuggestion = require('../models/statusCeoSuggestionsModel');
 
 const loginRh = async (email) => {
   return await RhView.findOne({ where: { email } });
@@ -222,6 +222,33 @@ const suggestToCeo = async ({ id_rh_entretien, id_candidat, id_type_status_sugge
   return suggestion;
 };
 
+const getAllCeoSuggestions = async () => {
+  const suggestions = await CeoSuggestions.findAll({
+    include: [
+      {
+        model: RhEntretien,
+        as: 'RhEntretien',
+        attributes: ['id_rh_entretien', 'date_entretien', 'duree']
+      },
+      {
+        model: Candidats,
+        as: 'Candidat',
+        include: [
+          {
+            model: Tiers,
+            as: 'Tier',
+            attributes: ['nom', 'prenom', 'email']
+          }
+        ]
+      }
+    ],
+    order: [['date_suggestion', 'DESC']]
+  });
+
+
+  return suggestions;
+};
+
 module.exports = {
   loginRh,
   getAllSuggests,
@@ -233,5 +260,6 @@ module.exports = {
   updateDateStatusRhEntretien, 
   getProchaineDisponibilite, 
   createScoreRhEntretien,
-  suggestToCeo
+  suggestToCeo,
+  getAllCeoSuggestions
 };

@@ -37,6 +37,6 @@ router.post('/create/score/rh_entretien', rhController.createScoreRhEntretien);
 router.post('/suggest/ceo', rhController.suggestToCeo);
 
 // liste suggestions
-// router.get('/suggest/', rhController.getAllCeoSuggestions);
+router.get('/suggest/', rhController.getAllCeoSuggestions);
 
 module.exports = router;
