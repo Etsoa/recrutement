@@ -112,10 +112,10 @@ function CreateAnnonce() {
 
   const handeQCM = async () => {
     try {
-      // if (!qcmAnnonce) {
-      //   alert("Veuillez d'abord créer une annonce.");
-      //   return;
-      // }
+      if (!qcmAnnonce) {
+        alert("Veuillez d'abord créer une annonce.");
+        return;
+      }
       navigate(`/back-office/createQCM/${qcmAnnonce}`);
     } catch (error) {
       console.error(error);
