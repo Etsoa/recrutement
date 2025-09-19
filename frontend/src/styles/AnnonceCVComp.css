@@ -1,0 +1,21 @@
+.annoncecv-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-xl);
+  width: 100%;
+  padding: var(--spacing-xl);
+  box-sizing: border-box;
+}
+
+/* Colonne gauche : annonce */
+.annoncecv-left {
+  flex: 1;
+  max-width: 50%;
+}
+
+/* Colonne droite : CV */
+.annoncecv-right {
+  flex: 1;
+  max-width: 50%;
+}
