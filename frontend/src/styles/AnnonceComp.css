@@ -1,0 +1,83 @@
+.annonce-container {
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-2xl);
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border);
+  animation: fadeIn 0.4s ease;
+}
+
+.annonce-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.annonce-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.annonce-entreprise {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
+
+.annonce-meta {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.annonce-date {
+  font-style: italic;
+}
+
+.annonce-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.annonce-section-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-accent);
+  border-bottom: 2px solid var(--color-border-light);
+  padding-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.annonce-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.annonce-list {
+  list-style: disc;
+  margin-left: var(--spacing-lg);
+  color: var(--color-text);
+}
+
+.annonce-list-item {
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.5;
+}
+
+.annonce-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.annonce-tag {
+  background: var(--color-primary);
+  color: var(--color-text-light);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+}

@@ -15,6 +15,7 @@ import CVtest from '../pages/CVtest';
 import CVList from '../pages/CVList';
 import Users from '../pages/Users';
 import AnnonceList from '../pages/AnnonceList';
+import AnnonceCVComp from '../pages/AnnonceCVComp';
 
 // Configuration des routes
 const AppRouter = () => {
@@ -30,6 +31,7 @@ const AppRouter = () => {
           <Route path="/cv-list" element={<CVList />} />
           <Route path="/users" element={<Users />} />
           <Route path="/annonces-list" element={<AnnonceList />} />
+          <Route path="/comparaison-annonce-cv" element={<AnnonceCVComp />} />
         </Routes>
       </Layout>
     </Router>
