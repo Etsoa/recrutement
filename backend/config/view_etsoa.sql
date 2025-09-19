@@ -26,10 +26,10 @@ LEFT JOIN (
         id_annonce, 
         id_type_status_annonce, 
         date_changement
-    FROM status_annonce 
+    FROM status_annonces 
     ORDER BY id_annonce, date_changement DESC
 ) sa ON a.id_annonce = sa.id_annonce
-LEFT JOIN type_status_annonces tsa ON sa.id_type_status_annonce = tsa.id_type_status_annonce;
+LEFT JOIN type_status_annonces tsa ON sa.id_type_status_annonce = tsa.id_type_status;
 
 -- Vue pour les formations requises par annonce
 CREATE OR REPLACE VIEW v_annonces_formations AS
@@ -223,7 +223,7 @@ JOIN v_annonces_base ab ON c.id_annonce = ab.id_annonce;
 -- Vue pour les questions QCM avec leurs réponses
 CREATE OR REPLACE VIEW v_questions_qcm_complete AS
 SELECT 
-    qq.id_question_qcm,
+    qq.id_question,
     qq.intitule,
     JSON_AGG(
         JSONB_BUILD_OBJECT(
@@ -233,22 +233,22 @@ SELECT
         ) ORDER BY rq.id_reponse_qcm
     ) AS reponses
 FROM question_qcms qq
-JOIN reponse_qcms rq ON qq.id_question_qcm = rq.id_question_qcm
-GROUP BY qq.id_question_qcm, qq.intitule;
+JOIN reponse_qcms rq ON qq.id_question = rq.id_question_qcm
+GROUP BY qq.id_question, qq.intitule;
 
 -- Vue pour les QCM d'une annonce spécifique
 CREATE OR REPLACE VIEW v_qcm_par_annonce AS
 SELECT 
     qa.id_annonce,
-    qc.id_question_qcm,
+    qc.id_question,
     qc.intitule,
     qc.reponses
 FROM qcm_annonces qa
-JOIN v_questions_qcm_complete qc ON qa.id_question_qcm = qc.id_question_qcm;
+JOIN v_questions_qcm_complete qc ON qa.id_question_qcm = qc.id_question;
 
 -- Vue pour l'envoi de QCM avec informations candidat
 CREATE OR REPLACE VIEW v_envoi_qcm_complete AS
-SELECT 
+SELECT
     eqc.id_envoi_qcm_candidat,
     eqc.lien,
     eqc.token,
@@ -257,12 +257,11 @@ SELECT
     cc.prenom,
     cc.email,
     cc.poste,
-    cc.id_annonce,
+    c.id_annonce,
     cc.id_candidat
 FROM envoi_qcm_candidats eqc
-JOIN v_candidats_complete cc ON eqc.id_candidat = cc.id_candidat;
-
--- Vue pour les résultats QCM
+JOIN candidats c ON eqc.id_candidat = c.id_candidat
+JOIN v_candidats_complete cc ON eqc.id_candidat = cc.id_candidat;-- Vue pour les résultats QCM
 CREATE OR REPLACE VIEW v_resultats_qcm AS
 SELECT 
     rqc.id_reponse_qcm_candidat,
@@ -314,7 +313,7 @@ SELECT
 FROM pourcentage_minimum_cv;
 
 -- Index pour améliorer les performances
-CREATE INDEX IF NOT EXISTS idx_annonces_status ON status_annonce(id_annonce, date_changement DESC);
+CREATE INDEX IF NOT EXISTS idx_annonces_status ON status_annonces(id_annonce, date_changement DESC);
 CREATE INDEX IF NOT EXISTS idx_tiers_cin ON tiers(cin);
 CREATE INDEX IF NOT EXISTS idx_candidats_annonce ON candidats(id_annonce);
 CREATE INDEX IF NOT EXISTS idx_envoi_qcm_token ON envoi_qcm_candidats(token);

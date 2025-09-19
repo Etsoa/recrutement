@@ -13,7 +13,7 @@ const nodemailer = require('nodemailer');
 // Configuration du transporteur email (à adapter selon votre fournisseur)
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
+  port: process.env.SMTP_PORT, 
   secure: false, 
   auth: {
     user: process.env.SMTP_USER,
