@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const Employe = require('./employesModel');
-const Poste = require('./postesModel');
+const Poste = require('./postes');
 
 const HistoriquePosteEmploye = db.define('HistoriquePosteEmploye', {
   id_historique_poste_employe: {

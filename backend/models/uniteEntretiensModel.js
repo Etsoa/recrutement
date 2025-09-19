@@ -45,6 +45,6 @@ const UniteEntretien = db.define('UniteEntretien', {
 
 // Associations
 UniteEntretien.belongsTo(Candidat, { foreignKey: 'id_candidat' });
-UniteEntretien.belongsTo(Unite, { foreignKey: 'id_unite' });
+UniteEntretien.belongsTo(Unite, { foreignKey: 'id_unite', as: 'unite' });
 
 module.exports = UniteEntretien;

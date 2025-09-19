@@ -1,6 +1,9 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
+const Annonce = require('./annoncesModel');
+const TypeStatusAnnonce = require('./typeStatusAnnoncesModel');
+
 const StatusAnnonce = db.define('StatusAnnonce', {
   id_status_annonce: {
     type: DataTypes.INTEGER,
@@ -11,7 +14,7 @@ const StatusAnnonce = db.define('StatusAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'annonces',
+      model: Annonce,
       key: 'id_annonce'
     },
     onUpdate: 'CASCADE',
@@ -25,32 +28,19 @@ const StatusAnnonce = db.define('StatusAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'type_status_annonces',
+      model: TypeStatusAnnonce,
       key: 'id_type_status_annonce'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
-  id_unite: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'unites',
-      key: 'id_unite'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   }
 }, {
-  tableName: 'status_annonce',
+  tableName: 'status_annonces',
   timestamps: false
 });
 
-// Associations avec lazy loading pour éviter les dépendances circulaires
-StatusAnnonce.associate = function(models) {
-  StatusAnnonce.belongsTo(models.Annonce, { foreignKey: 'id_annonce' });
-  StatusAnnonce.belongsTo(models.TypeStatusAnnonce, { foreignKey: 'id_type_status_annonce' });
-  StatusAnnonce.belongsTo(models.Unite, { foreignKey: 'id_unite' });
-};
+// Associations
+StatusAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+StatusAnnonce.belongsTo(TypeStatusAnnonce, { foreignKey: 'id_type_status_annonce' });
 
 module.exports = StatusAnnonce;

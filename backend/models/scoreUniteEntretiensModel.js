@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const UniteEntretien = require('./uniteEntretiensModel.js');
+const UniteEntretien = require('./uniteEntretiensModel');
 
 const ScoreUniteEntretien = db.define('ScoreUniteEntretien', {
   id_score_unite_entretien: {

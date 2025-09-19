@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const UniteEntretien = require('./uniteEntretiensModel.js');
+const UniteEntretien = require('./uniteEntretiensModel');
 const TypeStatusEntretien = require('./typeStatusEntretiensModel');
 
 const StatusUniteEntretien = db.define('StatusUniteEntretien', {

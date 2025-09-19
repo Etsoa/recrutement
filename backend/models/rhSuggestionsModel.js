@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const UniteEntretien = require('./uniteEntretiensModel.js');
+const UniteEntretien = require('./uniteEntretiensModel');
 const Candidat = require('./candidatsModel');
 
 const RhSuggestion = db.define('RhSuggestion', {
@@ -40,7 +40,8 @@ const RhSuggestion = db.define('RhSuggestion', {
 });
 
 // Associations
-RhSuggestion.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien' });
-RhSuggestion.belongsTo(Candidat, { foreignKey: 'id_candidat' });
+RhSuggestion.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien', as: 'entretien' });
+RhSuggestion.belongsTo(Candidat, { foreignKey: 'id_candidat', as: 'candidat' });
+
 
 module.exports = RhSuggestion;

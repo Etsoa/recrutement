@@ -1,6 +1,9 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
+const Annonce = require('./annoncesModel');
+const Qualite = require('./qualitesModel');
+
 const QualiteAnnonce = db.define('QualiteAnnonce', {
   id_qualite_annonce: {
     type: DataTypes.INTEGER,
@@ -11,7 +14,7 @@ const QualiteAnnonce = db.define('QualiteAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'annonces',
+      model: Annonce,
       key: 'id_annonce'
     },
     onUpdate: 'CASCADE',
@@ -21,7 +24,7 @@ const QualiteAnnonce = db.define('QualiteAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'qualites',
+      model: Qualite,
       key: 'id_qualite'
     },
     onUpdate: 'CASCADE',
@@ -32,12 +35,8 @@ const QualiteAnnonce = db.define('QualiteAnnonce', {
   timestamps: false
 });
 
-// Associations avec lazy loading
-QualiteAnnonce.associate = function(models) {
-  QualiteAnnonce.belongsTo(models.Annonce, { foreignKey: 'id_annonce' });
-  QualiteAnnonce.belongsTo(models.Qualite, { foreignKey: 'id_qualite' });
-};
-
-module.exports = QualiteAnnonce;
+// Associations
+QualiteAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+QualiteAnnonce.belongsTo(Qualite, { foreignKey: 'id_qualite' });
 
 module.exports = QualiteAnnonce;

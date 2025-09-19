@@ -3,7 +3,6 @@ const db = require('../config/db');
 
 const Ville = require('./villesModel');
 const Genre = require('./genresModel');
-const SituationMatrimoniale = require('./situationMatrimonialesModel');
 
 const Tiers = db.define('Tiers', {
   id_tiers: {
@@ -23,46 +22,22 @@ const Tiers = db.define('Tiers', {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
-  id_genre: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Genre,
-      key: 'id_genre'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
-  id_situation_matrimoniale: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: SituationMatrimoniale,
-      key: 'id_situation'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
-  nombre_enfants: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  contact: {
+  cin: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,
     validate: {
       isEmail: true
     }
   },
-  cin: {
+  photo: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: true
   },
   id_ville: {
     type: DataTypes.INTEGER,
@@ -74,9 +49,19 @@ const Tiers = db.define('Tiers', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  photo: {
+  id_genre: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Genre,
+      key: 'id_genre'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  },
+  contact: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   }
 }, {
   tableName: 'tiers',

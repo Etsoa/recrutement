@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
+const QuestionQcm = require('./questionQcmsModel'); // On importe le modèle QuestionQCM
 
 const ReponseQcm = db.define('ReponseQcm', {
   id_reponse_qcm: {
@@ -11,8 +12,8 @@ const ReponseQcm = db.define('ReponseQcm', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'question_qcms',
-      key: 'id_question'
+      model: QuestionQCM,
+      key: 'id_question_qcm'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
@@ -30,9 +31,7 @@ const ReponseQcm = db.define('ReponseQcm', {
   timestamps: false
 });
 
-// Associations avec lazy loading
-ReponseQcm.associate = function(models) {
-  ReponseQcm.belongsTo(models.QuestionQcm, { foreignKey: 'id_question_qcm', targetKey: 'id_question' });
-};
+// Association Sequelize
+ReponseQcm.belongsTo(QuestionQcm, { foreignKey: 'id_question_qcm' });
 
 module.exports = ReponseQcm;

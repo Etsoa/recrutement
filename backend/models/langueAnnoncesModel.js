@@ -1,6 +1,9 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
+const Annonce = require('./annoncesModel');
+const Langue = require('./languesModel');
+
 const LangueAnnonce = db.define('LangueAnnonce', {
   id_langue_annonce: {
     type: DataTypes.INTEGER,
@@ -11,7 +14,7 @@ const LangueAnnonce = db.define('LangueAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'annonces',
+      model: Annonce,
       key: 'id_annonce'
     },
     onUpdate: 'CASCADE',
@@ -21,7 +24,7 @@ const LangueAnnonce = db.define('LangueAnnonce', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'langues',
+      model: Langue,
       key: 'id_langue'
     },
     onUpdate: 'CASCADE',
@@ -32,10 +35,8 @@ const LangueAnnonce = db.define('LangueAnnonce', {
   timestamps: false
 });
 
-// Associations avec lazy loading
-LangueAnnonce.associate = function(models) {
-  LangueAnnonce.belongsTo(models.Annonce, { foreignKey: 'id_annonce' });
-  LangueAnnonce.belongsTo(models.Langue, { foreignKey: 'id_langue' });
-};
+// Associations
+LangueAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+LangueAnnonce.belongsTo(Langue, { foreignKey: 'id_langue' });
 
 module.exports = LangueAnnonce;
