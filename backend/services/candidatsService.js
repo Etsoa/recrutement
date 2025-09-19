@@ -1,8 +1,8 @@
-const { models } = require('../models/index');
+const Candidat = require('../models/candidatsModel');
 
 async function checkCandidatExists(id_tiers, id_annonce) {
   try {
-    const candidat = await models.Candidat.findOne({
+  const candidat = await Candidat.findOne({
       where: { 
         id_tiers,
         id_annonce 
@@ -18,7 +18,7 @@ async function checkCandidatExists(id_tiers, id_annonce) {
 
 async function createCandidat(candidatData) {
   try {
-    const candidat = await models.Candidat.create(candidatData);
+  const candidat = await Candidat.create(candidatData);
     return candidat;
   } catch (error) {
     console.error('Erreur createCandidat:', error);

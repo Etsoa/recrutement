@@ -1,12 +1,20 @@
-const { models } = require('../models/index');
+const Candidat = require('../models/candidatsModel');
+const Tiers = require('../models/tiersModel');
+const Annonce = require('../models/annoncesModel');
+const Poste = require('../models/postesModel');
+const EnvoiQcmCandidat = require('../models/envoiQcmCandidatsModel');
+const ReponseQcmCandidat = require('../models/reponseQcmCandidatsModel');
+const QcmAnnonce = require('../models/qcmAnnoncesModel');
+const QuestionQcm = require('../models/questionQcmsModel');
+const ReponseQcm = require('../models/reponseQcmsModel');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 
 // Configuration du transporteur email (à adapter selon votre fournisseur)
-const transporter = nodemailer.createTransporter({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: process.env.SMTP_PORT || 587,
-  secure: false, // true pour 465, false pour autres ports
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false, 
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD
@@ -16,7 +24,7 @@ const transporter = nodemailer.createTransporter({
 async function createEnvoiQcm(id_candidat) {
   try {
     // Récupérer les informations du candidat et de l'annonce
-    const candidat = await models.Candidat.findOne({
+  const candidat = await Candidat.findOne({
       where: { id_candidat },
       include: [
         {
@@ -58,7 +66,7 @@ async function createEnvoiQcm(id_candidat) {
     // Créer l'enregistrement d'envoi QCM selon la structure existante
     const lienQcm = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/qcm/${token}`;
     
-    const envoiQcm = await models.EnvoiQcmCandidat.create({
+  const envoiQcm = await EnvoiQcmCandidat.create({
       id_candidat,
       lien: lienQcm,
       token,
@@ -156,7 +164,7 @@ async function verifyTokenQcm(token) {
     }
 
     // Vérifier si un envoi QCM existe pour ce token
-    const envoiQcm = await models.EnvoiQcmCandidat.findOne({
+  const envoiQcm = await EnvoiQcmCandidat.findOne({
       where: { token: token }
     });
 
@@ -168,7 +176,7 @@ async function verifyTokenQcm(token) {
     }
 
     // RÈGLE MÉTIER : Vérifier si le token a déjà été utilisé en checkant reponse_qcm_candidats
-    const reponsesExistantes = await models.ReponseQcmCandidat.findOne({
+  const reponsesExistantes = await ReponseQcmCandidat.findOne({
       where: { id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat }
     });
 
@@ -180,7 +188,7 @@ async function verifyTokenQcm(token) {
     }
 
     // Récupérer les informations du candidat
-    const candidat = await models.Candidat.findOne({
+  const candidat = await Candidat.findOne({
       where: { 
         id_candidat: decoded.id_candidat,
         id_annonce: decoded.id_annonce 
@@ -249,7 +257,7 @@ async function creerReponseQcmAbandon(id_envoi_qcm_candidat, id_annonce) {
   try {
     // RÈGLE MÉTIER : Si candidat sort sans finir, score = 0
     // Récupérer toutes les questions de l'annonce
-    const questionsQcm = await models.QcmAnnonce.findAll({
+  const questionsQcm = await QcmAnnonce.findAll({
       where: { id_annonce }
     });
 
@@ -265,7 +273,7 @@ async function creerReponseQcmAbandon(id_envoi_qcm_candidat, id_annonce) {
     }));
 
     // Insérer toutes les réponses d'abandon
-    await models.ReponseQcmCandidat.bulkCreate(reponsesAbandon);
+  await ReponseQcmCandidat.bulkCreate(reponsesAbandon);
 
     return {
       message: 'QCM marqué comme abandonné avec score 0',
@@ -282,7 +290,7 @@ async function creerReponseQcmAbandon(id_envoi_qcm_candidat, id_annonce) {
 async function checkQcmCompleted(id_envoi_qcm_candidat) {
   try {
     // Vérifier s'il existe des réponses pour cet envoi QCM
-    const reponses = await models.ReponseQcmCandidat.findOne({
+  const reponses = await ReponseQcmCandidat.findOne({
       where: { id_envoi_qcm_candidat }
     });
 
@@ -303,14 +311,14 @@ async function getQcmQuestionsByToken(token) {
     }
     
     // Récupérer les questions QCM spécifiques à cette annonce
-    const questionsQcm = await models.QcmAnnonce.findAll({
+  const questionsQcm = await QcmAnnonce.findAll({
       where: { id_annonce: verification.id_annonce },
       include: [
         {
-          model: models.QuestionQcm,
+          model: QuestionQcm,
           include: [
             {
-              model: models.ReponseQcm, // Les options de réponse
+              model: ReponseQcm, // Les options de réponse
               attributes: ['id_reponse_qcm', 'reponse']
               // Note: ne pas inclure 'modalite' pour la sécurité
             }

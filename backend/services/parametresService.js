@@ -1,4 +1,18 @@
-const { models } = require('../models/index');
+const Genre = require('../models/genresModel');
+const SituationMatrimoniale = require('../models/situationMatrimonialesModel');
+const Ville = require('../models/villesModel');
+const Filiere = require('../models/filieresModel');
+const Niveau = require('../models/niveauxModel');
+const Langue = require('../models/languesModel');
+const Qualite = require('../models/qualitesModel');
+const Domaine = require('../models/domainesModel');
+const Poste = require('../models/postesModel');
+const Unite = require('../models/unitesModel');
+const DelaiEntretien = require('../models/delaiEntretienModel');
+const DelaiQcm = require('../models/delaiQcmModel');
+const PourcentageMinimumCv = require('../models/pourcentageMinimumCvModel');
+const ScoreMinimumEntretien = require('../models/scoreMinimumEntretienModel');
+const ScoreMinimumQcm = require('../models/scoreMinimumQcmModel');
 
 async function getAllParametresReference() {
   try {
@@ -14,16 +28,16 @@ async function getAllParametresReference() {
       postes,
       unites
     ] = await Promise.all([
-      models.Genre.findAll(),
-      models.SituationMatrimoniale.findAll(),
-      models.Ville.findAll(),
-      models.Filiere.findAll(),
-      models.Niveau.findAll(),
-      models.Langue.findAll(),
-      models.Qualite.findAll(),
-      models.Domaine.findAll(),
-      models.Poste.findAll(),
-      models.Unite.findAll()
+  Genre.findAll(),
+  SituationMatrimoniale.findAll(),
+  Ville.findAll(),
+  Filiere.findAll(),
+  Niveau.findAll(),
+  Langue.findAll(),
+  Qualite.findAll(),
+  Domaine.findAll(),
+  Poste.findAll(),
+  Unite.findAll()
     ]);
 
     return {
@@ -53,11 +67,11 @@ async function getAllParametres() {
       scoreMinimumEntretien,
       scoreMinimumQcm
     ] = await Promise.all([
-      models.DelaiEntretien.findAll(),
-      models.DelaiQcm.findAll(),
-      models.PourcentageMinimumCv.findAll(),
-      models.ScoreMinimumEntretien.findAll(),
-      models.ScoreMinimumQcm.findAll()
+  DelaiEntretien.findAll(),
+  DelaiQcm.findAll(),
+  PourcentageMinimumCv.findAll(),
+  ScoreMinimumEntretien.findAll(),
+  ScoreMinimumQcm.findAll()
     ]);
 
     return {
@@ -75,7 +89,7 @@ async function getAllParametres() {
 
 async function getPourcentageMinimumCv() {
   try {
-    const pourcentage = await models.PourcentageMinimumCv.findOne();
+  const pourcentage = await PourcentageMinimumCv.findOne();
   } catch (error) {
     console.error('Erreur getPourcentageMinimumCv:', error);
     throw error;

@@ -1,8 +1,8 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Tiers = require('./tiers');
-const Langue = require('./langues');
+const Tiers = require('./tiersModel');
+const Langue = require('./languesModel');
 
 const LangueTiers = db.define('LangueTiers', {
   id_langue_tiers: {

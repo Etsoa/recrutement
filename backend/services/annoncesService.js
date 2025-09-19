@@ -1,8 +1,24 @@
-const { models } = require('../models/index');
+const Annonce = require('../models/annoncesModel');
+const StatusAnnonce = require('../models/statusAnnoncesModel');
+const TypeStatusAnnonce = require('../models/typeStatusAnnoncesModel');
+const Poste = require('../models/postesModel');
+const Ville = require('../models/villesModel');
+const Genre = require('../models/genresModel');
+const NiveauFiliereAnnonce = require('../models/niveauFiliereAnnoncesModel');
+const Filiere = require('../models/filieresModel');
+const Niveau = require('../models/niveauxModel');
+const LangueAnnonce = require('../models/langueAnnoncesModel');
+const Langue = require('../models/languesModel');
+const QualiteAnnonce = require('../models/qualiteAnnoncesModel');
+const Qualite = require('../models/qualitesModel');
+const ExperienceAnnonce = require('../models/experienceAnnoncesModel');
+const Domaine = require('../models/domainesModel');
+const QcmAnnonce = require('../models/qcmAnnoncesModel');
+const QuestionQcm = require('../models/questionQcmsModel');
 
 async function getAllAnnonces() {
 	try {
-		const annonces = await models.Annonce.findAll();
+		const annonces = await Annonce.findAll();
 		return annonces;
 	} catch (error) {
 		console.error('Erreur getAllAnnonces:', error);
@@ -12,18 +28,18 @@ async function getAllAnnonces() {
 
 async function getAllAnnoncesActives() {
 	try {
-		const typeStatusActive = await models.TypeStatusAnnonce.findOne({ where: { valeur: 'Publie' } });
+		const typeStatusActive = await TypeStatusAnnonce.findOne({ where: { valeur: 'Publie' } });
 		if (!typeStatusActive) return [];
-		const annonces = await models.Annonce.findAll({
+		const annonces = await Annonce.findAll({
 			include: [
 				{
-					model: models.StatusAnnonce,
+					model: StatusAnnonce,
 					required: true,
 					where: { id_type_status_annonce: typeStatusActive.id_type_status_annonce },
 				},
-				{ model: models.Poste },
-				{ model: models.Ville },
-				{ model: models.Genre }
+				{ model: Poste },
+				{ model: Ville },
+				{ model: Genre }
 			]
 		});
 		return annonces;
@@ -35,34 +51,34 @@ async function getAllAnnoncesActives() {
 
 async function getAnnonceById(id_annonce) {
 	try {
-		return await models.Annonce.findOne({
+		return await Annonce.findOne({
 			where: { id_annonce },
 			include: [
-				{ model: models.Poste },
-				{ model: models.Ville },
-				{ model: models.Genre },
+				{ model: Poste },
+				{ model: Ville },
+				{ model: Genre },
 				{
-					model: models.NiveauFiliereAnnonce,
+					model: NiveauFiliereAnnonce,
 					include: [
-						{ model: models.Filiere },
-						{ model: models.Niveau }
+						{ model: Filiere },
+						{ model: Niveau }
 					]
 				},
 				{
-					model: models.LangueAnnonce,
-					include: [ { model: models.Langue } ]
+					model: LangueAnnonce,
+					include: [ { model: Langue } ]
 				},
 				{
-					model: models.QualiteAnnonce,
-					include: [ { model: models.Qualite } ]
+					model: QualiteAnnonce,
+					include: [ { model: Qualite } ]
 				},
 				{
-					model: models.ExperienceAnnonce,
-					include: [ { model: models.Domaine } ]
+					model: ExperienceAnnonce,
+					include: [ { model: Domaine } ]
 				},
 				{
-					model: models.QcmAnnonce,
-					include: [ { model: models.QuestionQcm } ]
+					model: QcmAnnonce,
+					include: [ { model: QuestionQcm } ]
 				}
 			]
 		});
@@ -74,19 +90,19 @@ async function getAnnonceById(id_annonce) {
 
 async function checkAnnonceActive(id_annonce) {
   try {
-    const typeStatusActive = await models.TypeStatusAnnonce.findOne({ where: { valeur: 'Publie' } });
+	const typeStatusActive = await TypeStatusAnnonce.findOne({ where: { valeur: 'Publie' } });
     if (!typeStatusActive) return false;
 
-    const annonce = await models.Annonce.findOne({
-      where: { id_annonce },
-      include: [
-        {
-          model: models.StatusAnnonce,
-          required: true,
-          where: { id_type_status_annonce: typeStatusActive.id_type_status_annonce },
-        }
-      ]
-    });
+	const annonce = await Annonce.findOne({
+		where: { id_annonce },
+		include: [
+			{
+				model: StatusAnnonce,
+				required: true,
+				where: { id_type_status_annonce: typeStatusActive.id_type_status_annonce },
+			}
+		]
+	});
 
     return !!annonce; // Retourne true si l'annonce existe et est active, false sinon
   } catch (error) {

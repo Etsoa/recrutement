@@ -15,7 +15,7 @@ router.get('/parametres', publicController.getAllParametres);
 router.post('/create/candidat', publicController.createCandidat);
 
 // entrer de token, verfication si non utilise(reponse_qcm vide) et envoie du bon qcm selon annonce
-router.post('/qcm/questions', publicController.qcmQuestions);
+// router.post('/qcm/questions', publicController.qcmQuestions);
 
 // si candidats jusqu a la fin un pdf de ces reponses stoces,
 // score calcules aprmis les bonnnes reponses trouve susr les bonnes reponses dans les questions rabattes sur 20 et chronometres depuis le token mis en place jusqu au clic du bouton valider

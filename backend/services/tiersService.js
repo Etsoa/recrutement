@@ -1,8 +1,12 @@
-const { models } = require('../models/index');
+const Tiers = require('../models/tiersModel');
+const NiveauFiliereTiers = require('../models/niveauFiliereTiersModel');
+const LangueTiers = require('../models/langueTiersModel');
+const QualiteTiers = require('../models/qualiteTiersModel');
+const ExperienceTiers = require('../models/experienceTiersModel');
 
 async function checkCinExists(cin) {
   try {
-    const tiers = await models.Tiers.findOne({
+  const tiers = await Tiers.findOne({
       where: { cin }
     });
     
@@ -16,13 +20,13 @@ async function checkCinExists(cin) {
 async function createTiersComplete(tiersData, relations) {
   try {
     // Créer le tiers principal
-    const nouveauTiers = await models.Tiers.create(tiersData);
+  const nouveauTiers = await Tiers.create(tiersData);
     const id_tiers = nouveauTiers.id_tiers;
 
     // Créer les relations si elles existent
     if (relations.formations && relations.formations.length > 0) {
       for (const formation of relations.formations) {
-        await models.NiveauFiliereTiers.create({
+  await NiveauFiliereTiers.create({
           id_tiers,
           id_filiere: formation.id_filiere,
           id_niveau: formation.id_niveau
@@ -32,7 +36,7 @@ async function createTiersComplete(tiersData, relations) {
 
     if (relations.langues && relations.langues.length > 0) {
       for (const langue of relations.langues) {
-        await models.LangueTiers.create({
+  await LangueTiers.create({
           id_tiers,
           id_langue: langue.id_langue
         });
@@ -41,7 +45,7 @@ async function createTiersComplete(tiersData, relations) {
 
     if (relations.qualites && relations.qualites.length > 0) {
       for (const qualite of relations.qualites) {
-        await models.QualiteTiers.create({
+  await QualiteTiers.create({
           id_tiers,
           id_qualite: qualite.id_qualite
         });
@@ -50,7 +54,7 @@ async function createTiersComplete(tiersData, relations) {
 
     if (relations.experiences && relations.experiences.length > 0) {
       for (const experience of relations.experiences) {
-        await models.ExperienceTiers.create({
+  await ExperienceTiers.create({
           id_tiers,
           id_domaine: experience.id_domaine,
           duree: experience.duree
@@ -68,4 +72,4 @@ async function createTiersComplete(tiersData, relations) {
 module.exports = {
   checkCinExists,
   createTiersComplete
-};z
+};

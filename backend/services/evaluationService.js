@@ -1,4 +1,16 @@
-const { models } = require('../models/index');
+const Annonce = require('../models/annoncesModel');
+const Poste = require('../models/postesModel');
+const Ville = require('../models/villesModel');
+const Genre = require('../models/genresModel');
+const NiveauFiliereAnnonce = require('../models/niveauFiliereAnnoncesModel');
+const Filiere = require('../models/filieresModel');
+const Niveau = require('../models/niveauxModel');
+const LangueAnnonce = require('../models/langueAnnoncesModel');
+const Langue = require('../models/languesModel');
+const QualiteAnnonce = require('../models/qualiteAnnoncesModel');
+const Qualite = require('../models/qualitesModel');
+const ExperienceAnnonce = require('../models/experienceAnnoncesModel');
+const Domaine = require('../models/domainesModel');
 
 // Fonction pour calculer l'âge
 function calculerAge(dateNaissance) {
@@ -18,30 +30,30 @@ function calculerAge(dateNaissance) {
 async function calculerCorrespondanceCandidat(id_annonce, candidatData) {
   try {
     // Récupérer les exigences de l'annonce
-    const annonce = await models.Annonce.findOne({
+  const annonce = await Annonce.findOne({
       where: { id_annonce },
       include: [
-        { model: models.Poste },
-        { model: models.Ville },
-        { model: models.Genre },
+        { model: Poste },
+        { model: Ville },
+        { model: Genre },
         {
-          model: models.NiveauFiliereAnnonce,
+          model: NiveauFiliereAnnonce,
           include: [
-            { model: models.Filiere },
-            { model: models.Niveau }
+            { model: Filiere },
+            { model: Niveau }
           ]
         },
         {
-          model: models.LangueAnnonce,
-          include: [ { model: models.Langue } ]
+          model: LangueAnnonce,
+          include: [ { model: Langue } ]
         },
         {
-          model: models.QualiteAnnonce,
-          include: [ { model: models.Qualite } ]
+          model: QualiteAnnonce,
+          include: [ { model: Qualite } ]
         },
         {
-          model: models.ExperienceAnnonce,
-          include: [ { model: models.Domaine } ]
+          model: ExperienceAnnonce,
+          include: [ { model: Domaine } ]
         }
       ]
     });

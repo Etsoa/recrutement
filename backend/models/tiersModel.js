@@ -3,6 +3,8 @@ const db = require('../config/db');
 
 const Ville = require('./villesModel');
 const Genre = require('./genresModel');
+const SituationMatrimoniale = require('./situationMatrimonialesModel');
+
 
 const Tiers = db.define('Tiers', {
   id_tiers: {
