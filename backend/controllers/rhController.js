@@ -247,3 +247,24 @@ exports.createScoreRhEntretien = async (req, res) => {
     res.status(500).json({ message: err.message, data: null, success: false });
   }
 };
+
+exports.suggestToCeo = async (req, res) => {
+  try {
+    const { id_rh_entretien, id_candidat } = req.body;
+
+    if (!id_rh_entretien || !id_candidat) {
+      return res.status(400).json({ message: 'id_rh_entretien et id_candidat sont requis', data: null, success: false });
+    }
+
+    const suggestion = await rhService.suggestToCeo({ id_rh_entretien, id_candidat });
+
+    res.status(201).json({
+      message: 'Suggestion envoyée au CEO avec succès',
+      data: suggestion,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message, data: null, success: false });
+  }
+};

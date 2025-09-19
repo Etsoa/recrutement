@@ -11,7 +11,10 @@ const StatusRhEntretien = require('../models/statusRhEntretiensModel');
 const RhEntretiensView = require('../models/rhEntretiensViewModel');
 const { Op } = require('sequelize');
 
-const ScoreRhEntretien = require('../models/scoreRhEntretiensModel'); // Assure-toi que le modèle existe
+const ScoreRhEntretien = require('../models/scoreRhEntretiensModel'); 
+
+const CeoSuggestions = require('../models/ceoSuggestionsModel');
+const StatusCeoSuggestions = require('../models/statusCeoSuggestionsModel');
 
 const loginRh = async (email) => {
   return await RhView.findOne({ where: { email } });
@@ -196,6 +199,29 @@ const createScoreRhEntretien = async ({ id_rh_entretien, score, date_score }) =>
   return nouveauScore;
 };
 
+const suggestToCeo = async ({ id_rh_entretien, id_candidat, id_type_status_suggestion = 3 }) => {
+  if (!id_rh_entretien || !id_candidat) {
+    throw new Error('id_rh_entretien et id_candidat sont requis');
+  }
+
+  // Créer la suggestion
+  const suggestion = await CeoSuggestions.create({
+    id_rh_entretien,
+    id_candidat,
+    id_type_status_suggestion,
+    date_suggestion: new Date()
+  });
+
+  // Optionnel: créer le statut initial
+  await StatusCeoSuggestions.create({
+    id_ceo_suggestion: suggestion.id_ceo_suggestion,
+    id_type_status_suggestion,
+    date_changement: new Date()
+  });
+
+  return suggestion;
+};
+
 module.exports = {
   loginRh,
   getAllSuggests,
@@ -206,5 +232,6 @@ module.exports = {
   getDisponibilitesRh,
   updateDateStatusRhEntretien, 
   getProchaineDisponibilite, 
-  createScoreRhEntretien
+  createScoreRhEntretien,
+  suggestToCeo
 };
