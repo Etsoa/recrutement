@@ -32,7 +32,7 @@ const LangueTiers = db.define('LangueTiers', {
   }
 }, {
   tableName: 'langue_tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

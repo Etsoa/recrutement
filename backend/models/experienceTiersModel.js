@@ -36,7 +36,7 @@ const ExperienceTiers = db.define('ExperienceTiers', {
   }
 }, {
   tableName: 'experience_tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

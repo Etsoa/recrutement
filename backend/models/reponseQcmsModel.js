@@ -12,7 +12,7 @@ const ReponseQcm = db.define('ReponseQcm', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: QuestionQCM,
+      model: QuestionQcm,
       key: 'id_question_qcm'
     },
     onUpdate: 'CASCADE',
@@ -28,7 +28,7 @@ const ReponseQcm = db.define('ReponseQcm', {
   }
 }, {
   tableName: 'reponse_qcms',
-  timestamps: true
+  timestamps: false
 });
 
 // Association Sequelize

@@ -11,7 +11,7 @@ const api = axios.create({
 
 export const getAllUnites = async () => {
   try {
-    const response = await api.get('http://localhost:5000/api/unite/');
+    const response = await api.get('/unite/');
     return response.data;
   } catch (error) {
     throw error;

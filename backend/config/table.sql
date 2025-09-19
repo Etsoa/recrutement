@@ -36,7 +36,7 @@ CREATE TABLE domaines (
 CREATE TABLE unites (
     id_unite SERIAL PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
-    motdepasse VARCHAR(100) NOT NULL
+    mot_de_passe VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE postes (
@@ -51,13 +51,13 @@ CREATE TABLE villes (
 );
 
 CREATE TABLE question_qcms (
-    id_question SERIAL PRIMARY KEY,
+    id_question_qcm SERIAL PRIMARY KEY,
     intitule VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE reponse_qcms (
     id_reponse_qcm SERIAL PRIMARY KEY,
-    id_question_qcm INTEGER REFERENCES question_qcms(id_question) ON DELETE CASCADE,
+    id_question_qcm INTEGER REFERENCES question_qcms(id_question_qcm) ON DELETE CASCADE,
     reponse VARCHAR(255) NOT NULL,
     modalite BOOLEAN NOT NULL
 );

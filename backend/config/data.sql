@@ -53,11 +53,11 @@ INSERT INTO domaines (valeur) VALUES ('Agriculture');
 INSERT INTO domaines (valeur) VALUES ('Informatique');
 INSERT INTO domaines (valeur) VALUES ('Transport');
 
-INSERT INTO unites (nom, motdepasse) VALUES ('Direction Generale', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Ressources Humaines', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Comptabilite', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Production', 'azerty');
-INSERT INTO unites (nom, motdepasse) VALUES ('Commercial', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Direction Generale', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Ressources Humaines', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Comptabilite', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Production', 'azerty');
+INSERT INTO unites (nom, mot_de_passe) VALUES ('Commercial', 'azerty');
 
 INSERT INTO postes (valeur, id_unite) VALUES ('Directeur General', 1);
 INSERT INTO postes (valeur, id_unite) VALUES ('Assistant Direction', 1);

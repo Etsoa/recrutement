@@ -14,7 +14,7 @@ const SituationMatrimoniale = db.define('SituationMatrimoniale', {
   }
 }, {
   tableName: 'situation_matrimoniales',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = SituationMatrimoniale;

@@ -13,7 +13,7 @@ const ScoreMinimumEntretien = db.define('ScoreMinimumEntretien', {
   }
 }, {
   tableName: 'score_minimum_entretien',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = ScoreMinimumEntretien;

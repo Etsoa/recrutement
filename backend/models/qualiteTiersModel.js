@@ -32,7 +32,7 @@ const QualiteTiers = db.define('QualiteTiers', {
   }
 }, {
   tableName: 'qualite_tiers',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

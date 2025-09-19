@@ -32,7 +32,7 @@ const QcmAnnonce = db.define('QcmAnnonce', {
   }
 }, {
   tableName: 'qcm_annonces',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

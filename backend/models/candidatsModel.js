@@ -36,7 +36,7 @@ const Candidat = db.define('Candidat', {
   }
 }, {
   tableName: 'candidats',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations

@@ -14,7 +14,7 @@ const TypeStatusSuggestion = db.define('TypeStatusSuggestion', {
   }
 }, {
   tableName: 'type_status_suggestions',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = TypeStatusSuggestion;

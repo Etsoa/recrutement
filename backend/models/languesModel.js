@@ -14,7 +14,7 @@ const Langue = db.define('Langue', {
   }
 }, {
   tableName: 'langues',
-  timestamps: true
+  timestamps: false
 });
 
 module.exports = Langue;

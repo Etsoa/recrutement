@@ -36,7 +36,7 @@ const RhSuggestion = db.define('RhSuggestion', {
   }
 }, {
   tableName: 'rh_suggestions',
-  timestamps: true
+  timestamps: false
 });
 
 // Associations
