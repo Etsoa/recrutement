@@ -16,8 +16,8 @@ const ScoreRhEntretien = require('../models/scoreRhEntretiensModel');
 const CeoSuggestions = require('../models/ceoSuggestionsModel');
 const StatusCeoSuggestion = require('../models/statusCeoSuggestionsModel');
 
-const loginRh = async (email) => {
-  return await RhView.findOne({ where: { email } });
+const loginRh = async (email, mot_de_passe) => {
+  return await RhView.findOne({ where: { email, mot_de_passe } });
 };
 
 const getAllSuggests = async () => {
@@ -41,7 +41,7 @@ const getAllSuggests = async () => {
           include: [
             {
               model: Tiers,
-              as: 'tiers', // alias à vérifier dans Candidats
+              as: 'Tier', // alias à vérifier dans Candidats
               attributes: ['nom', 'prenom', 'email']
             }
           ]

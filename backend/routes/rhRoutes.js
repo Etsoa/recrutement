@@ -5,7 +5,9 @@ const rhController = require('../controllers/rhController');
 // email + mdp a verfieer par rapport au post retour true/false
 router.post('/', rhController.loginRh);
 
-// anonces a valier ou invalider dans status
+// Récupérer les données pour le formulaire
+router.get('/form-annonce', rhController.getFormAnnonceData);
+// Créer l'annonce
 router.get('/create/annonce', rhController.createAnnonce);
 
 // les suggestions des unites sont des demandes de entretien avec rh pour qu ce dernier decide de ce qu il faut faire

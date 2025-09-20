@@ -1,4 +1,4 @@
-CREATE VIEW vue_rh AS
+CREATE OR REPLACE VIEW vue_rh AS
 SELECT 
        e.id_employe,
        t.email,
@@ -13,7 +13,9 @@ FROM employes e
 JOIN tiers t ON e.id_tiers = t.id_tiers
 JOIN postes p ON e.id_poste = p.id_poste
 JOIN unites u ON p.id_unite = u.id_unite
-WHERE u.nom = 'Ressources Humaines';
+WHERE u.nom = 'Ressources Humaines'
+  AND p.valeur = 'Responsable RH';
+
 
 CREATE OR REPLACE VIEW rh_entretiens_view AS
 SELECT 

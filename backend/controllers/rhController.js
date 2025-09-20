@@ -1,5 +1,8 @@
 const rhService = require('../services/rhService');
 const annonceService = require('../services/annoncesService');
+const postesService = require('../services/postesService');
+const villesService = require('../services/villesService');
+const genresService = require('../services/genresService');
 
 exports.getAllRhs = async (req, res) => {
   try {
@@ -44,22 +47,29 @@ exports.createAnnonce = async (req, res) => {
   try {
     const { id_poste, id_ville, age_min, age_max, id_genre } = req.query;
 
-    if (!id_poste || !id_ville || !id_genre) {
-      return res.status(400).json({ message: 'Données manquantes', data: null, success: false });
+    // Vérifications précises
+    if (!id_poste) {
+      return res.status(400).json({ message: 'Le champ "poste" est manquant', data: null, success: false });
     }
+    if (!id_ville) {
+      return res.status(400).json({ message: 'Le champ "ville" est manquant', data: null, success: false });
+    }
+    // id_genre peut être vide si c'est "homme et femme"
+    const genreValide = id_genre || null;
 
+    // age_min et age_max ne sont pas obligatoires
     const newAnnonce = await annonceService.createAnnonce({
       id_poste,
       id_ville,
-      age_min: age_min || null,
-      age_max: age_max || null,
-      id_genre
+      age_min: age_min ? parseInt(age_min) : null,
+      age_max: age_max ? parseInt(age_max) : null,
+      id_genre: genreValide
     });
 
-    res.json({ message: 'Annonce créée', data: newAnnonce, success: true });
+    res.json({ message: 'Annonce créée avec succès', data: newAnnonce, success: true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Erreur serveur', data: null, success: false });
+    res.status(500).json({ message: 'Erreur serveur: ' + err.message, data: null, success: false });
   }
 };
 
@@ -284,6 +294,27 @@ exports.getAllCeoSuggestions = async (req, res) => {
       message: 'Erreur lors de la récupération des suggestions',
       data: null,
       success: false
+    });
+  }
+};
+
+exports.getFormAnnonceData = async (req, res) => {
+  try {
+    const [postes, villes, genres] = await Promise.all([
+      postesService.getAllPostes(),
+      villesService.getAllVilles(),
+      genresService.getAllGenres()
+    ]);
+
+    res.json({
+      success: true,
+      data: { postes, villes, genres }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la récupération des données",
+      error: error.message
     });
   }
 };
