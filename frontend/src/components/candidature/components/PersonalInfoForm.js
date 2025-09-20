@@ -4,6 +4,7 @@ import { Input, Dropdown } from '../../index';
 const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
   const handleChange = (value, fieldName) => {
     // fieldName contient le nom du champ
+    console.log('PersonalInfoForm handleChange:', fieldName, '=', value);
     updateFormData({ [fieldName]: value });
   };
 

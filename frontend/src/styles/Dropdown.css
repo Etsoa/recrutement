@@ -39,16 +39,15 @@
   width: 100%;
   padding: var(--spacing-md) var(--spacing-md);
   font-size: var(--font-size-base);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--border-radius);
-  background-color: var(--color-background);
+  border: none;
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: transparent;
   color: var(--color-text);
   transition: var(--transition);
   appearance: none;
   cursor: pointer;
   outline: none;
   height: var(--height-input);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .dropdown-select.with-icon {
@@ -56,23 +55,20 @@
 }
 
 .dropdown-select:hover {
-  border-color: var(--color-border-hover, #bdc3c7);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border-bottom-color: var(--color-border-hover, var(--color-border));
 }
 
 .dropdown-select:focus {
   outline: none;
-  border-color: var(--color-primary);
+  border-bottom-color: var(--color-border-focus);
   background-color: white;
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1), 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .dropdown-select:disabled {
   background-color: var(--color-background-muted);
   color: var(--color-text-disabled);
   cursor: not-allowed;
-  border-color: var(--color-border-disabled, var(--color-border-light));
-  box-shadow: none;
+  border-bottom-color: var(--color-border-disabled, var(--color-border-light));
 }
 
 .dropdown-arrow {
@@ -83,11 +79,10 @@
   color: var(--color-text-secondary);
   pointer-events: none;
   transition: var(--transition);
-  font-weight: bold;
 }
 
 .dropdown-select:focus + .dropdown-arrow {
-  color: var(--color-primary);
+  color: var(--color-border-focus);
 }
 
 .dropdown-error {
@@ -106,15 +101,12 @@
 
 /* État d'erreur */
 .dropdown-container.error .dropdown-select {
-  border-color: var(--color-danger);
-  background-color: rgba(231, 76, 60, 0.05);
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1), 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-bottom-color: var(--color-danger);
 }
 
 .dropdown-container.error .dropdown-select:focus {
-  border-color: var(--color-danger);
+  border-bottom-color: var(--color-danger);
   background-color: white;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15), 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive */

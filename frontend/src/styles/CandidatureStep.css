@@ -762,9 +762,21 @@ small {
 }
 
 .niveaux-checkboxes-inline {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: var(--spacing-md) !important;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.niveaux-checkboxes-inline .checkbox-container {
+  flex: 0 0 auto;
+  min-width: fit-content;
+}
+
+.niveau-checkbox {
+  margin-right: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .checkbox-label-inline {

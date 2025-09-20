@@ -36,18 +36,6 @@ const FileUploader = ({ formData, updateFormData, errors = {} }) => {
           previewType="document"
           error={errors.cv}
         />
-
-        <FileButton
-          label="Lettre de motivation"
-          name="lettre_motivation"
-          accept=".pdf,image/jpeg,image/png"
-          onChange={handleFileChange}
-          maxSize={5}
-          showPreview={true}
-          previewType="document"
-          error={errors.lettre_motivation}
-          variant="outline"
-        />
       </div>
     </div>
   );
