@@ -88,5 +88,20 @@ exports.loginCeo = async (req, res) => {
 };
 
 exports.getAllSuggests = async (req, res) => {
-  
+  try {
+    const suggestions = await ceoService.getAllSuggests();
+
+    res.json({
+      message: 'Liste des suggestions CEO récupérée avec succès',
+      data: suggestions,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des suggestions',
+      data: null,
+      success: false
+    });
+  }
 }

@@ -1,5 +1,8 @@
 const CeoView = require('../models/ceoViewModel');
 const CeoSuggestions = require('../models/ceoSuggestionsModel');
+const RhEntretien = require('../models/rhEntretiensModel');
+const Candidats = require('../models/candidatsModel');
+const Tiers = require('../models/tiersModel');
 
 const loginCeo = async (email, mot_de_passe) => {
     const type_status_employe = 'Actif';
@@ -40,5 +43,6 @@ const getAllSuggests = async () => {
 };
 
 module.exports = {
-    loginCeo
+    loginCeo,
+    getAllSuggests
 }
