@@ -368,7 +368,7 @@ const CandidaturePage = () => {
       <div className="candidature-container">
         {/* Grand titre */}
         <div className="main-title">
-          <h1>POSTULER POUR CE POSTE</h1>
+          <h2>POSTULER POUR CE POSTE</h2>
         </div>
 
         {/* Aperçu de l'annonce en haut */}

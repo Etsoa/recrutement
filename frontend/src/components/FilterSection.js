@@ -5,7 +5,6 @@ const FilterSection = ({
   filters,
   activeFilters = {},
   onFilterChange,
-  onResetFilters,
   showToggle = false,
   isVisible = true,
   onToggleVisibility,
@@ -17,40 +16,6 @@ const FilterSection = ({
     const newValues = value && value !== "" ? [value] : [];
     onFilterChange(filterKey, newValues);
   };
-
-  const handleResetAll = () => {
-    if (onResetFilters) {
-      onResetFilters();
-    }
-  };
-
-  const removeActiveFilter = (filterKey, value) => {
-    // Pour les dropdowns, on remet à vide
-    onFilterChange(filterKey, []);
-  };
-
-  // Compter les filtres actifs
-  const getActiveFilterTags = () => {
-    const tags = [];
-    Object.entries(activeFilters).forEach(([key, values]) => {
-      if (Array.isArray(values) && values.length > 0) {
-        const filterGroup = filters.find(f => f.key === key);
-        if (filterGroup) {
-          values.forEach(value => {
-            tags.push({
-              key,
-              value,
-              label: `${filterGroup.name}: ${value}`
-            });
-          });
-        }
-      }
-    });
-    return tags;
-  };
-
-  const activeFilterTags = getActiveFilterTags();
-  const hasActiveFilters = activeFilterTags.length > 0;
 
   return (
     <div className={`filter-section-container ${className}`} {...props}>
@@ -65,19 +30,6 @@ const FilterSection = ({
               <path d="M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z"/>
             </svg>
             Filtres
-          </button>
-        )}
-        
-        {hasActiveFilters && (
-          <button
-            className="reset-all-btn"
-            onClick={handleResetAll}
-            type="button"
-          >
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-            Tout réinitialiser
           </button>
         )}
       </div>
@@ -115,28 +67,7 @@ const FilterSection = ({
             ))}
           </div>
 
-          {/* Tags des filtres actifs */}
-          {hasActiveFilters && (
-            <div className="active-filters">
-              <span className="active-filters-label">Filtres actifs :</span>
-              <div className="filter-tags">
-                {activeFilterTags.map((tag, index) => (
-                  <div key={`${tag.key}-${tag.value}-${index}`} className="filter-tag">
-                    {tag.label}
-                    <button
-                      onClick={() => removeActiveFilter(tag.key, tag.value)}
-                      type="button"
-                      aria-label={`Supprimer le filtre ${tag.label}`}
-                    >
-                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+
         </div>
       )}
     </div>
