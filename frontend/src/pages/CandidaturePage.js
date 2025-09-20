@@ -8,6 +8,8 @@ import StepIndicator from '../components/candidature/StepIndicator';
 import PersonalInfoStep from '../components/candidature/PersonalInfoStep';
 import ProfessionalInfoStep from '../components/candidature/ProfessionalInfoStep';
 import SummaryStep from '../components/candidature/SummaryStep';
+import SuccessMessage from '../components/candidature/SuccessMessage';
+import ErrorSubmissionMessage from '../components/candidature/ErrorMessage';
 import '../styles/CandidaturePage.css';
 
 const CandidaturePage = () => {
@@ -57,6 +59,10 @@ const CandidaturePage = () => {
   // État pour les erreurs de validation
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // États pour les résultats de soumission
+  const [submissionStatus, setSubmissionStatus] = useState(null); // null, 'success', 'error'
+  const [submissionError, setSubmissionError] = useState('');
 
   // Charger les données de l'annonce
   useEffect(() => {
@@ -178,14 +184,18 @@ const CandidaturePage = () => {
         } else {
           // Vérifier que chaque expérience a les champs requis
           formData.experiences.forEach((exp, index) => {
-            if (!exp.poste?.trim()) {
-              newErrors[`experience_${index}_poste`] = `Le poste de l'expérience ${index + 1} est requis`;
+            if (!exp.intitule_poste?.trim()) {
+              newErrors[`experience_${index}_intitule_poste`] = `Le poste de l'expérience ${index + 1} est requis`;
             }
-            if (!exp.entreprise?.trim()) {
-              newErrors[`experience_${index}_entreprise`] = `L'entreprise de l'expérience ${index + 1} est requise`;
+            if (!exp.nom_entreprise?.trim()) {
+              newErrors[`experience_${index}_nom_entreprise`] = `L'entreprise de l'expérience ${index + 1} est requise`;
             }
             if (!exp.date_debut) {
               newErrors[`experience_${index}_date_debut`] = `La date de début de l'expérience ${index + 1} est requise`;
+            }
+            // Validation: si date_fin est fournie, elle doit être postérieure à date_debut
+            if (exp.date_debut && exp.date_fin && new Date(exp.date_fin) <= new Date(exp.date_debut)) {
+              newErrors[`experience_${index}_date_fin`] = `La date de fin doit être postérieure à la date de début`;
             }
           });
         }
@@ -224,18 +234,20 @@ const CandidaturePage = () => {
 
   // Soumission du formulaire
   const handleSubmit = async () => {
-    if (!validateStep(5)) {
+    if (!validateStep(3)) {
       return;
     }
 
     setIsSubmitting(true);
+    setSubmissionError('');
+    
     try {
       // Préparer les données pour l'envoi
       const submissionData = new FormData();
       
       // Ajouter toutes les données du formulaire
       Object.keys(formData).forEach(key => {
-        if (key === 'experiences' || key === 'langues' || key === 'qualites') {
+        if (key === 'formations' || key === 'experiences' || key === 'langues' || key === 'qualites') {
           submissionData.append(key, JSON.stringify(formData[key]));
         } else if (formData[key] !== null && formData[key] !== '') {
           submissionData.append(key, formData[key]);
@@ -245,17 +257,37 @@ const CandidaturePage = () => {
       submissionData.append('annonce_id', annonceId);
 
       // Simulation de l'envoi (à remplacer par un appel API)
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Simuler une réussite la plupart du temps
+          if (Math.random() > 0.2) {
+            resolve();
+          } else {
+            reject(new Error('Erreur de connexion au serveur'));
+          }
+        }, 2000);
+      });
       
       // Succès
-      alert('Candidature envoyée avec succès !');
-      navigate('/annonces');
+      setSubmissionStatus('success');
       
     } catch (err) {
-      alert('Erreur lors de l\'envoi de la candidature');
+      setSubmissionError(err.message || 'Une erreur inattendue s\'est produite');
+      setSubmissionStatus('error');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Fonction pour réessayer l'envoi
+  const handleRetry = () => {
+    setSubmissionStatus(null);
+    setSubmissionError('');
+  };
+
+  // Fonction pour retourner aux annonces
+  const handleBackToAnnonces = () => {
+    navigate('/annonces');
   };
 
   // Rendu du composant d'étape actuel
@@ -308,6 +340,26 @@ const CandidaturePage = () => {
           onRetry={() => window.location.reload()}
         />
       </div>
+    );
+  }
+
+  // Affichage des résultats de soumission
+  if (submissionStatus === 'success') {
+    return (
+      <SuccessMessage 
+        annonce={annonce}
+        onBackToAnnonces={handleBackToAnnonces}
+      />
+    );
+  }
+
+  if (submissionStatus === 'error') {
+    return (
+      <ErrorSubmissionMessage 
+        error={submissionError}
+        onRetry={handleRetry}
+        onBackToAnnonces={handleBackToAnnonces}
+      />
     );
   }
 

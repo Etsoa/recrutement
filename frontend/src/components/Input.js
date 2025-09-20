@@ -8,6 +8,9 @@ export const Input = ({
   help,
   required = false,
   className = '',
+  onChange,
+  name,
+  value,
   ...props
 }) => {
   const inputId = props.id || `input-${Math.random().toString(36).substr(2, 9)}`;
@@ -20,6 +23,13 @@ export const Input = ({
   ]
     .filter(Boolean)
     .join(' ');
+
+  const handleChange = (e) => {
+    if (onChange) {
+      // Nouvelle signature: onChange(value, fieldName)
+      onChange(e.target.value, name);
+    }
+  };
 
   return (
     <div className="form-group">
@@ -34,6 +44,9 @@ export const Input = ({
       
       <input
         id={inputId}
+        name={name}
+        value={value}
+        onChange={handleChange}
         className={inputClasses}
         {...props}
       />

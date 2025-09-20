@@ -1,0 +1,155 @@
+/* Pagination.css - Composant Pagination réutilisable avec style CVList */
+
+.pagination-container {
+  margin-top: var(--spacing-xl);
+}
+
+/* Informations de pagination */
+.pagination-info {
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.pagination-info p {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+}
+
+/* Pagination - Style CVList */
+.cv-list__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl) 0;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 100px;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--color-text-secondary);
+}
+
+.pagination-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.pagination-pages {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.pagination-page {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition);
+  min-width: 40px;
+  text-align: center;
+}
+
+.pagination-page:hover:not(.disabled):not(.dots) {
+  background-color: var(--color-background);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateY(-1px);
+}
+
+.pagination-page.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: white;
+  font-weight: var(--font-weight-semibold);
+}
+
+.pagination-page.dots {
+  border: none;
+  background: transparent;
+  cursor: default;
+  color: var(--color-text-secondary);
+}
+
+.pagination-page.dots:hover {
+  background: transparent;
+  color: var(--color-text-secondary);
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cv-list__pagination {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .pagination-btn {
+    padding: var(--spacing-xs) var(--spacing-md);
+    min-width: 80px;
+    font-size: var(--font-size-xs);
+  }
+  
+  .pagination-page {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    min-width: 36px;
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .cv-list__pagination {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+  
+  .pagination-pages {
+    order: 1;
+  }
+  
+  .pagination-btn {
+    order: 2;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Masquer certains numéros de page sur très petit écran */
+  .pagination-page:not(.active):not(.dots) {
+    display: none;
+  }
+  
+  .pagination-page.active,
+  .pagination-page.dots {
+    display: flex;
+  }
+}

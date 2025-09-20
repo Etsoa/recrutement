@@ -46,7 +46,8 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
           <strong>Expériences professionnelles :</strong><br/>
           {formData.experiences.map((exp, index) => (
             <span key={index}>
-              • {exp.intitule_poste} chez {exp.nom_entreprise} ({exp.duree} {exp.duree > 1 ? 'ans' : 'an'})
+              • {exp.intitule_poste} chez {exp.nom_entreprise} 
+              ({exp.date_debut && new Date(exp.date_debut).toLocaleDateString('fr-FR')} - {exp.date_fin ? new Date(exp.date_fin).toLocaleDateString('fr-FR') : 'En cours'})
               {exp.description_taches && <><br/>&nbsp;&nbsp;Raisons du départ / Réalisations : {exp.description_taches}</>}<br/>
             </span>
           ))}

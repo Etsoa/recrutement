@@ -794,6 +794,65 @@ small {
   font-weight: var(--font-weight-medium);
 }
 
+/* Styles pour les competences checkbox */
+.competences-container {
+  margin-top: var(--spacing-md);
+}
+
+.competences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.competence-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  background: var(--color-surface);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  border: 2px solid var(--color-border);
+  transition: var(--transition-base);
+}
+
+.competence-checkbox:hover {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+}
+
+.competence-checkbox input[type="checkbox"] {
+  margin: 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.competence-checkbox input[type="checkbox"]:checked + .checkmark + .competence-text {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.competence-checkbox input[type="checkbox"]:checked {
+  accent-color: var(--color-accent);
+}
+
+.checkmark {
+  display: none;
+}
+
+.competence-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Style pour les form-grid full-width */
+.form-grid .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
 .niveaux-list {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
