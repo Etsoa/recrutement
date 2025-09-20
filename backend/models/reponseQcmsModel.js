@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
-const QuestionQcm = require('./questionQcmsModel'); // On importe le modèle QuestionQCM
+const QuestionQcm = require('./questionQcmsModel'); 
 
 const ReponseQcm = db.define('ReponseQcm', {
   id_reponse_qcm: {
@@ -12,7 +12,7 @@ const ReponseQcm = db.define('ReponseQcm', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: QuestionQCM,
+  model: QuestionQcm,
       key: 'id_question_qcm'
     },
     onUpdate: 'CASCADE',

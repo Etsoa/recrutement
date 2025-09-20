@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const SituationMatrimoniale = db.define('SituationMatrimoniale', {
-  id_situation: {
+  id_situation_matrimoniale: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true

@@ -5,6 +5,7 @@ const Ville = require('./villesModel');
 const Genre = require('./genresModel');
 const SituationMatrimoniale = require('./situationMatrimonialesModel');
 
+
 const Tiers = db.define('Tiers', {
   id_tiers: {
     type: DataTypes.INTEGER,
@@ -60,31 +61,9 @@ const Tiers = db.define('Tiers', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  id_situation_matrimoniale: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: SituationMatrimoniale,
-      key: 'id_situation'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
-  },
-  nombre_enfants: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
   contact: {
     type: DataTypes.STRING,
-    allowNull: false
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true
-    }
+    allowNull: true
   }
 }, {
   tableName: 'tiers',

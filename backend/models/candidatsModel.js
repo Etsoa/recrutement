@@ -40,7 +40,7 @@ const Candidat = db.define('Candidat', {
 });
 
 // Associations
-Candidat.belongsTo(Tiers, { foreignKey: 'id_tiers' });
+Candidat.belongsTo(Tiers, { foreignKey: 'id_tiers'});
 Candidat.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 
 module.exports = Candidat;

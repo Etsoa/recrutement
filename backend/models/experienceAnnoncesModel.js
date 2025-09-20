@@ -4,7 +4,7 @@ const db = require('../config/db');
 const Annonce = require('./annoncesModel');
 const Domaine = require('./domainesModel');
 
-const ExperienceAnnonce = db.define('ExperienceAnnonces', {
+const ExperienceAnnonce = db.define('ExperienceAnnonce', {
   id_experience_annonce: {
     type: DataTypes.INTEGER,
     primaryKey: true,

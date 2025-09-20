@@ -59,5 +59,4 @@ Annonce.belongsTo(Poste, { foreignKey: 'id_poste' });
 Annonce.belongsTo(Ville, { foreignKey: 'id_ville' });
 Annonce.belongsTo(Genre, { foreignKey: 'id_genre' });
 
-
 module.exports = Annonce;

@@ -35,7 +35,7 @@ const LangueAnnonce = db.define('LangueAnnonce', {
   timestamps: false
 });
 
-// 🔗 Associations Sequelize
+// Associations
 LangueAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 LangueAnnonce.belongsTo(Langue, { foreignKey: 'id_langue' });
 
