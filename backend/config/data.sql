@@ -143,3 +143,212 @@ INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement
 VALUES 
 (3, 2, '2025-09-03', 1),  -- "Publie" par RH
 (3, 2, '2025-09-07', 1);  -- "Publie" par Direction Generale
+
+
+-- LANGUES pour annonces
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (1, 1); -- Malgache
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (1, 2); -- Français
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (2, 2); -- Français
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (2, 3); -- Anglais
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (3, 1);
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (3, 3);
+
+-- QUALITES pour annonces
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (1, 1); -- Ponctuel
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (1, 4); -- Esprit d equipe
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (2, 3); -- Autonome
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (3, 2); -- Rigoureux
+
+-- EXPERIENCES pour annonces
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (1, 1, 5); -- Hôpital
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (1, 2, 3); -- Banque
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (2, 3, 2); -- Education
+
+-- NIVEAUX/FILIERES pour annonces
+INSERT INTO niveau_filiere_annonces (id_annonce, id_niveau, id_filiere) VALUES (1, 5, 6); -- Master, Informatique
+INSERT INTO niveau_filiere_annonces (id_annonce, id_niveau, id_filiere) VALUES (2, 4, 7); -- Licence Pro, Gestion
+INSERT INTO niveau_filiere_annonces (id_annonce, id_niveau, id_filiere) VALUES (3, 6, 8); -- Doctorat, Droit
+
+-- CANDIDATS
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES 
+('Rakoto', 'Jean', '1985-03-15', 1, 2, 2, '0341234567', 'jean.rakoto@email.com', 'AA123456', 1, 'photo1.jpg'),
+('Rasoa', 'Marie', '1990-07-22', 2, 1, 0, '0347654321', 'marie.rasoa@email.com', 'BB987654', 2, 'photo2.jpg');
+
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (1, 1, 'cv_jean.pdf');
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (2, 2, 'cv_marie.pdf');
+
+-- LANGUES pour candidats
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (1, 1); -- Malgache
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (1, 2); -- Français
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (2, 2); -- Français
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (2, 3); -- Anglais
+
+-- QUALITES pour candidats
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (1, 1); -- Ponctuel
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (1, 5); -- Creatif
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (2, 3); -- Autonome
+
+-- EXPERIENCES pour candidats
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (1, 1, '2010-01-01', '2015-12-31'); -- Hôpital
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (1, 2, '2016-01-01', '2019-12-31'); -- Banque
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (2, 3, '2012-01-01', '2018-06-30'); -- Education
+
+-- NIVEAUX/FILIERES pour candidats
+INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (1, 5, 6); -- Master, Informatique
+INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (2, 4, 7); -- Licence Pro, Gestion
+
+-- -------------------
+-- Langues pour annonces
+-- -------------------
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (1, 1);
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (1, 2);
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (2, 2);
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (3, 3);
+
+-- -------------------
+-- Qualités pour annonces
+-- -------------------
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (1, 1);
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (1, 2);
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (2, 3);
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (3, 4);
+
+-- -------------------
+-- Expériences pour annonces
+-- -------------------
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (1, 1, 10);
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (2, 2, 5);
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (3, 3, 7);
+
+-- -------------------
+-- Niveau/Filière pour annonces
+-- -------------------
+INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES (1, 6, 4);
+INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES (2, 7, 3);
+INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES (3, 8, 5);
+
+-- -------------------
+-- Candidats et Tiers
+-- -------------------
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES 
+('Rabe', 'Jean', '1985-04-12', 1, 1, 0, '0341234567', 'jean.rabe@mail.com', 'AA123456', 1, 'photo1.jpg'),
+('Rakoto', 'Marie', '1990-08-22', 2, 2, 2, '0349876543', 'marie.rakoto@mail.com', 'BB987654', 2, 'photo2.jpg');
+
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (1, 1, 'cv_jean.pdf');
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (2, 2, 'cv_marie.pdf');
+
+-- -------------------
+-- Langues candidats
+-- -------------------
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (1, 1);
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (1, 3);
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (2, 2);
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (2, 4);
+
+-- -------------------
+-- Qualités candidats
+-- -------------------
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (1, 1);
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (1, 4);
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (2, 2);
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (2, 5);
+
+-- -------------------
+-- Expériences candidats
+-- -------------------
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (1, 1, '2010-01-01', '2015-12-31');
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (2, 2, '2012-06-01', '2018-08-31');
+
+-- -------------------
+-- Niveau/Filière candidats
+-- -------------------
+INSERT INTO niveau_filiere_tiers (id_tiers, id_filiere, id_niveau) VALUES (1, 6, 4);
+INSERT INTO niveau_filiere_tiers (id_tiers, id_filiere, id_niveau) VALUES (2, 7, 3);
+
+-- TIERS (candidats)
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES 
+('Rakoto','Jean','1990-05-12',1,1,0,'0320000001','jean.rakoto@email.com','AA123456','1','photo1.jpg'),
+('Rasoa','Marie','1992-08-20',2,2,1,'0320000002','marie.rasoa@email.com','BB234567','2','photo2.jpg'),
+('Andry','Paul','1988-03-15',1,1,0,'0320000003','paul.andry@email.com','CC345678','3','photo3.jpg');
+
+-- CANDIDATS
+INSERT INTO candidats (id_tiers, id_annonce, cv)
+VALUES
+(1,1,'cv_jean.pdf'),
+(2,2,'cv_marie.pdf'),
+(3,3,'cv_paul.pdf'),
+(1,3,'cv_jean2.pdf'); -- Jean a postulé aussi à l'annonce 3
+
+-- LANGUE_TIERS
+INSERT INTO langue_tiers (id_tiers, id_langue)
+VALUES
+(1,1),(1,2),(2,2),(2,3),(3,1),(3,3);
+
+-- QUALITE_TIERS
+INSERT INTO qualite_tiers (id_tiers, id_qualite)
+VALUES
+(1,1),(1,2),(2,3),(2,4),(3,1),(3,5);
+
+-- NIVEAU_FILIERE_TIERS
+INSERT INTO niveau_filiere_tiers (id_tiers, id_filiere, id_niveau)
+VALUES
+(1,6,4),(1,1,2),(2,7,3),(2,2,2),(3,6,5);
+
+-- EXPERIENCE_TIERS
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin)
+VALUES
+(1,1,'2015-01-01','2018-12-31'),
+(1,2,'2019-01-01','2021-12-31'),
+(2,3,'2014-06-01','2018-06-01'),
+(3,1,'2010-01-01','2015-01-01');
+
+-- EMPLOYES
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
+VALUES
+(3,1,1); -- Paul est employé comme Directeur Général (id_poste =1) et actif
+
+-- STATUS_EMPLOYES
+INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement)
+VALUES
+(1,1,'2020-01-01');
+
+-- QCM et réponses
+INSERT INTO question_qcms (intitule)
+VALUES 
+('Quelle est la capitale de Madagascar ?'),
+('Quelle est la couleur du drapeau français ?');
+
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite)
+VALUES
+(1,'Antananarivo',true),
+(1,'Fianarantsoa',false),
+(1,'Toamasina',false),
+(2,'Bleu, blanc, rouge',true),
+(2,'Rouge, blanc, bleu',false),
+(2,'Vert, blanc, rouge',false);
+
+-- QCM_ANNONCES
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm)
+VALUES
+(1,1),
+(1,2),
+(2,1);
+
+
+-- -------------------
+-- QCM pour annonces
+-- -------------------
+INSERT INTO question_qcms (intitule) VALUES ('Quelle est la capitale de Madagascar ?');
+INSERT INTO question_qcms (intitule) VALUES ('Quelle est la couleur du ciel ?');
+
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES (1, 'Antananarivo', TRUE);
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES (1, 'Fianarantsoa', FALSE);
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES (2, 'Bleu', TRUE);
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES (2, 'Vert', FALSE);
+
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES (1, 1);
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES (1, 2);
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES (2, 2);

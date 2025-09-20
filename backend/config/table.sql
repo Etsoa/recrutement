@@ -51,13 +51,13 @@ CREATE TABLE villes (
 );
 
 CREATE TABLE question_qcms (
-    id_question SERIAL PRIMARY KEY,
+    id_question_qcm SERIAL PRIMARY KEY,
     intitule VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE reponse_qcms (
     id_reponse_qcm SERIAL PRIMARY KEY,
-    id_question_qcm INTEGER REFERENCES question_qcms(id_question) ON DELETE CASCADE,
+    id_question_qcm INTEGER REFERENCES question_qcms(id_question_qcm) ON DELETE CASCADE,
     reponse VARCHAR(255) NOT NULL,
     modalite BOOLEAN NOT NULL
 );
@@ -74,7 +74,7 @@ CREATE TABLE annonces (
 CREATE TABLE qcm_annonces (
     id_qcm_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
-    id_question_qcm INTEGER REFERENCES question_qcms(id_question) ON DELETE CASCADE
+    id_question_qcm INTEGER REFERENCES question_qcms(id_question_qcm) ON DELETE CASCADE
 );
 
 CREATE TABLE type_status_annonces (
