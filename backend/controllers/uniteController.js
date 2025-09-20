@@ -17,12 +17,11 @@ exports.getAllAnnonces = async (req, res) => {
   }
 };
 
-const { getAnnonceById } = require('../services/unite/traitementAnnoncesService');
 
 exports.getAnnonceById = async (req, res) => {
   try {
     const id = req.params.id; // ID depuis l'URL
-    const data = await getAnnonceById(id);
+    const data = await traitementAnnonceService.getAnnonceById(id);
     if (!data) {
       return res.status(404).json({
         message: 'Annonce non trouvée',

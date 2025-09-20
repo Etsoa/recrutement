@@ -2,18 +2,19 @@ const Annonce = require('../../models/annoncesModel');
 const Poste = require('../../models/postesModel');
 const Ville = require('../../models/villesModel');
 const Genre = require('../../models/genresModel');
-const LangueAnnonce = require('../../models/langueAnnoncesModel');
-const QualiteAnnonce = require('../../models/qualiteAnnoncesModel');
-const ExperienceAnnonce = require('../../models/experienceAnnoncesModel');
-const NiveauFiliereAnnonce = require('../../models/niveauFiliereAnnoncesModel');
-const StatusAnnonce = require('../../models/statusAnnoncesModel');
-const TypeStatusAnnonce = require('../../models/typeStatusAnnoncesModel');
 const Unite = require('../../models/unitesModel');
 const Langue = require('../../models/languesModel');
 const Qualite = require('../../models/qualitesModel');
 const Domaine = require('../../models/domainesModel');
 const Filiere = require('../../models/filieresModel');
 const Niveau = require('../../models/niveauxModel');
+const LangueAnnonce = require('../../models/langueAnnoncesModel');
+const QualiteAnnonce = require('../../models/qualiteAnnoncesModel');
+const ExperienceAnnonce = require('../../models/experienceAnnoncesModel');
+const NiveauFiliereAnnonce = require('../../models/niveauFiliereAnnoncesModel');
+const StatusAnnonce = require('../../models/statusAnnoncesModel');
+const TypeStatusAnnonce = require('../../models/typeStatusAnnoncesModel');
+
 
 exports.getAllAnnonces = async () => {
   try {
@@ -31,45 +32,48 @@ exports.getAllAnnonces = async () => {
   }
 };
 
-const getAnnonceById = async (id) => {
-  const annonce = await Annonce.findOne({
+
+exports.getAnnonceById = async (id) => {
+  return await Annonce.findOne({
     where: { id_annonce: id },
     include: [
       { model: Poste, attributes: ['valeur'] },
       { model: Ville, attributes: ['valeur'] },
       { model: Genre, attributes: ['valeur'] },
       {
-        model: LangueAnnonce,
-        include: [{ model: Langue, attributes: ['valeur'] }]
+        association: 'langues',            // alias défini dans belongsToMany
+        attributes: ['valeur'],
+        through: { attributes: [] }       // masque la table pivot
       },
       {
-        model: QualiteAnnonce,
-        include: [{ model: Qualite, attributes: ['valeur'] }]
+        association: 'qualites',
+        attributes: ['valeur'],
+        through: { attributes: [] }
       },
       {
-        model: ExperienceAnnonce,
-        include: [{ model: Domaine, attributes: ['valeur'] }]
+        association: 'experiences',
+        attributes: ['valeur'],
+        through: { attributes: [] }
       },
       {
-        model: NiveauFiliereAnnonce,
-        include: [
-          { model: Niveau, attributes: ['valeur'] },
-          { model: Filiere, attributes: ['valeur'] }
-        ]
+        association: 'niveaux',
+        attributes: ['valeur'],
+        through: { attributes: [] }
+      },
+      {
+        association: 'filieres',
+        attributes: ['valeur'],
+        through: { attributes: [] }
       },
       {
         model: StatusAnnonce,
+        as: 'status',
         include: [
           { model: TypeStatusAnnonce, attributes: ['valeur'] },
           { model: Unite, attributes: ['nom'] }
         ]
       }
-    ]
+    ],
+    order: [['id_annonce', 'ASC']]
   });
-
-  return annonce;
 };
-
-
-
-module.exports = { getAnnonceById };
