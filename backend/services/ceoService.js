@@ -3,6 +3,7 @@ const CeoSuggestions = require('../models/ceoSuggestionsModel');
 const RhEntretien = require('../models/rhEntretiensModel');
 const Candidats = require('../models/candidatsModel');
 const Tiers = require('../models/tiersModel');
+const CeoEmployesView = require('../models/ceoEmployesViewModel');
 
 const loginCeo = async (email, mot_de_passe) => {
     const type_status_employe = 'Actif';
@@ -42,7 +43,13 @@ const getAllSuggests = async () => {
   return suggestions;
 };
 
+const getAllEmployes = async () => {
+    const employes = await CeoEmployesView.findAll();
+    return employes;
+}
+
 module.exports = {
     loginCeo,
-    getAllSuggests
+    getAllSuggests,
+    getAllEmployes
 }

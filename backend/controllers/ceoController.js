@@ -76,7 +76,6 @@ exports.loginCeo = async (req, res) => {
         });
     }
   } catch (err) {
-    console.log(err);
     res
       .status(500)
       .json({
@@ -97,9 +96,26 @@ exports.getAllSuggests = async (req, res) => {
       success: true
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({
       message: 'Erreur lors de la récupération des suggestions',
+      data: null,
+      success: false
+    });
+  }
+}
+
+exports.getAllEmployes = async (req, res) => {
+  try {
+    const employes = await ceoService.getAllEmployes();
+
+    res.json({
+      message: 'Liste des employés pour CEO récupérée avec succès',
+      data: employes,
+      success: true
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des employés',
       data: null,
       success: false
     });

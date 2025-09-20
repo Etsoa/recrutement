@@ -12,6 +12,6 @@ router.get('/suggestions', ceoController.getAllSuggests);
 // router.post('recruter', ceoController.recruter);
 
 //liste des emqloyes status machin machin sous forme d'arbre qar unite
-// router.get('/employes', ceoController.getAllEmployes);
+router.get('/employes', ceoController.getAllEmployes);
 
 module.exports = router;
