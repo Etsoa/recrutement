@@ -36,6 +36,12 @@ const Header = () => {
           >
             CV Détail
           </Link>
+          <Link 
+            to="/qcm?token=test_token_hardcode" 
+            className={`header__nav-item ${location.pathname.startsWith('/qcm') ? 'header__nav-item--active' : ''}`}
+          >
+            QCM Test
+          </Link>
         </nav>
         
         <div className="header__actions">

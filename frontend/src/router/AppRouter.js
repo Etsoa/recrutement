@@ -5,11 +5,13 @@ import '../styles/variables.css';
 
 // Importation du Layout
 import Layout from '../components/Layout';
+import QCMLayout from '../components/QCMLayout';
 
 // Importation des pages
 import Home from '../pages/Home';
 import Annonces from '../pages/Annonces';
 import CandidaturePage from '../pages/CandidaturePage';
+import QCMPage from '../pages/QCMPage';
 import DetailQCM from '../pages/DetailQCM';
 import Historiques from '../pages/Historiques';
 import CVtest from '../pages/CVtest';
@@ -20,18 +22,30 @@ import Users from '../pages/Users';
 const AppRouter = () => {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/annonces" element={<Annonces />} />
-          <Route path="/candidature/:annonceId" element={<CandidaturePage />} />
-          <Route path="/detailQCM" element={<DetailQCM />} />
-          <Route path="/historique" element={<Historiques />} />
-          <Route path="/cv" element={<CVtest />} />
-          <Route path="/cv-list" element={<CVList />} />
-          <Route path="/users" element={<Users />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Route QCM sans Layout (pas de header/footer) */}
+        <Route path="/qcm" element={
+          <QCMLayout>
+            <QCMPage />
+          </QCMLayout>
+        } />
+        
+        {/* Autres routes avec Layout normal */}
+        <Route path="/*" element={
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/annonces" element={<Annonces />} />
+              <Route path="/candidature/:annonceId" element={<CandidaturePage />} />
+              <Route path="/detailQCM" element={<DetailQCM />} />
+              <Route path="/historique" element={<Historiques />} />
+              <Route path="/cv" element={<CVtest />} />
+              <Route path="/cv-list" element={<CVList />} />
+              <Route path="/users" element={<Users />} />
+            </Routes>
+          </Layout>
+        } />
+      </Routes>
     </Router>
   );
 };

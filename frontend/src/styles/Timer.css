@@ -1,0 +1,328 @@
+@import '../styles/variables.css';
+
+.timer-simple {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #374151;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px 16px;
+  background: rgba(59, 130, 246, 0.12);
+  border-radius: 10px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.timer-icon {
+  flex-shrink: 0;
+  color: #1e40af;
+}
+
+.timer-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.timer-text {
+  font-family: 'Courier New', monospace;
+  font-weight: 800;
+  color: #1e40af;
+  min-width: 28px;
+  text-align: center;
+}
+
+.timer-container:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #22c55e);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+.timer-container.warning {
+  border-color: #f59e0b;
+  background: #fefbf3;
+  animation: pulse-warning 1s ease-in-out infinite alternate;
+}
+
+.timer-container.warning:before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  transform: translateX(0);
+}
+
+.timer-container.time-up {
+  border-color: #ef4444;
+  background: #fef7f7;
+  animation: pulse-danger 0.8s ease-in-out infinite alternate;
+}
+
+.timer-container.time-up:before {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+  transform: translateX(0);
+}
+
+@keyframes pulse-warning {
+  from {
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+  }
+  to {
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+  }
+}
+
+@keyframes pulse-danger {
+  from {
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  }
+  to {
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.timer-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.timer-icon {
+  color: #6b7280;
+  flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+.timer-container.warning .timer-icon {
+  color: #f59e0b;
+  animation: rotate-warning 2s linear infinite;
+}
+
+.timer-container.time-up .timer-icon {
+  color: #ef4444;
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes rotate-warning {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+.timer-time {
+  font-family: 'Courier New', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  letter-spacing: 1px;
+  text-align: center;
+  flex: 1;
+  transition: color 0.3s ease;
+}
+
+.timer-container.warning .timer-time {
+  color: #f59e0b;
+}
+
+.timer-container.time-up .timer-time {
+  color: #ef4444;
+  animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0.5;
+  }
+}
+
+.timer-status {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+.timer-container.warning .timer-status {
+  color: #f59e0b;
+}
+
+.timer-container.time-up .timer-status {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.timer-progress {
+  width: 100%;
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.timer-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #22c55e);
+  border-radius: 3px;
+  transition: width 1s linear, background 0.3s ease;
+  position: relative;
+}
+
+.timer-progress-fill:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.timer-container.warning .timer-progress-fill {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.timer-container.time-up .timer-progress-fill {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.timer-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.timer-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.timer-btn:hover {
+  background: #e5e7eb;
+  color: #374151;
+  transform: translateY(-1px);
+}
+
+.timer-btn:active {
+  transform: translateY(0);
+}
+
+.timer-btn.start {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.timer-btn.start:hover {
+  background: #bbf7d0;
+  color: #166534;
+}
+
+.timer-btn.pause {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.timer-btn.pause:hover {
+  background: #fed7aa;
+  color: #c2410c;
+}
+
+.timer-btn.reset {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.timer-btn.reset:hover {
+  background: #fecaca;
+  color: #b91c1c;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .timer-container {
+    padding: 12px 16px;
+    min-width: 160px;
+  }
+  
+  .timer-time {
+    font-size: 20px;
+  }
+  
+  .timer-display {
+    gap: 8px;
+  }
+  
+  .timer-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+  
+  .timer-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .timer-container,
+  .timer-container:before,
+  .timer-progress-fill,
+  .timer-btn,
+  .timer-icon {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.timer-container:focus-within {
+  outline: 2px solid var(--primary-color, #2563eb);
+  outline-offset: 2px;
+}

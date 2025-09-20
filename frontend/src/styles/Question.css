@@ -1,0 +1,107 @@
+/* Question.css - Style pour le composant Question QCM */
+
+.question-container {
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  margin-bottom: 0;
+  box-shadow: none;
+  border: none;
+}
+
+.question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+}
+
+.question-number {
+  background: var(--color-primary);
+  color: white;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.question-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.question-text {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.answers-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding-left: var(--spacing-lg);
+}
+
+.answer-option {
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  transition: var(--transition);
+}
+
+.answer-option:hover {
+  background-color: var(--color-background-hover, rgba(0, 0, 0, 0.02));
+}
+
+/* Animation pour les réponses */
+.answer-option {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: slideInAnswer 0.3s ease forwards;
+}
+
+.answer-option:nth-child(1) { animation-delay: 0.1s; }
+.answer-option:nth-child(2) { animation-delay: 0.2s; }
+.answer-option:nth-child(3) { animation-delay: 0.3s; }
+.answer-option:nth-child(4) { animation-delay: 0.4s; }
+.answer-option:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes slideInAnswer {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* État désactivé */
+.question-container.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .question-container {
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .question-text {
+    font-size: var(--font-size-base);
+  }
+  
+  .answers-container {
+    padding-left: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+  
+  .question-number {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}

@@ -23,3 +23,7 @@ export { default as UserList } from './UserList';
 export { default as CV } from './CV';
 export { default as CVMiniature } from './CVMiniature';
 export { default as AnnonceCard } from './AnnonceCard';
+
+// Composants QCM
+export { default as Question } from './Question';
+export { default as Timer } from './Timer';
