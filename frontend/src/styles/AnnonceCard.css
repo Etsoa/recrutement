@@ -7,34 +7,12 @@
   padding: var(--spacing-2xl);
   max-width: 850px;
   margin: 0 auto;
-  transition: var(--transition);
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow);
   height: 520px;
   display: flex;
   flex-direction: column;
-}
-
-.annonce-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-hover));
-  opacity: 1;
-}
-
-.annonce-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-  border-color: rgba(22, 160, 133, 0.2);
-}
-
-.annonce-card:hover::before {
-  opacity: 0;
 }
 
 /* Header */
@@ -80,14 +58,6 @@
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--border-radius);
   border: 1px solid transparent;
-  transition: var(--transition);
-}
-
-.annonce-location:hover,
-.annonce-age:hover,
-.annonce-genre:hover {
-  border-color: var(--color-accent);
-  background: var(--color-background);
 }
 
 /* Contenu */

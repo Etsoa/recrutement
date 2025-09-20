@@ -6,9 +6,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import AnnonceCard from '../components/AnnonceCard';
 import StepIndicator from '../components/candidature/StepIndicator';
 import PersonalInfoStep from '../components/candidature/PersonalInfoStep';
-import ProfessionalStep from '../components/candidature/ProfessionalStep';
-import CompetencesStep from '../components/candidature/CompetencesStep';
-import UploadsStep from '../components/candidature/UploadsStep';
+import ProfessionalInfoStep from '../components/candidature/ProfessionalInfoStep';
 import SummaryStep from '../components/candidature/SummaryStep';
 import '../styles/CandidaturePage.css';
 
@@ -18,7 +16,7 @@ const CandidaturePage = () => {
   
   // État pour l'étape courante
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 5;
+  const totalSteps = 3;
   
   // États pour l'annonce
   const [annonce, setAnnonce] = useState(null);
@@ -40,10 +38,7 @@ const CandidaturePage = () => {
     nombre_enfants: '',
     
     // Formation
-    niveau: '',
-    filiere: '',
-    etablissement: '',
-    annee_obtention: '',
+    formations: [],
     
     // Expériences
     experiences: [],
@@ -53,9 +48,6 @@ const CandidaturePage = () => {
     
     // Qualités
     qualites: [],
-    
-    // Motivation
-    motivation: '',
     
     // Fichiers
     photo: null,
@@ -163,23 +155,49 @@ const CandidaturePage = () => {
         if (!formData.telephone?.trim()) newErrors.telephone = 'Le téléphone est requis';
         if (!formData.adresse?.trim()) newErrors.adresse = 'L\'adresse est requise';
         if (!formData.ville) newErrors.ville = 'La ville est requise';
+        // Vérification des formations
+        if (!formData.formations || formData.formations.length === 0) {
+          newErrors.formations = 'Au moins une formation est requise';
+        } else {
+          // Vérifier que chaque formation a une filière et au moins un niveau
+          formData.formations.forEach((formation, index) => {
+            if (!formation.filiere) {
+              newErrors[`formation_${index}_filiere`] = `La filière de la formation ${index + 1} est requise`;
+            }
+            if (!formation.niveaux || formation.niveaux.length === 0) {
+              newErrors[`formation_${index}_niveaux`] = `Au moins un niveau pour la formation ${index + 1} est requis`;
+            }
+          });
+        }
         break;
         
-      case 2: // Formation
-        if (!formData.niveau) newErrors.niveau = 'Le niveau d\'études est requis';
-        if (!formData.filiere) newErrors.filiere = 'La filière est requise';
+      case 2: // Informations professionnelles
+        // Au moins une expérience avec poste et entreprise
+        if (!formData.experiences || formData.experiences.length === 0) {
+          newErrors.experiences = 'Au moins une expérience professionnelle est requise';
+        } else {
+          // Vérifier que chaque expérience a les champs requis
+          formData.experiences.forEach((exp, index) => {
+            if (!exp.poste?.trim()) {
+              newErrors[`experience_${index}_poste`] = `Le poste de l'expérience ${index + 1} est requis`;
+            }
+            if (!exp.entreprise?.trim()) {
+              newErrors[`experience_${index}_entreprise`] = `L'entreprise de l'expérience ${index + 1} est requise`;
+            }
+            if (!exp.date_debut) {
+              newErrors[`experience_${index}_date_debut`] = `La date de début de l'expérience ${index + 1} est requise`;
+            }
+          });
+        }
+        // CV requis
+        if (!formData.cv) {
+          newErrors.cv = 'Le CV est requis';
+        }
         break;
         
-      case 3: // Compétences (pas de validation obligatoire)
-        break;
-        
-      case 4: // Téléchargements
-        if (!formData.cv) newErrors.cv = 'Le CV est requis';
-        break;
-        
-      case 5: // Récapitulatif (validation finale)
+      case 3: // Récapitulatif (validation finale)
         // Réexécuter toutes les validations
-        return validateStep(1) && validateStep(2) && validateStep(4);
+        return validateStep(1) && validateStep(2);
       default:
         // Cas par défaut pour les étapes non reconnues
         break;
@@ -253,29 +271,13 @@ const CandidaturePage = () => {
         );
       case 2:
         return (
-          <ProfessionalStep
+          <ProfessionalInfoStep
             formData={formData}
             updateFormData={updateFormData}
             errors={errors}
           />
         );
       case 3:
-        return (
-          <CompetencesStep
-            formData={formData}
-            updateFormData={updateFormData}
-            errors={errors}
-          />
-        );
-      case 4:
-        return (
-          <UploadsStep
-            formData={formData}
-            updateFormData={updateFormData}
-            errors={errors}
-          />
-        );
-      case 5:
         return (
           <SummaryStep
             formData={formData}
@@ -312,73 +314,76 @@ const CandidaturePage = () => {
   return (
     <div className="candidature-page">
       <div className="candidature-container">
-        {/* Titre principal */}
-        <div className="page-title">
-          <h1>Information candidature</h1>
-          <p className="page-subtitle">Complétez votre candidature en 5 étapes</p>
+        {/* Grand titre */}
+        <div className="main-title">
+          <h1>POSTULER POUR CE POSTE</h1>
         </div>
 
-        {/* Aperçu de l'annonce */}
-        {annonce && (
-          <AnnonceCard 
-            annonce={annonce}
-            hideActions={true}
-          />
-        )}
-
-        {/* Indicateur d'étapes */}
-        <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
-
-        {/* Contenu de l'étape courante */}
-        <div className="step-container">
-          {renderCurrentStep()}
+        {/* Aperçu de l'annonce en haut */}
+        <div className="annonce-preview-section">
+          {annonce && (
+            <AnnonceCard 
+              annonce={annonce}
+              hideActions={true}
+            />
+          )}
         </div>
 
-        {/* Navigation */}
-        <div className="step-navigation">
-          <div className="nav-buttons">
-            {currentStep > 1 && (
-              <Button 
-                onClick={goToPreviousStep}
-                variant="secondary"
-                disabled={isSubmitting}
-              >
-                ← Précédent
-              </Button>
-            )}
-            
-            <div className="nav-spacer"></div>
-            
-            {currentStep < totalSteps ? (
-              <Button 
-                onClick={goToNextStep}
-                variant="primary"
-                disabled={isSubmitting}
-              >
-                Suivant →
-              </Button>
-            ) : (
-              <Button 
-                onClick={handleSubmit}
-                variant="primary"
-                disabled={isSubmitting || !formData.cv}
-                className="submit-button"
-              >
-                {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma candidature'}
-              </Button>
-            )}
+        {/* Step Indicator en bas du preview */}
+        <div className="step-indicator-section">
+          <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
+        </div>
+
+        {/* Formulaire en bas */}
+        <div className="form-section">
+          {/* Contenu de l'étape courante */}
+          <div className="step-container">
+            {renderCurrentStep()}
           </div>
-        </div>
-        
-        {/* Indicateurs de progression */}
-        <div className="progress-info">
-          {currentStep === totalSteps && (
-            <div className="final-check">
-              {!formData.cv && (
-                <p className="warning">⚠️ CV requis pour envoyer votre candidature</p>
+
+          {/* Navigation */}
+          <div className="step-navigation">
+            <div className="nav-buttons">
+              {currentStep > 1 && (
+                <Button 
+                  onClick={goToPreviousStep}
+                  variant="secondary"
+                  disabled={isSubmitting}
+                >
+                  ← Précédent
+                </Button>
+              )}
+              
+              <div className="nav-spacer"></div>
+              
+              {currentStep < totalSteps ? (
+                <Button 
+                  onClick={goToNextStep}
+                  variant="primary"
+                  disabled={isSubmitting}
+                >
+                  Suivant →
+                </Button>
+              ) : (
+                <Button 
+                  onClick={handleSubmit}
+                  variant="primary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Envoi en cours...' : 'Envoyer ma candidature'}
+                </Button>
               )}
             </div>
-          )}
+          </div>
+          
+          {/* Indicateurs de progression */}
+          <div className="progress-info">
+            {currentStep === totalSteps && (
+              <div className="final-check">
+                <p className="info">✓ Vérifiez toutes vos informations avant d'envoyer</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
