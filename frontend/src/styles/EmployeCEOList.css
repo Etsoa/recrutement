@@ -1,0 +1,66 @@
+.employe-table-container {
+  padding: var(--spacing-lg);
+  background-color: var(--color-background);
+  min-height: 100vh;
+}
+
+.table-title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-xl);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+.employe-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.employe-table th,
+.employe-table td {
+  padding: var(--spacing-sm);
+  text-align: left;
+  font-size: var(--font-size-sm);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.employe-table th {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  position: relative;
+}
+
+.employe-table th:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.filter-row input {
+  width: 100%;
+  padding: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius);
+}
+
+.sort-indicator {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  margin-left: var(--spacing-xs);
+}
+
+.employe-table tbody tr:hover {
+  background-color: var(--color-surface-hover);
+}
+
+.no-data {
+  text-align: center;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-lg);
+}
