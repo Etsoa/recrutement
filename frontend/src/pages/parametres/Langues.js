@@ -10,6 +10,7 @@ function Langues() {
   const [parametrages, setparametrages] = useState([]);
   const [langue, setLangue] = useState('');
   const [showListeLangues, setShowListeLangues] = useState(false);
+  
 
   useEffect(() => {
     const fetchData = async () => {

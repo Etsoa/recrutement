@@ -11,11 +11,13 @@ const situationMatrimonialesService = require('../services/situationMatrimoniale
 const niveauFiliereService = require('../services/niveauFiliereAnnoncesService');
 const experienceAnnoncesService = require('../services/experienceAnnoncesService');
 const annoncesService = require('../services/AnnoncesService');
+const annoncesCompletService = require('../services/annoncesCompletService');
 const langueAnnoncesService = require('../services/langueAnnoncesService');
 const qualiteAnnoncesService = require('../services/qualiteAnnoncesService');
 const qcmAnnoncesService = require('../services/qcmAnnoncesService');
 const questionQcmsService = require('../services/questionQcmsService');
 const reponseQcmsService = require('../services/reponseQcmsService');
+const statusAnnonceService = require('../services/statusAnnoncesService');
 
 
 exports.getAllUnites = async (req, res) => {
@@ -66,6 +68,16 @@ exports.getUniteById = async (req, res) => {
   }
 };
 
+exports.getPostesByIdUnite = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await postesService.getPostesByIdUnite(id);
+    res.json({ message: 'Poste récupérée avec succès', data, success: true });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération de l’unité', data: null, success: false });
+  }
+};
+
 exports.getAllParametres = async (req, res) => {
   try {
     const postes = await postesService.getAllPostes();
@@ -98,14 +110,24 @@ exports.getAllParametres = async (req, res) => {
   }
 };
 
+exports.getLanguesByAnnonce = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const langues = await langueAnnoncesService.getLangueAnnoncesByIdAnnonce(id);
+    res.json({ message: 'Liste des paramètres récupérée avec succès', langues, success: true });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des paramètres', data: null, success: false });
+  }
+};
+
 exports.getQuestionsReponses = async (req, res) => {
   try {
     const questions = await questionQcmsService.getAllQuestionQcms();
     const reponses = await reponseQcmsService.getAllReponseQcms();
-       const data = {
+    const data = {
       questions,
       reponses
-       };
+    };
     console.log("Data dans controller", data);
     res.json({ message: 'Liste des questions récupérée avec succès', data, success: true });
   } catch (err) {
@@ -215,7 +237,7 @@ exports.createQualite = async (req, res) => {
 };
 
 exports.createSituationMatrimoniale = async (req, res) => {
-  try { 
+  try {
     console.log("Body reçu:", req.body);
     const situationMatrimoniale = await situationsMatrimonialesService.createSituationMatrimoniale(req.body);
     res.json({ message: 'Situation matrimoniale créée avec succès', data: situationMatrimoniale, success: true });
@@ -283,7 +305,7 @@ exports.addQualitesAnnonce = async (req, res) => {
     console.log("body recu", req.body);
     const qualite = await qualiteAnnoncesService.createQualiteAnnonce(req.body);
     res.json({ message: 'Qualité créée avec succès', data: qualite, success: true });
-  }catch (err) {
+  } catch (err) {
     console.error("Erreur lors de l'insertion du Qualite:", err);
     res.status(500).json({ message: 'Erreur lors de la création d Qualite', data: null, success: false });
   }
@@ -333,3 +355,35 @@ exports.createQcm = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la création du QCM', data: null, success: false });
   }
 };
+
+exports.statusAnnonce = async (req, res) => {
+  try {
+    console.log("Body reçu:", req.body);
+    const status = await statusAnnonceService.createStatusAnnonce(req.body);
+    res.json({ message: 'Status ajouté avec succès', data: status, success: true });
+  } catch (err) {
+    console.error("Erreur dans status:", err);
+    res.status(500).json({ message: 'Erreur lors de la création du status', data: null, success: false });
+  }
+}
+
+exports.getAllAnnonces = async (req, res) => {
+  try {
+    const annonces = await annoncesCompletService.getAll();
+    res.json({ message: 'recuperation des annonces avec succès', data: annonces, success: true });
+  } catch (err) {
+    console.error("Erreur dans status:", err);
+    res.status(500).json({ message: 'Erreur lors de la recuperation du annonces', data: null, success: false });
+  }
+}
+
+exports.getAnnonceById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const annonces = await annoncesCompletService.getById(id);
+    res.json({ message: 'recuperation des annonces avec succès', data: annonces, success: true });
+  } catch (err) {
+    console.error("Erreur dans status:", err);
+    res.status(500).json({ message: 'Erreur lors de la recuperation du annonces', data: null, success: false });
+  }
+}

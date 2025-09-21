@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllParametres, createNiveauFiliere, createAnnonce, createExperienceAnnonce, createLanguesAnnonce, createQualitesAnnonce } from "../api/annonceApi";
+import { getAllParametres, createNiveauFiliere, createAnnonce, createExperienceAnnonce, createLanguesAnnonce, createQualitesAnnonce,statusAnnonce } from "../api/annonceApi";
+import { getPostesByIdUnite } from "../api/parametreApi";
 import Input, { Select } from "../components/Input";
 import { Button } from "../components";
 import '../styles/Parametrage.css';
@@ -8,7 +9,10 @@ import Header from "../components/Header";
 
 function CreateAnnonce() {
   const navigate = useNavigate();
+  const savedUnite = JSON.parse(localStorage.getItem("unite"));
+  const [unite] = useState(savedUnite);
   const [parametrages, setparametrages] = useState([]);
+  const [listePostes, setListePostes] = useState([]);
   const [postes, setPostes] = useState(0);
   const [villes, setVilles] = useState(0);
   const [ageMin, setAgeMin] = useState(0);
@@ -29,6 +33,8 @@ function CreateAnnonce() {
       try {
         const response = await getAllParametres();
         setparametrages(response.data);
+        const responsePostes = await getPostesByIdUnite(parseInt(unite.id_unite));
+        setListePostes(responsePostes); // on met directement la liste
       } catch (error) {
         console.error(error);
       }
@@ -89,6 +95,14 @@ function CreateAnnonce() {
         for (let item of qualitesData) {
           await createQualitesAnnonce(item);
         }
+        const statusAnnonceData = {
+          id_annonce: response.data.id_annonce,
+          id_type_status_annonce: 1,
+          date_changement: new Date().toISOString().split('T')[0], // juste la date
+          id_unite: parseInt(unite.id_unite)
+        };
+        await statusAnnonce(statusAnnonceData);
+        // ici 
         // Réinitialiser les champs du formulaire
         setPostes(0);
         setVilles(0);
@@ -106,7 +120,7 @@ function CreateAnnonce() {
       }
     } catch (error) {
       console.error(error);
-      alert("Erreur serveur frgthyj", error);
+      alert("Remplissez toutes les informations", error.message);
     }
   };
 
@@ -140,7 +154,7 @@ function CreateAnnonce() {
           <div className="form-container">
             <Select
               label="Poste"
-              options={parametrages.postes?.map((unite) => ({
+              options={listePostes.data?.map((unite) => ({
                 value: unite.id_poste,
                 label: unite.valeur
               }))}

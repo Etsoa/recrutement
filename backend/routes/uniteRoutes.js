@@ -10,8 +10,16 @@ router.get('/id/:id', uniteController.getUniteById);
 
 // dans parametrages des besoins (CR)
 router.get('/parametres', uniteController.getAllParametres);
+router.get('/postesByUnite/:id', uniteController.getPostesByIdUnite);
 router.get('/questionsReponses', uniteController.getQuestionsReponses);
 router.get('/qcmAnnonce/:id', uniteController.getQCMAnnonce);
+router.get('/languesAnnonce/:id', uniteController.getLanguesByAnnonce);
+// router.get('/annonces/:id', uniteController.getAnnonceById);
+// router.get('/annonces/:id', uniteController.getAnnonceById);
+// router.get('/annonces/:id', uniteController.getAnnonceById);
+// router.get('/annonces/:id', uniteController.getAnnonceById);
+// router.get('/annonces/:id', uniteController.getAnnonceById);
+router.post('/annonces', uniteController.getAllAnnonces);
 
 // partie C du parametrages
 router.post('/create/poste', uniteController.createPoste);
@@ -31,15 +39,13 @@ router.post('/create/reponses', uniteController.createReponseQcm);
 
 // table annonce, qcm annonce, status_annonce, competences_annonce + status en attente
 router.post('/create/annonce', uniteController.createAnnonce);
+router.post('/create/statusAnnonce', uniteController.statusAnnonce);
 router.post('/add/niveau_filiere', uniteController.addNiveauFiliere);
 router.post('/add/experienceAnnonce', uniteController.addExperienceAnnonce);
 router.post('/add/langues', uniteController.addLanguesAnnonce);
 router.post('/add/qualites', uniteController.addQualitesAnnonce);
 
 // liste annonce(components)
-// router.get('/annonces', uniteController.getAllAnnonces);
-// fiche annonce
-// router.get('/annonces/:id', uniteController.getAnnonceById);
 // table envoi qcm candidat(email)
 // router.post('/create/qcm_candidat', uniteController.createQcmCandidat);
 

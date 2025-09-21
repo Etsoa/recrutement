@@ -28,25 +28,25 @@ export const createAnnonce = async (data) => {
 };
 
 export const createNiveauFiliere = async (data) => {
-  try{
+  try {
     const response = await api.post('/unite/add/niveau_filiere', data);
-    return response.data; 
+    return response.data;
   } catch (error) {
     throw error;
   }
 }
 
 export const createExperienceAnnonce = async (data) => {
-  try{
+  try {
     const response = await api.post('/unite/add/experienceAnnonce', data);
-    return response.data; 
+    return response.data;
   } catch (error) {
     throw error;
   }
 }
 
 export const createLanguesAnnonce = async (data) => {
-  try{
+  try {
     const response = await api.post('/unite/add/langues', data);
     return response.data;
   } catch (error) {
@@ -55,13 +55,13 @@ export const createLanguesAnnonce = async (data) => {
 };
 
 export const createQualitesAnnonce = async (data) => {
-  try{
+  try {
     const response = await api.post('/unite/add/qualites', data);
     return response.data;
   } catch (error) {
     throw error;
   }
-}; 
+};
 
 export const getQCMAnnonce = async (data) => {
   try {
@@ -80,3 +80,39 @@ export const createQcmAnnonce = async (data) => {
     throw error;
   }
 };
+
+export const statusAnnonce = async (data) => {
+  try {
+    const response = await api.post('/unite/create/statusAnnonce', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAllAnnonces = async (data) => {
+  try {
+    const response = await api.post('/unite/annonces', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAnnonceById = async (id) => {
+  try {
+    const response = await api.get(`/unite/annonces/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getLanguesByAnnonce = async (id) => {
+  try {
+    const response = await api.get(`/unite/languesAnnonce/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

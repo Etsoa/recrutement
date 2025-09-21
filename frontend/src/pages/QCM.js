@@ -15,19 +15,15 @@ function QCM() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Récupérer toutes les questions possibles
         const response = await getQuestionsReponses();
         setAllQuestions(response.data.questions || []);
 
-        // Récupérer les QCM liés à l'annonce
         const qcmResponse = await getQCMAnnonce(id);
         if (qcmResponse.success) {
-          // si c’est un seul objet, on le met dans un tableau
           const data = Array.isArray(qcmResponse.data)
             ? qcmResponse.data
             : [qcmResponse.data];
           setDonnees(data);
-
           // pré-sélection des questions déjà associées
           setSelectedQuestions(data.map((q) => q.id_question_qcm));
         }

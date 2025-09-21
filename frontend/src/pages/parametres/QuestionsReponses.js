@@ -14,11 +14,13 @@ function QuestionsReponses() {
   const [newReponse, setNewReponse] = useState("");
   const [newModalite, setNewModalite] = useState(false);
   const [showListe, setShowListe] = useState(false);
+      const [unite, setUnite] = useState(localStorage.getItem('unite'));
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getQuestionsReponses();
+        const response = await getQuestionsReponses(unite.id_unite);
         setDonnees(response.data);
       } catch (error) {
         console.error(error);

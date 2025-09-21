@@ -13,6 +13,12 @@ const getPosteById = async (id) => {
     return await Poste.findByPk(id);
 };
 
+const getPostesByIdUnite = async (id_unite) => {
+  return await Poste.findAll({
+    where: { id_unite }
+  });
+};
+
 const updatePoste = async (id, data) => {
     return await Poste.update(data, { where: { id } });
 };
@@ -24,6 +30,7 @@ const deletePoste = async (id) => {
 module.exports = {
     createPoste,
     getAllPostes,
+    getPostesByIdUnite,
     getPosteById,
     updatePoste,
     deletePoste

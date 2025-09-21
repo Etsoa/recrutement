@@ -34,7 +34,6 @@ function Unites() {
     try {
       const res = await loginUnite(selected, password);
       if (res.success) {
-        setMessage("Connexion réussie !");
         navigate(`/back-office/dashboard`);
       } else {
         setMessage("Verifiez l'unité selectionné et mot de passe.");

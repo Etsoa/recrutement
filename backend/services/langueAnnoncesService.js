@@ -7,6 +7,12 @@ const createLangueAnnonce = async (data) => {
 const getAllLangueAnnonces = async () => {
     return await LangueAnnonce.findAll();
 };
+const getLangueAnnoncesByIdAnnonce = async (id_annonce) => {
+    return await LangueAnnonce.findAll({
+        where: { id_annonce }
+    });
+};
+
 
 const getLangueAnnonceById = async (id) => {
     return await LangueAnnonce.findByPk(id);
@@ -23,6 +29,7 @@ const deleteLangueAnnonce = async (id) => {
 module.exports = {
     createLangueAnnonce,
     getAllLangueAnnonces,
+    getLangueAnnoncesByIdAnnonce,
     getLangueAnnonceById,
     updateLangueAnnonce,
     deleteLangueAnnonce

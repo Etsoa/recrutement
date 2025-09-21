@@ -10,6 +10,7 @@ function Genres() {
   const [parametrages, setparametrages] = useState([]);
   const [genres, setGenres] = useState('');
   const [showListeGenres, setShowListeGenres] = useState(false);
+  
 
   useEffect(() => {
     const fetchData = async () => {

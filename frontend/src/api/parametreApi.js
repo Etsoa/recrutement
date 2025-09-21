@@ -9,6 +9,15 @@ const api = axios.create({
   }
 });
 
+export const getPostesByIdUnite = async (id) => {
+  try {
+    const response = await api.get(`/unite/postesByUnite/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getAllParametres = async () => {
   try {
     const response = await api.get('/unite/parametres');

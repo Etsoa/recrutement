@@ -9,7 +9,6 @@ function App() {
     <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/annonces" element={<Annonces />} />
           <Route path="/detailQCM" element={<DetailQCM />} />
           <Route path="/historique" element={<Historiques />} />
           <Route path="/back-office" element={<Unites />} />
@@ -17,6 +16,7 @@ function App() {
           <Route path="/back-office/parametres" element={<Parametres />} />
           <Route path="/back-office/createAnnonce" element={<CreateAnnonce />} />
           <Route path="/back-office/createQCM/:id"  element={<QCM />}/>
+          <Route path="/back-office/listeAnnonce" element={<Annonces />} />
         </Routes>
     </Router>
   );

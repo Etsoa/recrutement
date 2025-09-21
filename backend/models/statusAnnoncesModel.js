@@ -3,6 +3,7 @@ const db = require('../config/db');
 
 const Annonce = require('./annoncesModel');
 const TypeStatusAnnonce = require('./typeStatusAnnoncesModel');
+const Unite = require('./unitesModel');
 
 const StatusAnnonce = db.define('StatusAnnonce', {
   id_status_annonce: {
@@ -33,14 +34,19 @@ const StatusAnnonce = db.define('StatusAnnonce', {
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
+  },
+    id_unite: {                   // ← il manquait cette colonne
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
-  tableName: 'status_annonces',
+  tableName: 'status_annonce',
   timestamps: false
 });
 
 // Associations
 StatusAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 StatusAnnonce.belongsTo(TypeStatusAnnonce, { foreignKey: 'id_type_status_annonce' });
+StatusAnnonce.belongsTo(Unite, { foreignKey: 'id_unite' });
 
 module.exports = StatusAnnonce;

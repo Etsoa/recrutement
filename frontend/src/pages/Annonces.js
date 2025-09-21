@@ -1,59 +1,50 @@
-import React, { useState, useEffect } from "react";
-import { Input, Textarea, Select, SearchInput } from "../components/Input";
+import { useState, useEffect } from "react";
+import { getAllAnnonces } from "../api/annonceApi";
 import Header from "../components/Header";
 import Annonce from "../components/AnnonceBO";
-
+import { Button } from "../components";
+import { useNavigate } from "react-router-dom";
+import '../styles/Parametrage.css';
 
 function Annonces() {
-  // const [post, setPost] = useState("");
-  // const [ville, setVille] = useState("");
-  // const [ageMin, setAgeMin] = useState(0);
-  // const [ageMax, setAgeMax] = useState(0);
-  // const [genre, setGenre] = useState("");
-  // const [nbreEnfant, setNbreEnfant] = useState(0);
-  // const [situationMatrimoniale, setSituationMatrimoniale] = useState("");
-  // const [langues, setLangues] = useState([]);
-  // const [qualites, setQualites] = useState([]);
-  // const [experiences, setExperiences] = useState([]);
-  // const [filiere, setFiliere] = useState([]);
-  // const [niveau, setNiveau] = useState([]);
+  const navigate = useNavigate();
   const [listeAnnonces, setlisteAnnonces] = useState([]);
-  const [formData, setFormData] = useState({
-    id: 1,
-    post: "Développeur fullstack",
-    ville: "Antananarivo",
-    ageMin: 25,
-    ageMax: 35,
-    genre: "Homme",
-    langues: ["Français", "Anglais", "Malagasy"],
-    qualites: ["Rigoureux", "Autonome", "Curieux"],
-    experiences: [
-      { poste: "Développeur Frontend", duree: "2 ans" },
-      { poste: "Développeur Backend", duree: "1 an" }
-    ],
-    filiere: ["Informatique", "Mathématiques"],
-    niveau: ["Licence", "Master", "Doctorat"]
-  });
   const [showDetails, setShowDetails] = useState(false);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllAnnonces();
+        setlisteAnnonces(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const data = await getUsers();
-  //       setMessage(data.message);
-  //       setUsers(data.users || []);
-  //     } catch (error) {
-  //       setMessage("Hello World from Frontend! (Backend not connected)");
-  //     }
-  //   };
 
-  //   fetchData();
-  // }, []);
   return (
     <div>
       <Header />
-      <Annonce formData={formData} showDetails={showDetails} setShowDetails={setShowDetails} />
+      <Button
+        variant="primary"
+        onClick={() => navigate(-1)}>
+        Retour
+      </Button>
+      <h1>Liste des annonces:</h1>
+      {listeAnnonces.length === 0 ? (
+        <p>Aucune annonce trouvée</p>
+      ) : (
+        listeAnnonces.map((annonce) => (
+          <Annonce
+            key={annonce.id_annonce}
+            annonce={annonce}   // 👈 passe l’objet complet
+            showDetails={showDetails}
+            setShowDetails={setShowDetails}
+          />
+        ))
+      )}
     </div>
   );
 }
