@@ -31,7 +31,7 @@ const Employe = db.define('Employe', {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  id_type_status_employes: {
+  id_type_status_employe: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -49,6 +49,6 @@ const Employe = db.define('Employe', {
 // Associations
 Employe.belongsTo(Poste, { foreignKey: 'id_poste' });
 Employe.belongsTo(Tiers, { foreignKey: 'id_tiers' });
-Employe.belongsTo(TypeStatusEmploye, { foreignKey: 'id_type_status_employes' });
+Employe.belongsTo(TypeStatusEmploye, { foreignKey: 'id_type_status_employe' });
 
 module.exports = Employe;

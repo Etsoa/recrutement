@@ -32,27 +32,68 @@ const SuggestionTable = () => {
     }));
   };
 
-  const handleSubmit = (id) => {
-    const decision = decisions[id];
-    if (!decision || decision.status === "refuser") {
-      alert("Suggestion refusée.");
+  const handleSubmit = async (s) => {
+    const decision = decisions[s.id_candidat];
+
+    if (!decision) {
+      alert("Veuillez choisir une décision.");
       return;
+    }
+
+    if (decision.status === "refuser") {
+      try {
+        const res = await fetch("http://localhost:5000/api/ceo/reject-suggestion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_ceo_suggestion: s.id_ceo_suggestion })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert("Suggestion refusée avec succès !");
+          setSuggestions((prev) =>
+            prev.filter((item) => item.id_ceo_suggestion !== s.id_ceo_suggestion)
+          );
+        } else {
+          alert("Erreur : " + data.message);
+        }
+      } catch (error) {
+        console.error("Erreur API reject:", error);
+      }
     }
 
     if (decision.status === "valider") {
       if (!decision.date_debut || !decision.duree) {
-        alert("Date début et durée sont obligatoires pour valider.");
+        alert("Date début et durée sont obligatoires.");
         return;
       }
 
-      // 👉 Ici tu peux envoyer avec fetch/axios vers ton backend
-      console.log("Données envoyées :", {
-        id_candidat: id,
-        date_debut: decision.date_debut,
-        duree: decision.duree
-      });
+      try {
+        const res = await fetch("http://localhost:5000/api/ceo/validate-suggestion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id_ceo_suggestion: s.id_ceo_suggestion,
+            id_employe: s.id_candidat, // ⚠️ Vérifie ici si c'est bien l'id_employe attendu
+            date_debut: decision.date_debut,
+            duree: decision.duree,
+            id_poste: s.Candidat.Annonce.Poste.id_poste,
+            id_tiers: s.Candidat.id_tiers
+          })
+        });
 
-      alert("Contrat d’essai validé !");
+        const data = await res.json();
+        if (data.success) {
+          alert("Contrat d’essai validé !");
+          setSuggestions((prev) =>
+            prev.filter((item) => item.id_ceo_suggestion !== s.id_ceo_suggestion)
+          );
+        } else {
+          alert("Erreur : " + data.message);
+        }
+      } catch (error) {
+        console.error("Erreur API validate:", error);
+      }
     }
   };
 
@@ -119,7 +160,7 @@ const SuggestionTable = () => {
                   )}
                 </td>
                 <td>
-                  <button onClick={() => handleSubmit(s.id_candidat)}>Envoyer</button>
+                  <button onClick={() => handleSubmit(s)}>Envoyer</button>
                 </td>
               </tr>
             );

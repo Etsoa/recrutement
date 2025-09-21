@@ -5,6 +5,10 @@ const Candidats = require('../models/candidatsModel');
 const Tiers = require('../models/tiersModel');
 const CeoEmployesView = require('../models/ceoEmployesViewModel');
 const ContratEssai = require('../models/contratEssaisModel');
+const ContratEssaisService = require('./contratEssaisService');
+const Annonces = require('../models/annoncesModel');
+const Postes = require('../models/postesModel');
+const EmployesService = require('../services/employesService');
 
 const loginCeo = async (email, mot_de_passe) => {
   const type_status_employe = 'Actif';
@@ -73,6 +77,16 @@ const getAllSuggestsWaitingValidation = async () => {
             model: Tiers,
             as: 'Tier',
             attributes: ['nom', 'prenom', 'email']
+          },
+          {
+            model: Annonces,
+            as: 'Annonce',
+            attributes: ['id_annonce'],
+            include: [{
+              model: Postes,
+              as: 'Poste',
+              attributes: ['id_poste']
+            }]
           }
         ]
       }
@@ -113,10 +127,43 @@ const refuserSuggestion = async (id_ceo_suggestion) => {
   }
 }
 
+const accepterSuggestion = async (id_ceo_suggestion, id_employe, date_debut, duree, id_poste, id_tiers) => {
+  try {
+    const suggestion = await CeoSuggestions.findByPk(id_ceo_suggestion);
+
+    if (!suggestion) {
+      return {
+        success: false,
+        message: "Suggestion introuvable"
+      };
+    }
+
+    // Mise à jour du statut à 1 (valide)
+    await suggestion.update({ id_type_status_suggestion: 1 });
+
+    await ContratEssaisService.createContratEssai({ id_employe: id_employe, date_debut: date_debut, duree: duree });
+    // id_type_status_employe tokony 6 ny en contrat d'essai
+    await EmployesService.createEmploye({id_tiers: id_tiers, id_type_status_employe: 6, id_poste: id_poste})
+
+    return {
+      success: true,
+      message: "Suggestion refusée avec succès"
+    };
+  } catch (error) {
+    console.error("Erreur refuserSuggestion:", error);
+    return {
+      success: false,
+      message: "Erreur lors du refus de la suggestion",
+      error: error.message
+    };
+  }
+}
+
 module.exports = {
   loginCeo,
   getAllSuggests,
   getAllEmployes,
   getAllSuggestsWaitingValidation,
-  refuserSuggestion
+  refuserSuggestion,
+  accepterSuggestion
 }

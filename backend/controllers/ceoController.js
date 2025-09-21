@@ -167,3 +167,43 @@ exports.refuserSuggestion = async (req, res) => {
     });
   }
 };
+
+exports.accepterSuggestion = async (req, res) => {
+  try {
+    const {
+      id_ceo_suggestion,
+      id_employe,
+      date_debut,
+      duree,
+      id_poste,
+      id_tiers } = req.body;
+
+    if (!id_ceo_suggestion) {
+      return res.status(400).json({
+        success: false,
+        message: "id_ceo_suggestion est requis",
+        data: null
+      });
+    }
+
+    ceoService.accepterSuggestion(
+      id_ceo_suggestion, 
+      id_employe, 
+      date_debut, 
+      duree, 
+      id_poste, 
+      id_tiers);
+
+    return res.json({
+      success: true,
+      message: "Suggestion accepte avec succès",
+      data: null
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Erreur serveur lors du refus de la suggestion",
+      data: null
+    });
+  }
+}
