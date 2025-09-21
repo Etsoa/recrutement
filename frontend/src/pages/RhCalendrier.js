@@ -173,44 +173,57 @@ const RhCalendar = () => {
                 <p>Gestion des entretiens</p>
               </div>
             </div>
+            <div className="header-center">
+              {/* Navigation du calendrier */}
+              <div className="calendar-navigation">
+                <button onClick={goToPreviousMonth} className="nav-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                  </svg>
+                </button>
+
+                <h2 className="month-title">
+                  {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                </h2>
+
+                <button onClick={goToNextMonth} className="nav-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
+                </button>
+              </div>
+
+            </div>
 
             <div className="header-right">
-              <button onClick={goToToday} className="btn btn--primary">
-                Aujourd'hui
-              </button>
+              <div className="calendar-jump">
+                <div className="month-year-selector">
+                  {/* Mois */}
+                  <select
+                    value={currentDate.getMonth()}
+                    onChange={(e) => setCurrentDate(new Date(currentDate.getFullYear(), Number(e.target.value), 1))}
+                  >
+                    {monthNames.map((m, i) => (
+                      <option key={i} value={i}>{m}</option>
+                    ))}
+                  </select>
+
+                  {/* Année */}
+                  <select
+                    value={currentDate.getFullYear()}
+                    onChange={(e) => setCurrentDate(new Date(Number(e.target.value), currentDate.getMonth(), 1))}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => currentDate.getFullYear() - 5 + i).map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation rapide */}
-        <div className="calendar-jump">
-          <input 
-            type="month" 
-            value={`${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}`} 
-            onChange={handleJumpMonth}
-          />
-        </div>
-
-        {/* Navigation du calendrier */}
-        <div className="calendar-navigation">
-          <button onClick={goToPreviousMonth} className="btn btn--outline nav-btn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="15,18 9,12 15,6"></polyline>
-            </svg>
-            Précédent
-          </button>
-
-          <h2 className="month-title">
-            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-          </h2>
-
-          <button onClick={goToNextMonth} className="btn btn--outline nav-btn">
-            Suivant
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="9,18 15,12 9,6"></polyline>
-            </svg>
-          </button>
-        </div>
 
         {/* Calendrier principal */}
         <div className="calendar-main">
