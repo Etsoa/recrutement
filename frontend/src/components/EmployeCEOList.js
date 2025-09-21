@@ -60,7 +60,6 @@ const EmployeCEOList = () => {
   const visibleColumns = [
     "nom",
     "prenom",
-    "date_naissance",
     "nombre_enfants",
     "contact",
     "email",
@@ -72,6 +71,20 @@ const EmployeCEOList = () => {
     "poste",
     "unite",
   ];
+
+  // Colonnes avec datalist
+  const datalistColumns = [
+    "genre",
+    "situation_matrimoniale",
+    "ville",
+    "type_status_employe",
+    "poste",
+    "unite",
+  ];
+
+  // Récupère les valeurs uniques pour une colonne
+  const getUniqueValues = (col) =>
+    [...new Set(employes.map((emp) => emp[col]).filter(Boolean))];
 
   return (
     <div className="employe-table-container fade-in">
@@ -93,12 +106,29 @@ const EmployeCEOList = () => {
           <tr className="filter-row">
             {visibleColumns.map((col) => (
               <th key={col}>
-                <input
-                  type="text"
-                  placeholder={`Filtrer ${col}`}
-                  value={filters[col] || ""}
-                  onChange={(e) => handleFilterChange(e, col)}
-                />
+                {datalistColumns.includes(col) ? (
+                  <>
+                    <input
+                      type="text"
+                      placeholder={`Filtrer ${col}`}
+                      value={filters[col] || ""}
+                      onChange={(e) => handleFilterChange(e, col)}
+                      list={`${col}-list`}
+                    />
+                    <datalist id={`${col}-list`}>
+                      {getUniqueValues(col).map((val, idx) => (
+                        <option key={idx} value={val} />
+                      ))}
+                    </datalist>
+                  </>
+                ) : (
+                  <input
+                    type="text"
+                    placeholder={`Filtrer ${col}`}
+                    value={filters[col] || ""}
+                    onChange={(e) => handleFilterChange(e, col)}
+                  />
+                )}
               </th>
             ))}
           </tr>
