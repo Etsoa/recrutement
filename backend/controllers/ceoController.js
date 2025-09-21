@@ -1,4 +1,5 @@
 const ceoService = require('../services/ceoService');
+const contratService = require('../services/contratEssaisService');
 
 // Mbola tsy mandeha
 exports.getAllCeos = async (req, res) => {
@@ -186,10 +187,10 @@ exports.accepterSuggestion = async (req, res) => {
     }
 
     ceoService.accepterSuggestion(
-      id_ceo_suggestion, 
-      date_debut, 
-      duree, 
-      id_poste, 
+      id_ceo_suggestion,
+      date_debut,
+      duree,
+      id_poste,
       id_tiers);
 
     return res.json({
@@ -217,6 +218,19 @@ exports.getEmpEnContratDEssai = async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: 'Erreur lors de la récupération des employés',
+      data: null,
+      success: false
+    });
+  }
+}
+
+exports.renewContract = async (req, res) => {
+  try {
+    const contrat = req.body;
+    await contratService.createContratEssai(contrat);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
       data: null,
       success: false
     });

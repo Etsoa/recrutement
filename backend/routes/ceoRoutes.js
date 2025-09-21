@@ -20,5 +20,6 @@ router.post('/validate-suggestion', ceoController.accepterSuggestion);
 router.post('/reject-suggestion', ceoController.refuserSuggestion);
 
 router.get('/emp-contrat-essai', ceoController.getEmpEnContratDEssai);
+router.post('/renouveler-contrat', ceoController.renewContract);
 
 module.exports = router;
