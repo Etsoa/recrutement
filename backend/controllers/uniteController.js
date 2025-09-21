@@ -44,6 +44,32 @@ exports.getAnnonceById = async (req, res) => {
   }
 };
 
+exports.getCandidatById = async (req, res) => {
+  try {
+    const id = req.params.id; // ID depuis l'URL
+    const data = await traitementAnnonceService.getCandidatById(id);
+    if (!data) {
+      return res.status(404).json({
+        message: 'Candidat non trouvé',
+        data: null,
+        success: false
+      });
+    }
+    res.json({
+      message: 'Candidat récupéré avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération du candidat',
+      data: null,
+      success: false
+    });
+  }
+};
+
 
 
 // exports.loginUnite = async (req, res) => {

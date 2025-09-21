@@ -4,6 +4,7 @@ const db = require('../config/db');
 const Poste = require('./postesModel');
 const Ville = require('./villesModel');
 const Genre = require('./genresModel');
+const Unite = require('./unitesModel');
 
 const Annonce = db.define('Annonce', {
   id_annonce: {
@@ -48,6 +49,16 @@ const Annonce = db.define('Annonce', {
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
+  },
+  id_unite: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Unite,
+      key: 'id_unite'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   }
 }, {
   tableName: 'annonces',
@@ -58,5 +69,6 @@ const Annonce = db.define('Annonce', {
 Annonce.belongsTo(Poste, { foreignKey: 'id_poste' });
 Annonce.belongsTo(Ville, { foreignKey: 'id_ville' });
 Annonce.belongsTo(Genre, { foreignKey: 'id_genre' });
+Annonce.belongsTo(Unite, { foreignKey: 'id_unite' });
 
 module.exports = Annonce;

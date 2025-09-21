@@ -2,11 +2,14 @@ const express = require('express');
 const router = express.Router();
 const uniteController = require('../controllers/uniteController');
 
-// liste annonce(components)
+// liste annonce(components) PAR UNITE
 router.get('/annonces', uniteController.getAllAnnonces);
 
 // fiche annonce
 router.get('/annonce/:id', uniteController.getAnnonceById);
+
+// fiche candidat
+router.get('/candidat/:id', uniteController.getCandidatById);
 
 // // table envoi qcm candidat(email)
 // router.post('/create/qcm_candidat', uniteController.createQcmCandidat);

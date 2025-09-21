@@ -68,7 +68,8 @@ CREATE TABLE annonces (
     id_ville INTEGER REFERENCES villes(id_ville) ON DELETE CASCADE,
     age_min INTEGER,
     age_max INTEGER,
-    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE
+    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE,
+    id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE
 );
 
 CREATE TABLE qcm_annonces (

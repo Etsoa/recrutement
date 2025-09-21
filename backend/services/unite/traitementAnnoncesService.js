@@ -111,80 +111,43 @@ exports.getAnnonceById = async (id) => {
       ]
     });
 
-    // Pour chaque candidat, récupérer ses détails et ses autres annonces
     const candidatsDetails = await Promise.all(
-      candidats.map(async (c) => {
-        const tiersId = c.id_tiers;
+    candidats.map(async (c) => {
+      const tiersId = c.id_tiers;
 
-        // Détails du tiers
-        const languesTiers = await LangueTiers.findAll({
-          where: { id_tiers: tiersId },
-          include: [{ model: Langue, attributes: ['valeur'] }]
-        });
+      // Détails du tiers
+      const languesTiers = await LangueTiers.findAll({
+        where: { id_tiers: tiersId },
+        include: [{ model: Langue, attributes: ['valeur'] }]
+      });
 
-        const qualitesTiers = await QualiteTiers.findAll({
-          where: { id_tiers: tiersId },
-          include: [{ model: Qualite, attributes: ['valeur'] }]
-        });
+      const qualitesTiers = await QualiteTiers.findAll({
+        where: { id_tiers: tiersId },
+        include: [{ model: Qualite, attributes: ['valeur'] }]
+      });
 
-        const experiencesTiers = await ExperienceTiers.findAll({
-          where: { id_tiers: tiersId },
-          include: [{ model: Domaine, attributes: ['valeur'] }]
-        });
+      const experiencesTiers = await ExperienceTiers.findAll({
+        where: { id_tiers: tiersId },
+        include: [{ model: Domaine, attributes: ['valeur'] }]
+      });
 
-        const niveauxFiliereTiers = await NiveauFiliereTiers.findAll({
-          where: { id_tiers: tiersId },
-          include: [
-            { model: Niveau, attributes: ['valeur'] },
-            { model: Filiere, attributes: ['valeur'] }
-          ]
-        });
+      const niveauxFiliereTiers = await NiveauFiliereTiers.findAll({
+        where: { id_tiers: tiersId },
+        include: [
+          { model: Niveau, attributes: ['valeur'] },
+          { model: Filiere, attributes: ['valeur'] }
+        ]
+      });
 
-        // Ses autres annonces
-        const candidatures = await Candidat.findAll({
-          where: { id_tiers: tiersId },
-          attributes: ['id_candidat', 'id_annonce', 'cv']
-        });
-
-        const autresAnnonces = await Promise.all(
-          candidatures.map(async (cand) => {
-            const annonceInfo = await Annonce.findOne({
-              where: { id_annonce: cand.id_annonce },
-              include: [
-                { model: Poste, attributes: ['valeur'] },
-                { model: Ville, attributes: ['valeur'] },
-                { model: Genre, attributes: ['valeur'] }
-              ]
-            });
-            return {
-              annonce: annonceInfo,
-              candidature: cand
-            };
-          })
-        );
-
-        // Vérifier si tiers est employé et récupérer statuts
-        const employe = await Employe.findOne({ where: { id_tiers: tiersId } });
-        let statutsEmploye = [];
-        if (employe) {
-          statutsEmploye = await StatusEmploye.findAll({
-            where: { id_employe: employe.id_employe },
-            include: [{ model: TypeStatusEmploye, attributes: ['valeur'] }]
-          });
-        }
-
-        return {
-          candidat: c,
-          langues: languesTiers,
-          qualites: qualitesTiers,
-          experiences: experiencesTiers,
-          niveauxFiliere: niveauxFiliereTiers,
-          autresAnnonces,
-          employe: employe || null,
-          statutsEmploye
-        };
-      })
-    );
+          return {
+            candidat: c,
+            langues: languesTiers,
+            qualites: qualitesTiers,
+            experiences: experiencesTiers,
+            niveauxFiliere: niveauxFiliereTiers
+          };
+        })
+      );
 
     // 4️⃣ Récupération des questions QCM + réponses
     const qcmsAnnonce = await QcmAnnonce.findAll({ where: { id_annonce: id } });
@@ -203,11 +166,98 @@ exports.getAnnonceById = async (id) => {
       experiences,
       niveauxFiliere,
       statuts,
-      candidats: candidatsDetails,
+      candidatsDetails,
       qcms: questions
     };
 
   } catch (err) {
     throw new Error('Erreur lors de la récupération des détails : ' + err.message);
+  }
+};
+
+
+exports.getCandidatById = async (tiersId) => {
+  try {
+    // 1️⃣ Infos du candidat (table Tiers)
+    const candidat = await Tiers.findOne({
+      where: { id_tiers: tiersId },
+      attributes: [
+        'id_tiers', 'nom', 'prenom', 'date_naissance', 'contact', 
+        'email', 'cin', 'photo', 'id_genre', 'id_situation_matrimoniale', 
+        'nombre_enfants', 'id_ville'
+      ]
+    });
+    if (!candidat) return null;
+
+    // 2️⃣ Vérifier si tiers est employé et récupérer statuts
+    const employe = await Employe.findOne({ where: { id_tiers: tiersId } });
+    let statutsEmploye = [];
+    if (employe) {
+      statutsEmploye = await StatusEmploye.findAll({
+        where: { id_employe: employe.id_employe },
+        include: [{ model: TypeStatusEmploye, attributes: ['valeur'] }]
+      });
+    }
+
+    // 3️⃣ Détails liés au candidat
+    const langues = await LangueTiers.findAll({
+      where: { id_tiers: tiersId },
+      include: [{ model: Langue, attributes: ['valeur'] }]
+    });
+
+    const qualites = await QualiteTiers.findAll({
+      where: { id_tiers: tiersId },
+      include: [{ model: Qualite, attributes: ['valeur'] }]
+    });
+
+    const experiences = await ExperienceTiers.findAll({
+      where: { id_tiers: tiersId },
+      include: [{ model: Domaine, attributes: ['valeur'] }]
+    });
+
+    const niveauxFiliere = await NiveauFiliereTiers.findAll({
+      where: { id_tiers: tiersId },
+      include: [
+        { model: Niveau, attributes: ['valeur'] },
+        { model: Filiere, attributes: ['valeur'] }
+      ]
+    });
+
+    // 4️⃣ Ses autres candidatures
+    const candidatures = await Candidat.findAll({
+      where: { id_tiers: tiersId },
+      attributes: ['id_candidat', 'id_annonce', 'cv']
+    });
+
+    const autresAnnonces = await Promise.all(
+      candidatures.map(async (cand) => {
+        const annonceInfo = await Annonce.findOne({
+          where: { id_annonce: cand.id_annonce },
+          include: [
+            { model: Poste, attributes: ['valeur'] },
+            { model: Ville, attributes: ['valeur'] },
+            { model: Genre, attributes: ['valeur'] }
+          ]
+        });
+        return {
+          annonce: annonceInfo,
+          candidature: cand
+        };
+      })
+    );
+
+    return {
+      candidat,
+      employe: employe || null,
+      statutsEmploye,
+      langues,
+      qualites,
+      experiences,
+      niveauxFiliere,
+      autresAnnonces
+    };
+
+  } catch (err) {
+    throw new Error('Erreur lors de la récupération du candidat : ' + err.message);
   }
 };
