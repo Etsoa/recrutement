@@ -14,7 +14,7 @@ const { Op } = require('sequelize');
 const ScoreRhEntretien = require('../models/scoreRhEntretiensModel'); 
 
 const CeoSuggestions = require('../models/ceoSuggestionsModel');
-const StatusCeoSuggestion = require('../models/statusCeoSuggestionsModel');
+const StatusCeoSuggestions = require('../models/statusCeoSuggestionsModel');
 
 const loginRh = async (email, mot_de_passe) => {
   return await RhView.findOne({ where: { email, mot_de_passe } });

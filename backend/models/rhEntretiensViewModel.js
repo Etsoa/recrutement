@@ -39,7 +39,14 @@ const RhEntretiensView = db.define('RhEntretiensView', {
   },
   status_date: {
     type: DataTypes.DATE
-  }
+  },
+  dernier_score: { 
+    type: DataTypes.INTEGER, 
+    allowNull: true 
+  },
+  date_dernier_score: { 
+    type: DataTypes.DATE, allowNull: true 
+  },
 }, {
   tableName: 'rh_entretiens_view',
   timestamps: false

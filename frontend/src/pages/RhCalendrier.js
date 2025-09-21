@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import rhService from '../services/rhService';
 import '../styles/RhCalendrier.css';
+import { Button } from '../components';
+
 
 const RhCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -152,6 +154,62 @@ const RhCalendar = () => {
   };
 
   const calendarDays = generateCalendarDays();
+
+  // Ajoute en haut avec les autres useState
+  const [scores, setScores] = useState({}); // { id_rh_entretien: score }
+  const [sending, setSending] = useState(false); // état pour loading
+
+  // Fonction pour gérer le changement de score
+  const handleScoreChange = (id, value) => {
+    setScores(prev => ({ ...prev, [id]: value }));
+  };
+
+  // Fonction pour envoyer le score
+  const submitScore = async (id) => {
+    if (!scores[id]) return alert("Veuillez saisir un score !");
+    setSending(true);
+    const now = new Date();
+    const dateScore = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ` +
+                      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+
+    try {
+      const resp = await rhService.createScore({
+        id_rh_entretien: id,
+        score: Number(scores[id]),
+        date_score: dateScore
+      });
+      if (resp.success) {
+        alert("Score enregistré avec succès !");
+      } else {
+        alert(resp.message || "Erreur serveur");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur2");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Fonction pour suggérer au CEO
+  const suggestToCeo = async (id_rh_entretien, id_candidat) => {
+    setSending(true);
+    try {
+      const resp = await rhService.suggestToCeo({ id_rh_entretien, id_candidat });
+      if (resp.success) {
+        alert("Suggestion envoyée au CEO !");
+      } else {
+        alert(resp.message || "Erreur serveur");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur");
+    } finally {
+      setSending(false);
+    }
+  };
+
 
   return (
     <div className="rh-calendar-container">
@@ -345,10 +403,6 @@ const RhCalendar = () => {
                                 </span>
                               </div>
                             )}
-                          </div>
-
-                          <div className="detail-group suggestion-info">
-                            <h5>💡 Suggestion depuis l'unité</h5>
                             <div className="detail-item">
                               <span className="detail-label">Date de la réception:</span>
                               <span className="detail-value">
@@ -359,7 +413,57 @@ const RhCalendar = () => {
                                 })}
                               </span>
                             </div>
+                            {/* Affichage du dernier score s'il existe */}
+                            {entretien.dernier_score !== null && entretien.dernier_score !== undefined && (
+                              <div className="detail-item">
+                                <span className="detail-label">Dernier score:</span>
+                                <span className="detail-value">
+                                  {entretien.dernier_score}/20 le{' '}
+                                  {new Date(entretien.date_dernier_score).toLocaleDateString('fr-FR')} à{' '}
+                                  {new Date(entretien.date_dernier_score).toLocaleTimeString('fr-FR', { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit' 
+                                  })}
+                                </span>
+                              </div>
+                            )}
+
+                            <div className="entretien-actions">
+
+                              {/* Input pour saisir un nouveau score */}
+                              <input
+                                type="number"
+                                min="0"
+                                max="20"
+                                placeholder="Score /20"
+                                value={scores[entretien.id_rh_entretien] || ''}
+                                onChange={(e) => handleScoreChange(entretien.id_rh_entretien, e.target.value)}
+                                disabled={sending}
+                              />
+
+                              {/* Bouton pour enregistrer le score */}
+                              <Button
+                                onClick={() => submitScore(entretien.id_rh_entretien)}
+                                disabled={sending || !scores[entretien.id_rh_entretien]}
+                              >
+                                Enregistrer Score
+                              </Button>
+
+                              {/* Bouton Suggérer au CEO : s'affiche si un score existe en DB */}
+                              {(entretien.dernier_score) && (
+                                <Button
+                                  onClick={() => suggestToCeo(entretien.id_rh_entretien, entretien.id_candidat)}
+                                  disabled={sending}
+                                >
+                                  Suggérer au CEO
+                                </Button>
+                              )}
+                            </div>
+
                           </div>
+                          
+
+
                         </div>
                       </div>
                     ))}
@@ -380,9 +484,9 @@ const RhCalendar = () => {
               </div>
 
               <div className="modal-footer">
-                <button onClick={() => setSelectedDate(null)} className="close-btn">
+                <Button onClick={() => setSelectedDate(null)} variant="secondary">
                   Fermer
-                </button>
+                </Button>
               </div>
             </div>
           </div>
