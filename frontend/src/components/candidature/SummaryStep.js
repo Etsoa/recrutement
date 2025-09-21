@@ -30,10 +30,25 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
         <strong>Adresse :</strong> {formData.adresse}, {formData.ville}
       </p>
 
-      {formData.formations && formData.formations.length > 0 && (
+      {/* Formations pré-universitaires */}
+      {(formData.formationsPreUniversitaires?.bepc || 
+        (formData.formationsPreUniversitaires?.bacs && formData.formationsPreUniversitaires.bacs.length > 0)) && (
         <p>
-          <strong>Formation :</strong><br/>
-          {formData.formations.map((formation, index) => (
+          <strong>Formations pré-universitaires :</strong><br/>
+          {formData.formationsPreUniversitaires?.bepc && <span>• BEPC obtenu<br/></span>}
+          {formData.formationsPreUniversitaires?.bacs?.map((bac, index) => (
+            <span key={index}>
+              • BAC série {bac.serie}<br/>
+            </span>
+          ))}
+        </p>
+      )}
+
+      {/* Formations universitaires */}
+      {formData.formationsUniversitaires && formData.formationsUniversitaires.length > 0 && (
+        <p>
+          <strong>Formations universitaires :</strong><br/>
+          {formData.formationsUniversitaires.map((formation, index) => (
             <span key={index}>
               • {formation.filiere} - Niveaux validés : {formation.niveaux.join(', ')}<br/>
             </span>
@@ -68,8 +83,7 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
 
       <p>
         <strong>Documents téléchargés :</strong><br/>
-        • Photo : {formData.photo ? `${formData.photo.name} (${formatFileSize(formData.photo.size)})` : 'Non fournie'}<br/>
-        • CV : {formData.cv ? `${formData.cv.name} (${formatFileSize(formData.cv.size)})` : 'Non fourni (obligatoire)'}
+        • Photo : {formData.photo ? `${formData.photo.name} (${formatFileSize(formData.photo.size)})` : 'Non fournie'}
       </p>
 
       <p>

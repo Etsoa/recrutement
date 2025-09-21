@@ -1,5 +1,5 @@
 // services/annoncesService.js - Service spécifique pour la gestion des annonces
-import api from './api';
+import { api } from './api';
 
 export const annoncesService = {
   /**

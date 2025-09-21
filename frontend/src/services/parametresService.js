@@ -1,5 +1,5 @@
 // services/parametresService.js - Service spécifique pour la gestion des paramètres
-import api from './api';
+import { api } from './api';
 
 export const parametresService = {
   /**

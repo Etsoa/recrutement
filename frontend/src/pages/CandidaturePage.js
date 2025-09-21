@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { annoncesService } from '../services/annoncesService';
 import Button from '../components/Button';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -39,8 +40,14 @@ const CandidaturePage = () => {
     situation_matrimoniale: '',
     nombre_enfants: '',
     
-    // Formation
-    formations: [],
+    // Formations pré-universitaires
+    formationsPreUniversitaires: {
+      bepc: false,
+      bacs: []
+    },
+    
+    // Formations universitaires
+    formationsUniversitaires: [],
     
     // Expériences
     experiences: [],
@@ -70,51 +77,17 @@ const CandidaturePage = () => {
       try {
         setLoading(true);
         
-        // TODO: Remplacer par un appel API réel
-        // const response = await fetch(`/api/annonces/${annonceId}`);
-        // const annonceData = await response.json();
+        // Utilisation du service annonces existant
+        const result = await annoncesService.getAnnonceById(annonceId);
         
-        // Pour l'instant, utilisation de données test avec l'ID de l'annonce
-        const mockAnnonce = {
-          id_annonce: annonceId,
-          Poste: { valeur: `Développeur Full Stack` },
-          Ville: { valeur: "Antananarivo" },
-          Genre: { valeur: "Tous genres" },
-          age_min: 25,
-          age_max: 35,
-          ExperienceAnnonces: [
-            {
-              nombre_annee: 3,
-              Domaine: { valeur: "Développement Web" }
-            },
-            {
-              nombre_annee: 2,
-              Domaine: { valeur: "Base de données" }
-            }
-          ],
-          LangueAnnonces: [
-            { Langue: { valeur: "Français" } },
-            { Langue: { valeur: "Anglais" } },
-            { Langue: { valeur: "Malagasy" } }
-          ],
-          QualiteAnnonces: [
-            { Qualite: { valeur: "Autonome" } },
-            { Qualite: { valeur: "Rigoureux" } },
-            { Qualite: { valeur: "Créatif" } }
-          ],
-          NiveauFiliereAnnonces: [
-            {
-              Niveau: { valeur: "Licence" },
-              Filiere: { valeur: "Informatique" }
-            }
-          ],
-          date_publication: new Date().toISOString().split('T')[0],
-          date_limite: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-        };
+        if (!result.success) {
+          throw new Error(result.message || 'Erreur lors du chargement de l\'annonce');
+        }
         
-        setAnnonce(mockAnnonce);
+        setAnnonce(result.data);
+        
       } catch (err) {
-        setError('Erreur lors du chargement de l\'annonce');
+        setError('Erreur lors du chargement de l\'annonce: ' + err.message);
         console.error('Erreur de chargement de l\'annonce:', err);
       } finally {
         setLoading(false);
@@ -162,11 +135,26 @@ const CandidaturePage = () => {
         if (!formData.adresse?.trim()) newErrors.adresse = 'L\'adresse est requise';
         if (!formData.ville) newErrors.ville = 'La ville est requise';
         // Vérification des formations
-        if (!formData.formations || formData.formations.length === 0) {
-          newErrors.formations = 'Au moins une formation est requise';
-        } else {
-          // Vérifier que chaque formation a une filière et au moins un niveau
-          formData.formations.forEach((formation, index) => {
+        const hasPreUniv = formData.formationsPreUniversitaires?.bepc || 
+                          (formData.formationsPreUniversitaires?.bacs && formData.formationsPreUniversitaires.bacs.length > 0);
+        const hasUniv = formData.formationsUniversitaires && formData.formationsUniversitaires.length > 0;
+        
+        if (!hasPreUniv && !hasUniv) {
+          newErrors.formations = 'Au moins une formation (pré-universitaire ou universitaire) est requise';
+        }
+        
+        // Vérifier les BACs s'ils existent
+        if (formData.formationsPreUniversitaires?.bacs) {
+          formData.formationsPreUniversitaires.bacs.forEach((bac, index) => {
+            if (!bac.serie) {
+              newErrors[`bac_${index}_serie`] = `La série du BAC ${index + 1} est requise`;
+            }
+          });
+        }
+        
+        // Vérifier les formations universitaires s'elles existent
+        if (formData.formationsUniversitaires) {
+          formData.formationsUniversitaires.forEach((formation, index) => {
             if (!formation.filiere) {
               newErrors[`formation_${index}_filiere`] = `La filière de la formation ${index + 1} est requise`;
             }
@@ -175,6 +163,8 @@ const CandidaturePage = () => {
             }
           });
         }
+        
+        // CV requis supprimé - plus obligatoire
         break;
         
       case 2: // Informations professionnelles
@@ -184,7 +174,7 @@ const CandidaturePage = () => {
         } else {
           // Vérifier que chaque expérience a les champs requis
           formData.experiences.forEach((exp, index) => {
-            if (!exp.intitule_poste?.trim()) {
+            if (!exp.intitule_poste) {
               newErrors[`experience_${index}_intitule_poste`] = `Le poste de l'expérience ${index + 1} est requis`;
             }
             if (!exp.nom_entreprise?.trim()) {
@@ -199,9 +189,15 @@ const CandidaturePage = () => {
             }
           });
         }
-        // CV requis
-        if (!formData.cv) {
-          newErrors.cv = 'Le CV est requis';
+        
+        // Validation des langues - au moins une langue requise
+        if (!formData.langues || formData.langues.length === 0) {
+          newErrors.langues = 'Au moins une langue est requise';
+        }
+        
+        // Validation des qualités - au moins une qualité requise
+        if (!formData.qualites || formData.qualites.length === 0) {
+          newErrors.qualites = 'Au moins une qualité professionnelle est requise';
         }
         break;
         

@@ -1,7 +1,42 @@
-import React from 'react';
-import { Input, TextareaComponent } from '../../index';
+import React, { useState, useEffect } from 'react';
+import { Input, TextareaComponent, Button, Dropdown } from '../../index';
+import parametresService from '../../../services/parametresService';
 
 const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
+  const [parametres, setParametres] = useState({
+    postes: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Charger les paramètres au montage du composant
+  useEffect(() => {
+    const loadParametres = async () => {
+      try {
+        setLoading(true);
+        const response = await parametresService.getAllParametres();
+        
+        if (response.success && response.data) {
+          setParametres({
+            postes: parametresService.formatForDropdown(response.data.postes || [])
+          });
+        } else {
+          console.error('Erreur lors du chargement des paramètres:', response.message);
+          setParametres({
+            postes: []
+          });
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des paramètres:', error);
+        setParametres({
+          postes: []
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadParametres();
+  }, []);
   // Gestion des expériences
   const handleExperienceChange = (value, fieldName, index) => {
     const field = fieldName.split('.')[1]; // Extraire le nom du champ après le point
@@ -32,13 +67,13 @@ const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
     <div className="section">
       <div className="section-header">
         <h3>Expériences professionnelles</h3>
-        <button 
-          type="button" 
-          className="btn-add"
+        <Button 
+          variant="primary"
+          size="sm"
           onClick={addExperience}
         >
           + Ajouter une expérience
-        </button>
+        </Button>
       </div>
 
       {formData.experiences && formData.experiences.length > 0 ? (
@@ -47,24 +82,27 @@ const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
             <div key={index} className="formation-item">
               <div className="formation-header">
                 <h4>Expérience #{index + 1}</h4>
-                <button
-                  type="button"
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => removeExperience(index)}
                   className="remove-filiere-btn"
                 >
                   ×
-                </button>
+                </Button>
               </div>
               
               <div className="formation-content">
                 <div className="form-grid two-columns">
-                  <Input
+                  <Dropdown
                     label="Intitulé du poste"
                     name={`experience.intitule_poste`}
                     value={experience.intitule_poste || ''}
                     onChange={(value, fieldName) => handleExperienceChange(value, fieldName, index)}
+                    options={parametres.postes || []}
+                    placeholder={loading ? "Chargement..." : (parametres.postes || []).length === 0 ? "Aucun poste disponible" : "Choisir un poste"}
+                    disabled={loading || (parametres.postes || []).length === 0}
                     required={true}
-                    placeholder="Ex: Développeur Web"
                     error={errors[`experience_${index}_intitule_poste`]}
                   />
 

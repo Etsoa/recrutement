@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const publicController = require('../controllers/publicController');
+const uploadController = require('../controllers/uploadController');
+const { uploadPhoto } = require('../middleware/uploadMiddleware');
 
 // liste des annonces 
 router.get('/annonces', publicController.getAllAnnonces);
@@ -13,6 +15,10 @@ router.get('/parametres', publicController.getAllParametres);
 // creer tiers + candidats ou candidats eulements is cin existant
 // si cv par rapport a pourcentage_minimum_cv a annonce alors : envoi de qcm sinon attente de validation manuelle
 router.post('/create/candidat', publicController.createCandidat);
+
+// Routes pour l'upload de fichiers
+router.post('/upload/photo', uploadPhoto, uploadController.uploadProfilePhoto);
+router.delete('/upload/photo/:filename', uploadController.deletePhoto);
 
 // entrer de token, verfication si non utilise(reponse_qcm vide) et envoie du bon qcm selon annonce
 // router.post('/qcm/questions', publicController.qcmQuestions);

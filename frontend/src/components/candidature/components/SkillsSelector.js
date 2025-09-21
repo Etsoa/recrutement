@@ -1,41 +1,68 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import parametresService from '../../../services/parametresService';
 
 const SkillsSelector = ({ formData, updateFormData, errors = {} }) => {
-  // Langues disponibles
-  const languesDisponibles = [
-    'Malagasy', 'Français', 'Anglais', 'Allemand', 'Espagnol', 
-    'Italien', 'Portugais', 'Chinois', 'Japonais', 'Arabe'
-  ];
+  const [parametres, setParametres] = useState({
+    langues: [],
+    qualites: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Charger les paramètres au montage du composant
+  useEffect(() => {
+    const loadParametres = async () => {
+      try {
+        setLoading(true);
+        const response = await parametresService.getAllParametres();
+        
+        if (response.success && response.data) {
+          setParametres({
+            langues: parametresService.formatForDropdown(response.data.langues || []),
+            qualites: parametresService.formatForDropdown(response.data.qualites || [])
+          });
+        } else {
+          console.error('Erreur lors du chargement des paramètres:', response.message);
+          setParametres({
+            langues: [],
+            qualites: []
+          });
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des paramètres:', error);
+        setParametres({
+          langues: [],
+          qualites: []
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadParametres();
+  }, []);
 
   // Gestion des langues (checkbox)
-  const handleLangueToggle = (langue) => {
+  const handleLangueToggle = (langueValue) => {
     const langues = [...(formData.langues || [])];
-    const index = langues.findIndex(l => l.langue === langue);
+    const index = langues.findIndex(l => l.langue === langueValue);
     
     if (index > -1) {
       langues.splice(index, 1);
     } else {
-      langues.push({ langue });
+      langues.push({ langue: langueValue });
     }
     updateFormData({ langues });
   };
 
-  // Qualités disponibles
-  const qualitesDisponibles = [
-    'Leadership', 'Travail en équipe', 'Communication', 'Créativité', 
-    'Résolution de problèmes', 'Adaptabilité', 'Gestion du temps', 
-    'Autonomie', 'Rigueur', 'Polyvalence', 'Initiative', 'Persévérance'
-  ];
-
   // Gestion des qualités (checkbox)
-  const handleQualiteToggle = (qualite) => {
+  const handleQualiteToggle = (qualiteValue) => {
     const qualites = [...(formData.qualites || [])];
-    const index = qualites.findIndex(q => q.qualite === qualite);
+    const index = qualites.findIndex(q => q.qualite === qualiteValue);
     
     if (index > -1) {
       qualites.splice(index, 1);
     } else {
-      qualites.push({ qualite });
+      qualites.push({ qualite: qualiteValue });
     }
     updateFormData({ qualites });
   };
@@ -47,21 +74,38 @@ const SkillsSelector = ({ formData, updateFormData, errors = {} }) => {
         <h3>Langues maîtrisées</h3>
         <p className="section-description">Sélectionnez les langues que vous maîtrisez</p>
         
-        <div className="competences-container">
-          <div className="competences-grid">
-            {languesDisponibles.map(langue => (
-              <label key={langue} className="competence-checkbox">
-                <input
-                  type="checkbox"
-                  checked={formData.langues?.some(l => l.langue === langue) || false}
-                  onChange={() => handleLangueToggle(langue)}
-                />
-                <span className="checkmark"></span>
-                <span className="competence-text">{langue}</span>
-              </label>
-            ))}
+        {errors.langues && (
+          <div className="error-message">
+            <p>{errors.langues}</p>
           </div>
-        </div>
+        )}
+        
+        {loading ? (
+          <div className="loading-state">
+            <p>Chargement des langues disponibles...</p>
+          </div>
+        ) : parametres.langues.length === 0 ? (
+          <div className="empty-state">
+            <p>Aucune langue disponible</p>
+          </div>
+        ) : (
+          <div className="competences-container">
+            <div className="competences-grid">
+              {parametres.langues.map(langue => (
+                <label key={langue.value} className="competence-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={formData.langues?.some(l => l.langue === langue.value) || false}
+                    onChange={() => handleLangueToggle(langue.value)}
+                    disabled={loading}
+                  />
+                  <span className="checkmark"></span>
+                  <span className="competence-text">{langue.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Section Qualités */}
@@ -69,21 +113,38 @@ const SkillsSelector = ({ formData, updateFormData, errors = {} }) => {
         <h3>Qualités professionnelles</h3>
         <p className="section-description">Sélectionnez vos principales qualités professionnelles</p>
         
-        <div className="competences-container">
-          <div className="competences-grid">
-            {qualitesDisponibles.map(qualite => (
-              <label key={qualite} className="competence-checkbox">
-                <input
-                  type="checkbox"
-                  checked={formData.qualites?.some(q => q.qualite === qualite) || false}
-                  onChange={() => handleQualiteToggle(qualite)}
-                />
-                <span className="checkmark"></span>
-                <span className="competence-text">{qualite}</span>
-              </label>
-            ))}
+        {errors.qualites && (
+          <div className="error-message">
+            <p>{errors.qualites}</p>
           </div>
-        </div>
+        )}
+        
+        {loading ? (
+          <div className="loading-state">
+            <p>Chargement des qualités disponibles...</p>
+          </div>
+        ) : parametres.qualites.length === 0 ? (
+          <div className="empty-state">
+            <p>Aucune qualité disponible</p>
+          </div>
+        ) : (
+          <div className="competences-container">
+            <div className="competences-grid">
+              {parametres.qualites.map(qualite => (
+                <label key={qualite.value} className="competence-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={formData.qualites?.some(q => q.qualite === qualite.value) || false}
+                    onChange={() => handleQualiteToggle(qualite.value)}
+                    disabled={loading}
+                  />
+                  <span className="checkmark"></span>
+                  <span className="competence-text">{qualite.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
