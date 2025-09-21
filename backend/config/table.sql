@@ -50,6 +50,15 @@ CREATE TABLE villes (
     valeur VARCHAR(100) NOT NULL
 );
 
+
+CREATE TABLE annonces (
+    id_annonce SERIAL PRIMARY KEY,
+    id_poste INTEGER REFERENCES postes(id_poste) ON DELETE CASCADE,
+    id_ville INTEGER REFERENCES villes(id_ville) ON DELETE CASCADE,
+    age_min INTEGER,
+    age_max INTEGER,
+    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE
+);
 CREATE TABLE question_qcms (
     id_question_qcm SERIAL PRIMARY KEY,
     intitule VARCHAR(255) NOT NULL
@@ -60,15 +69,6 @@ CREATE TABLE reponse_qcms (
     id_question_qcm INTEGER REFERENCES question_qcms(id_question_qcm) ON DELETE CASCADE,
     reponse VARCHAR(255) NOT NULL,
     modalite BOOLEAN NOT NULL
-);
-
-CREATE TABLE annonces (
-    id_annonce SERIAL PRIMARY KEY,
-    id_poste INTEGER REFERENCES postes(id_poste) ON DELETE CASCADE,
-    id_ville INTEGER REFERENCES villes(id_ville) ON DELETE CASCADE,
-    age_min INTEGER,
-    age_max INTEGER,
-    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE
 );
 
 CREATE TABLE qcm_annonces (

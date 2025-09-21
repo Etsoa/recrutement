@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { getAllParametres, createNiveauFiliere, createAnnonce, createExperienceAnnonce, createLanguesAnnonce, createQualitesAnnonce,statusAnnonce } from "../api/annonceApi";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getAllParametres, createNiveauFiliere, createAnnonce, createExperienceAnnonce, createLanguesAnnonce, createQualitesAnnonce, statusAnnonce } from "../api/annonceApi";
 import { getPostesByIdUnite } from "../api/parametreApi";
 import Input, { Select } from "../components/Input";
 import { Button } from "../components";
@@ -9,6 +9,9 @@ import Header from "../components/Header";
 
 function CreateAnnonce() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  // const update = query.get("update") || null;
   const savedUnite = JSON.parse(localStorage.getItem("unite"));
   const [unite] = useState(savedUnite);
   const [parametrages, setparametrages] = useState([]);

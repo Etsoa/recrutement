@@ -18,7 +18,40 @@ const qcmAnnoncesService = require('../services/qcmAnnoncesService');
 const questionQcmsService = require('../services/questionQcmsService');
 const reponseQcmsService = require('../services/reponseQcmsService');
 const statusAnnonceService = require('../services/statusAnnoncesService');
+const vueAnnoncesService = require('../services/vueAnnoncesService');
+const vueStatusAnnoncesService = require('../services/vueStatusAnnoncesService');
+const vueQuestionReponsesService = require('../services/vueQuestionReponsesService');
 
+exports.getDetailsQR = async (req, res) =>{
+   try {
+    const { id } = req.params;
+    const annonces = await vueQuestionReponsesService.getDetailQcmByAnnonceId(id);
+    res.json({ message: 'recuperation des annonces avec succès', data: annonces, success: true });
+  } catch (err) {
+    console.error("Erreur dans status:", err);
+    res.status(500).json({ message: 'Erreur lors de la recuperation du annonces', data: null, success: false });
+  } 
+}
+exports.getDetailsHistorique = async (req, res) => {
+   try {
+    const { id } = req.params;
+    const annonces = await vueStatusAnnoncesService.getStatusAnnoncesByAnnonceId(id);
+    res.json({ message: 'recuperation des annonces avec succès', data: annonces, success: true });
+  } catch (err) {
+    console.error("Erreur dans status:", err);
+    res.status(500).json({ message: 'Erreur lors de la recuperation du annonces', data: null, success: false });
+  } 
+}
+
+exports.getDetailsAnnonceById = async (req, res) => {
+    try {
+    const { id } = req.params;
+    const data = await vueAnnoncesService.getAnnonceById(id);
+    res.json({ message: 'Liste des unités récupérée avec succès', data, success: true });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des unités', data: null, success: false });
+  }
+}
 
 exports.getAllUnites = async (req, res) => {
   try {
@@ -114,6 +147,16 @@ exports.getLanguesByAnnonce = async (req, res) => {
   try {
     const { id } = req.params;
     const langues = await langueAnnoncesService.getLangueAnnoncesByIdAnnonce(id);
+    res.json({ message: 'Liste des paramètres récupérée avec succès', langues, success: true });
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur lors de la récupération des paramètres', data: null, success: false });
+  }
+};
+
+exports.getLangueById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const langues = await languesService.getLangueById(id);
     res.json({ message: 'Liste des paramètres récupérée avec succès', langues, success: true });
   } catch (err) {
     res.status(500).json({ message: 'Erreur lors de la récupération des paramètres', data: null, success: false });

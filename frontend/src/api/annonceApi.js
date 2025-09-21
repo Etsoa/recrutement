@@ -116,3 +116,40 @@ export const getLanguesByAnnonce = async (id) => {
     throw error;
   }
 }
+
+export const getLangueById = async (id) => {
+  try {
+    const response = await api.get(`/unite/getLangueById/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getDetailsAnnonceById = async (id) => {
+  try {
+    const response = await api.get(`/unite/detailsAnnonceById/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// historique 
+export const getDetailsHistorique = async (id) => {
+  try {
+    const response = await api.get(`/unite/detailsHistoriqueAnnonce/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+// qcm 
+export const getDetailsQR = async (id) => {
+  try {
+    const response = await api.get(`/unite/detailsQRAnnonce/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

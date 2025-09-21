@@ -9,7 +9,6 @@ import '../styles/Parametrage.css';
 function Annonces() {
   const navigate = useNavigate();
   const [listeAnnonces, setlisteAnnonces] = useState([]);
-  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +39,6 @@ function Annonces() {
           <Annonce
             key={annonce.id_annonce}
             annonce={annonce}   // 👈 passe l’objet complet
-            showDetails={showDetails}
-            setShowDetails={setShowDetails}
           />
         ))
       )}

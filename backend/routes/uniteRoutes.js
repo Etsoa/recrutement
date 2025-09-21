@@ -14,12 +14,11 @@ router.get('/postesByUnite/:id', uniteController.getPostesByIdUnite);
 router.get('/questionsReponses', uniteController.getQuestionsReponses);
 router.get('/qcmAnnonce/:id', uniteController.getQCMAnnonce);
 router.get('/languesAnnonce/:id', uniteController.getLanguesByAnnonce);
-// router.get('/annonces/:id', uniteController.getAnnonceById);
-// router.get('/annonces/:id', uniteController.getAnnonceById);
-// router.get('/annonces/:id', uniteController.getAnnonceById);
-// router.get('/annonces/:id', uniteController.getAnnonceById);
-// router.get('/annonces/:id', uniteController.getAnnonceById);
+router.get('/getLangueById/:id', uniteController.getLangueById);
+router.get('/detailsAnnonceById/:id', uniteController.getDetailsAnnonceById);
 router.post('/annonces', uniteController.getAllAnnonces);
+router.get('/detailsHistoriqueAnnonce/:id', uniteController.getDetailsHistorique);
+router.get('/detailsQRAnnonce/:id', uniteController.getDetailsQR);
 
 // partie C du parametrages
 router.post('/create/poste', uniteController.createPoste);
