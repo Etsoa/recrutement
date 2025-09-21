@@ -113,3 +113,130 @@ INSERT INTO delai_qcm (valeur) VALUES (2);
 INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 
 INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
+
+-- ANNONCES ET LEURS RELATIONS
+
+-- Questions QCM
+INSERT INTO question_qcms (intitule) VALUES 
+('Quelle est la différence entre recrutement et sélection ?'),
+('Comment évaluez-vous les compétences d''un candidat ?'),
+('Quels sont les outils de gestion RH que vous connaissez ?'),
+('Qu''est-ce qu''un bilan comptable ?'),
+('Comment calculez-vous la TVA ?'),
+('Quels sont les principes de base de la comptabilité ?'),
+('Qu''est-ce qu''une stratégie commerciale ?'),
+('Comment fidélisez-vous un client ?');
+
+-- Annonce 1: Responsable RH
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) 
+VALUES (4, 1, 25, 35, 1); -- Responsable RH à Antananarivo, 25-35 ans, Homme
+
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
+VALUES (1, 2, CURRENT_DATE, 2); -- Statut "Publié" par l'unité RH
+
+INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
+(1, 7, 4), -- Gestion + Licence Pro
+(1, 8, 3); -- Droit + Licence
+
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES 
+(1, 1), -- Malgache
+(1, 2), -- Français
+(1, 3); -- Anglais
+
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES 
+(1, 1), -- Ponctuel
+(1, 2), -- Rigoureux
+(1, 4), -- Esprit d'équipe
+(1, 7); -- Communicatif
+
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES 
+(1, 4, 3), -- Administration - 3 ans
+(1, 2, 2); -- Banque - 2 ans
+
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES 
+(1, 1),
+(1, 2),
+(1, 3);
+
+-- Annonce 2: Chef Comptable
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) 
+VALUES (7, 1, 28, 40, 2); -- Chef Comptable à Antananarivo, 28-40 ans, Femme
+
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
+VALUES (2, 2, CURRENT_DATE, 3); -- Statut "Publié" par l'unité Comptabilité
+
+INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
+(2, 7, 5), -- Gestion + Master
+(2, 11, 4); -- Économie + Licence Pro
+
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES 
+(2, 1), -- Malgache
+(2, 2); -- Français
+
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES 
+(2, 1), -- Ponctuel
+(2, 2), -- Rigoureux
+(2, 3), -- Autonome
+(2, 6); -- Organisé
+
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES 
+(2, 2, 5), -- Banque - 5 ans
+(2, 4, 3); -- Administration - 3 ans
+
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES 
+(2, 4),
+(2, 5),
+(2, 6);
+
+-- Annonce 3: Commercial
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) 
+VALUES (14, 2, 23, 30, 1); -- Commercial à Fianarantsoa, 23-30 ans, Homme
+
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
+VALUES (3, 2, CURRENT_DATE, 5); -- Statut "Publié" par l'unité Commercial
+
+INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
+(3, 7, 3), -- Gestion + Licence
+(3, 6, 2); -- Commerce + BAC
+
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES 
+(3, 1), -- Malgache
+(3, 2), -- Français
+(3, 3); -- Anglais
+
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES 
+(3, 7), -- Communicatif
+(3, 5), -- Créatif
+(3, 8), -- Flexible
+(3, 9); -- Leader
+
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES 
+(3, 6, 2); -- Commerce - 2 ans
+
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES 
+(3, 7),
+(3, 8);
+
+-- Annonce 4: Technicien (non publiée)
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) 
+VALUES (12, 3, 20, 35, 1); -- Technicien à Toamasina, 20-35 ans, Homme
+
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
+VALUES (4, 1, CURRENT_DATE, 4); -- Statut "En cours de demande" par l'unité Production
+
+INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
+(4, 10, 3), -- Génie Civil + Licence
+(4, 6, 4); -- Informatique + Licence Pro
+
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES 
+(4, 1), -- Malgache
+(4, 2); -- Français
+
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES 
+(4, 2), -- Rigoureux
+(4, 3), -- Autonome
+(4, 1); -- Ponctuel
+
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES 
+(4, 5, 1), -- Industrie - 1 an
+(4, 8, 2); -- Informatique - 2 ans

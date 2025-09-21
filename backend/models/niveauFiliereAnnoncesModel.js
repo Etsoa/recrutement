@@ -51,4 +51,7 @@ NiveauFiliereAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 NiveauFiliereAnnonce.belongsTo(Filiere, { foreignKey: 'id_filiere' });
 NiveauFiliereAnnonce.belongsTo(Niveau, { foreignKey: 'id_niveau' });
 
+// Reverse associations
+Annonce.hasMany(NiveauFiliereAnnonce, { foreignKey: 'id_annonce' });
+
 module.exports = NiveauFiliereAnnonce;

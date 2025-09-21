@@ -39,4 +39,7 @@ const LangueAnnonce = db.define('LangueAnnonce', {
 LangueAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 LangueAnnonce.belongsTo(Langue, { foreignKey: 'id_langue' });
 
+// Reverse associations
+Annonce.hasMany(LangueAnnonce, { foreignKey: 'id_annonce' });
+
 module.exports = LangueAnnonce;

@@ -39,4 +39,7 @@ const QualiteAnnonce = db.define('QualiteAnnonce', {
 QualiteAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 QualiteAnnonce.belongsTo(Qualite, { foreignKey: 'id_qualite' });
 
+// Reverse associations
+Annonce.hasMany(QualiteAnnonce, { foreignKey: 'id_annonce' });
+
 module.exports = QualiteAnnonce;

@@ -43,4 +43,7 @@ const ExperienceAnnonce = db.define('ExperienceAnnonce', {
 ExperienceAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 ExperienceAnnonce.belongsTo(Domaine, { foreignKey: 'id_domaine' });
 
+// Reverse associations
+Annonce.hasMany(ExperienceAnnonce, { foreignKey: 'id_annonce' });
+
 module.exports = ExperienceAnnonce;

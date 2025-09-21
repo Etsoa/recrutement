@@ -35,7 +35,7 @@ async function getAllAnnoncesActives() {
 				{
 					model: StatusAnnonce,
 					required: true,
-					where: { id_type_status_annonce: typeStatusActive.id_type_status_annonce },
+					where: { id_type_status_annonce: typeStatusActive.id_type_status },
 				},
 				{ model: Poste },
 				{ model: Ville },
@@ -99,7 +99,7 @@ async function checkAnnonceActive(id_annonce) {
 			{
 				model: StatusAnnonce,
 				required: true,
-				where: { id_type_status_annonce: typeStatusActive.id_type_status_annonce },
+				where: { id_type_status_annonce: typeStatusActive.id_type_status },
 			}
 		]
 	});

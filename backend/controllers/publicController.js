@@ -28,7 +28,16 @@ exports.getAllAnnonces = async (req, res) => {
 
 exports.getAnnonceById = async (req, res) => {
   try {
-    const { id } = req.params;
+    // Get id from body or query as mentioned in routes comment
+    const id = req.body.id || req.query.id;
+    
+    if (!id) {
+      return res.status(400).json({
+        message: 'ID de l\'annonce requis dans le body ou query',
+        data: null,
+        success: false
+      });
+    }
     
     const annonce = await annoncesService.getAnnonceById(id);
     

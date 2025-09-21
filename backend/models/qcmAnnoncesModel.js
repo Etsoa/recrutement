@@ -25,7 +25,7 @@ const QcmAnnonce = db.define('QcmAnnonce', {
     allowNull: false,
     references: {
       model: QuestionQCM,
-      key: 'id_question_qcm'
+      key: 'id_question'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
@@ -38,5 +38,8 @@ const QcmAnnonce = db.define('QcmAnnonce', {
 // Associations
 QcmAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 QcmAnnonce.belongsTo(QuestionQCM, { foreignKey: 'id_question_qcm' });
+
+// Reverse associations
+Annonce.hasMany(QcmAnnonce, { foreignKey: 'id_annonce' });
 
 module.exports = QcmAnnonce;

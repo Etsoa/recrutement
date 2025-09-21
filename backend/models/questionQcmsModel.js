@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const QuestionQcm = db.define('QuestionQcm', {
-  id_question_qcm: {
+  id_question: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true

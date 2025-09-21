@@ -2,15 +2,10 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const DelaiEntretien = db.define('DelaiEntretien', {
-  id_delai_entretien: {
+  valeur: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
-  },
-  valeur: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    allowNull: false
   }
 }, {
   tableName: 'delai_entretien',
