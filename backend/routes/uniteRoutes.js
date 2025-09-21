@@ -4,16 +4,12 @@ const uniteController = require('../controllers/uniteController');
 
 // liste annonce(components) PAR UNITE
 router.get('/annonces', uniteController.getAllAnnonces);
-
 // fiche annonce
 router.get('/annonce', uniteController.getAnnonceById);
-
 // fiche candidat
 router.get('/candidat', uniteController.getCandidatById);
-
 // table envoi qcm candidat(email)
 router.post('/send/qcm-candidat', uniteController.sendQcmCandidat);
-
 // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
 router.post('/send/unite-entretien', uniteController.sendUniteEntretien);
 
@@ -30,5 +26,7 @@ router.post('/send/unite-entretien', uniteController.sendUniteEntretien);
 // router.post('/suggest/rh', uniteController.suggestToRh);
 // // liste suggestions
 // router.get('/suggest/', uniteController.getAllRhSuggestions);
+
+
 
 module.exports = router;  
