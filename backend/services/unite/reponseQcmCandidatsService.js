@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 
 // Enregistrer une réponse QCM d'un candidat
 const createReponseQcm = async (reponseData) => {

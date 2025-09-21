@@ -1,5 +1,5 @@
 // services/vueStatusAnnoncesService.js
-const VueStatusAnnonces = require('../models/vueStatusAnnoncesModel');
+const VueStatusAnnonces = require('../../models/vueStatusAnnoncesModel');
 
 // Récupérer toutes les lignes
 const getAllStatusAnnonces = async () => {

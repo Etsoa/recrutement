@@ -1,141 +1,158 @@
+// ===== SERVICES IMPORTS =====
+// Services de traitement métier
 const traitementAnnonceService = require('../services/unite/traitementAnnoncesService');
 const traitementDossierService = require('../services/unite/traitementDossierService');
+const candidatsService = require('../services/unite/candidatsService');
+const entretiensService = require('../services/unite/entretiensService');
+const emailService = require('../services/unite/emailService');
+const suggestionsService = require('../services/unite/suggestionsService');
+const qcmCandidatsService = require('../services/unite/qcmCandidatsService');
+
+// Services de base de données
+const unitesService = require('../services/unite/unitesService');
+const postesService = require('../services/unite/postesService');
+const genresService = require('../services/unite/genresService');
+const villesService = require('../services/unite/villesService');
+const niveauxService = require('../services/unite/niveauxService');
+const filieresService = require('../services/unite/filieresService');
+const domainesService = require('../services/unite/domainesService');
+const languesService = require('../services/unite/languesService');
+const qualitesService = require('../services/unite/qualitesService');
+const situationsMatrimonialesService = require('../services/unite/situationMatrimonialesService');
+
+// Services de relations
+const niveauFiliereService = require('../services/unite/niveauFiliereAnnoncesService');
+const experienceAnnoncesService = require('../services/unite/experienceAnnoncesService');
+const langueAnnoncesService = require('../services/unite/langueAnnoncesService');
+const qualiteAnnoncesService = require('../services/unite/qualiteAnnoncesService');
+
+// Services d'annonces
+const annoncesService = require('../services/unite/AnnoncesService');
+const annoncesCompletService = require('../services/unite/annoncesCompletService');
+const statusAnnonceService = require('../services/unite/statusAnnoncesService');
+
+// Services QCM
+const qcmAnnoncesService = require('../services/unite/qcmAnnoncesService');
+const questionQcmsService = require('../services/unite/questionQcmsService');
+const reponseQcmsService = require('../services/unite/reponseQcmsService');
+
+// Services de vues
+const vueAnnoncesService = require('../services/unite/vueAnnoncesService');
+const vueStatusAnnoncesService = require('../services/unite/vueStatusAnnoncesService');
+const vueQuestionReponsesService = require('../services/unite/vueQuestionReponsesService');
+
+// Services externes
 const nodemailer = require('nodemailer');
 
+// ===== CONTROLLERS =====
 
-// exports.getAllAnnonces = async (req, res) => {
-//   try {
-//     const id = req.query.id;
-//     const data = await traitementAnnonceService.getAllAnnonces(id);
-//     res.json({ 
-//       message: 'Liste des annonces récupérée avec succès',
-//       data: data,
-//       success: true
-//     });
-//   } catch (err) {
-//     res.status(500).json({ 
-//       message: 'Erreur lors de la récupération des annonces',
-//       data: null,
-//       success: false
-//     });
-//   }
-// };
+exports.getAllAnnoncesUnite = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const data = await traitementAnnonceService.getAllAnnonces(id);
+    res.json({ 
+      message: 'Liste des annonces récupérée avec succès',
+      data: data,
+      success: true
+    });
+  } catch (err) {
+    res.status(500).json({ 
+      message: 'Erreur lors de la récupération des annonces',
+      data: null,
+      success: false
+    });
+  }
+};
 
+exports.getAnnonceByIdUnite = async (req, res) => {
+  try {
+    const id = req.query.id; // ID depuis l'URL
+    const data = await traitementAnnonceService.getAnnonceById(id);
+    if (!data) {
+      return res.status(404).json({
+        message: 'Annonce non trouvée',
+        data: null,
+        success: false
+      });
+    }
+    res.json({
+      message: 'Annonce récupérée avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération de l\'annonce',
+      data: null,
+      success: false
+    });
+  }
+};
 
-// exports.getAnnonceById = async (req, res) => {
-//   try {
-//     const id = req.query.id; // ID depuis l'URL
-//     const data = await traitementAnnonceService.getAnnonceById(id);
-//     if (!data) {
-//       return res.status(404).json({
-//         message: 'Annonce non trouvée',
-//         data: null,
-//         success: false
-//       });
-//     }
-//     res.json({
-//       message: 'Annonce récupérée avec succès',
-//       data,
-//       success: true
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({
-//       message: 'Erreur lors de la récupération de l\'annonce',
-//       data: null,
-//       success: false
-//     });
-//   }
-// };
+exports.getCandidatByIdUnite = async (req, res) => {
+  try {
+    const id = req.query.id; 
+    const data = await traitementAnnonceService.getCandidatById(id);
+    if (!data) {
+      return res.status(404).json({
+        message: 'Candidat non trouvé',
+        data: null,
+        success: false
+      });
+    }
+    res.json({
+      message: 'Candidat récupéré avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération du candidat',
+      data: null,
+      success: false
+    });
+  }
+};
 
-// exports.getCandidatById = async (req, res) => {
-//   try {
-//     const id = req.query.id; 
-//     const data = await traitementAnnonceService.getCandidatById(id);
-//     if (!data) {
-//       return res.status(404).json({
-//         message: 'Candidat non trouvé',
-//         data: null,
-//         success: false
-//       });
-//     }
-//     res.json({
-//       message: 'Candidat récupéré avec succès',
-//       data,
-//       success: true
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({
-//       message: 'Erreur lors de la récupération du candidat',
-//       data: null,
-//       success: false
-//     });
-//   }
-// };
+exports.sendQcmCandidat = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const data = await traitementDossierService.sendQcmCandidat(id);
+    res.status(201).json({
+      message: 'QCM candidat envoyé avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de l\'envoi du QCM au candidat',
+      data: null,
+      success: false
+    });
+  }
+};
 
-// exports.sendQcmCandidat = async (req, res) => {
-//   try {
-//     const id = req.query.id;
-//     const data = await traitementDossierService.sendQcmCandidat(id);
-//     res.status(201).json({
-//       message: 'QCM candidat envoyé avec succès',
-//       data,
-//       success: true
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({
-//       message: 'Erreur lors de la récupération du candidat',
-//       data: null,
-//       success: false
-//     });
-//   }
-// };
-
-// exports.sendUniteEntretien = async (req, res) => {
-//   try {
-//     const id = req.query.id;
-//     const data = await traitementDossierService.sendUniteEntretien(id);
-//     res.status(201).json({
-//       message: 'Unité d\'entretien envoyée avec succès',
-//       data,
-//       success: true
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({
-//       message: 'Erreur lors de la récupération du candidat',
-//       data: null,
-//       success: false
-//     });
-//   }
-// };
-
-
-const unitesService = require('../services/unitesService');
-const postesService = require('../services/postesService');
-const genresService = require('../services/genresService');
-const villesService = require('../services/villesService');
-const niveauxService = require('../services/niveauxService');
-const filieresService = require('../services/filieresService');
-const domainesService = require('../services/domainesService');
-const languesService = require('../services/languesService');
-const qualitesService = require('../services/qualitesService');
-const situationMatrimonialesService = require('../services/situationMatrimonialesService');
-const niveauFiliereService = require('../services/niveauFiliereAnnoncesService');
-const experienceAnnoncesService = require('../services/experienceAnnoncesService');
-const annoncesService = require('../services/AnnoncesService');
-const annoncesCompletService = require('../services/annoncesCompletService');
-const langueAnnoncesService = require('../services/langueAnnoncesService');
-const qualiteAnnoncesService = require('../services/qualiteAnnoncesService');
-const qcmAnnoncesService = require('../services/qcmAnnoncesService');
-const questionQcmsService = require('../services/questionQcmsService');
-const reponseQcmsService = require('../services/reponseQcmsService');
-const statusAnnonceService = require('../services/statusAnnoncesService');
-const vueAnnoncesService = require('../services/vueAnnoncesService');
-const vueStatusAnnoncesService = require('../services/vueStatusAnnoncesService');
-const vueQuestionReponsesService = require('../services/vueQuestionReponsesService');
+exports.sendUniteEntretien = async (req, res) => {
+  try {
+    const id = req.query.id;
+    const data = await traitementDossierService.sendUniteEntretien(id);
+    res.status(201).json({
+      message: 'Unité d\'entretien envoyée avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de l\'envoi de l\'entretien unité',
+      data: null,
+      success: false
+    });
+  }
+};
 
 exports.getDetailsQR = async (req, res) =>{
    try {
@@ -545,3 +562,91 @@ exports.getAnnonceById = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la recuperation du annonces', data: null, success: false });
   }
 }
+
+// Nouvelles fonctions pour la gestion des entretiens unité
+exports.getAllUniteEntretiensParJour = async (req, res) => {
+  try {
+    const { date } = req.query;
+    const entretiens = await entretiensService.getUniteEntretiensByDate(date);
+    res.json({ message: 'Liste des entretiens récupérée avec succès', data: entretiens, success: true });
+  } catch (err) {
+    console.error("Erreur dans getAllUniteEntretiensParJour:", err);
+    res.status(500).json({ message: 'Erreur lors de la récupération des entretiens', data: null, success: false });
+  }
+};
+
+exports.updateDateUniteEntretien = async (req, res) => {
+  try {
+    const { id, nouvelle_date } = req.body;
+    const entretien = await entretiensService.updateDateUniteEntretien(id, nouvelle_date);
+    res.json({ message: 'Date d\'entretien mise à jour avec succès', data: entretien, success: true });
+  } catch (err) {
+    console.error("Erreur dans updateDateUniteEntretien:", err);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour de la date', data: null, success: false });
+  }
+};
+
+exports.updateStatusUniteEntretien = async (req, res) => {
+  try {
+    const { id_entretien, id_status } = req.body;
+    const status = await entretiensService.updateStatusUniteEntretien(id_entretien, id_status);
+    res.json({ message: 'Statut d\'entretien mis à jour avec succès', data: status, success: true });
+  } catch (err) {
+    console.error("Erreur dans updateStatusUniteEntretien:", err);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour du statut', data: null, success: false });
+  }
+};
+
+exports.createScoreUniteEntretien = async (req, res) => {
+  try {
+    const scoreData = req.body;
+    const score = await entretiensService.createScoreUniteEntretien(scoreData);
+    res.json({ message: 'Score d\'entretien créé avec succès', data: score, success: true });
+  } catch (err) {
+    console.error("Erreur dans createScoreUniteEntretien:", err);
+    res.status(500).json({ message: 'Erreur lors de la création du score', data: null, success: false });
+  }
+};
+
+exports.createQcmCandidat = async (req, res) => {
+  try {
+    const qcmData = req.body;
+    const qcm = await qcmCandidatsService.createQcmCandidat(qcmData);
+    res.json({ message: 'QCM candidat créé avec succès', data: qcm, success: true });
+  } catch (err) {
+    console.error("Erreur dans createQcmCandidat:", err);
+    res.status(500).json({ message: 'Erreur lors de la création du QCM candidat', data: null, success: false });
+  }
+};
+
+exports.createUniteEntretien = async (req, res) => {
+  try {
+    const entretienData = req.body;
+    const entretien = await entretiensService.createUniteEntretien(entretienData);
+    res.json({ message: 'Entretien unité créé avec succès', data: entretien, success: true });
+  } catch (err) {
+    console.error("Erreur dans createUniteEntretien:", err);
+    res.status(500).json({ message: 'Erreur lors de la création de l\'entretien unité', data: null, success: false });
+  }
+};
+
+exports.suggestToRh = async (req, res) => {
+  try {
+    const suggestionData = req.body;
+    const suggestion = await suggestionsService.suggestToRh(suggestionData);
+    res.json({ message: 'Suggestion envoyée à la RH avec succès', data: suggestion, success: true });
+  } catch (err) {
+    console.error("Erreur dans suggestToRh:", err);
+    res.status(500).json({ message: 'Erreur lors de l\'envoi de la suggestion', data: null, success: false });
+  }
+};
+
+exports.getAllRhSuggestions = async (req, res) => {
+  try {
+    const suggestions = await suggestionsService.getAllRhSuggestions();
+    res.json({ message: 'Liste des suggestions récupérée avec succès', data: suggestions, success: true });
+  } catch (err) {
+    console.error("Erreur dans getAllRhSuggestions:", err);
+    res.status(500).json({ message: 'Erreur lors de la récupération des suggestions', data: null, success: false });
+  }
+};

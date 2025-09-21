@@ -1,4 +1,4 @@
-const QcmAnnonce = require('../models/qcmAnnoncesModel');
+const QcmAnnonce = require('../../models/qcmAnnoncesModel');
 
 const createQcmAnnonce = async (data) => {
     return await QcmAnnonce.create(data);

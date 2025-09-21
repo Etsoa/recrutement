@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 const crypto = require('crypto');
 
 // Créer un envoi QCM pour un candidat

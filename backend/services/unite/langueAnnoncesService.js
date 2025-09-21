@@ -1,4 +1,4 @@
-const LangueAnnonce = require('../models/langueAnnoncesModel');
+const LangueAnnonce = require('../../models/langueAnnoncesModel');
 
 const createLangueAnnonce = async (data) => {
     return await LangueAnnonce.create(data);

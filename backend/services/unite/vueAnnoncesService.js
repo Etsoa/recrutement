@@ -1,5 +1,5 @@
 // services/vueAnnoncesService.js
-const VueAnnoncesComplete = require('../models/vueAnnoncesCompleteModel');
+const VueAnnoncesComplete = require('../../models/vueAnnoncesCompleteModel');
 
 const getAllAnnonces = async () => {
     return await VueAnnoncesComplete.findAll();

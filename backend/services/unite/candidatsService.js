@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 
 // Créer un candidat
 const createCandidat = async (candidatData) => {

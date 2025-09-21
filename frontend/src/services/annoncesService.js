@@ -2,8 +2,8 @@
 import { api } from './api';
 
 const ANNONCES_ENDPOINTS = {
-  LIST: '/unite/annonces',
-  DETAILS: '/unite/annonce',
+  LIST: '/unite/annonces-unite',
+  DETAILS: '/unite/annonce-unite',
   SEND_QCM: '/unite/send/qcm-candidat',
   SEND_ENTRETIEN: '/unite/send/unite-entretien'
 };

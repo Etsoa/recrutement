@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 
 // Récupérer toutes les questions QCM avec leurs réponses
 const getAllQuestionsComplete = async () => {

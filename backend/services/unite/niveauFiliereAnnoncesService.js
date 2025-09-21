@@ -1,4 +1,4 @@
-const NiveauFiliereAnnonces = require('../models/niveauFiliereAnnoncesModel');
+const NiveauFiliereAnnonces = require('../../models/niveauFiliereAnnoncesModel');
 
 const createNiveauFiliereAnnonce = async (data) => {
     return await NiveauFiliereAnnonces.create(data);

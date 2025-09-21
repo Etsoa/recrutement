@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../../config/db');
 
 // Récupérer tous les paramètres système
 const getAllParametresSysteme = async () => {

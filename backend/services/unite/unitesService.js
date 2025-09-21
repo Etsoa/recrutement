@@ -1,4 +1,4 @@
-const Unite = require('../models/unitesModel');
+const Unite = require('../../models/unitesModel');
 
 const createUnite = async (data) => {
     return await Unite.create(data);

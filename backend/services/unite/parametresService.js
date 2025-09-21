@@ -1,9 +1,9 @@
-const db = require('../config/db');
-const DelaiEntretien = require('../models/delaiEntretienModel');
-const DelaiQcm = require('../models/delaiQcmModel');
-const PourcentageMinimumCv = require('../models/pourcentageMinimumCvModel');
-const ScoreMinimumQcm = require('../models/scoreMinimumQcmModel');
-const ScoreMinimumEntretien = require('../models/scoreMinimumEntretienModel.js');
+const db = require('../../config/db.js');
+const DelaiEntretien = require('../../models/delaiEntretienModel.js');
+const DelaiQcm = require('../../models/delaiQcmModel.js');
+const PourcentageMinimumCv = require('../../models/pourcentageMinimumCvModel.js');
+const ScoreMinimumQcm = require('../../models/scoreMinimumQcmModel.js');
+const ScoreMinimumEntretien = require('../../models/scoreMinimumEntretienModel.js');
 
 // ===== DELAI ENTRETIEN =====
 
