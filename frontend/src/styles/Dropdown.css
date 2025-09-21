@@ -35,40 +35,57 @@
   pointer-events: none;
 }
 
-.dropdown-select {
+/* Sélecteur plus spécifique pour éviter les conflits avec CandidatureStep.css */
+.dropdown-container .dropdown-select {
   width: 100%;
-  padding: var(--spacing-md) var(--spacing-md);
-  font-size: var(--font-size-base);
+  padding: 12px 16px;
+  font-size: 16px;
   border: none;
-  border-bottom: 1px solid var(--color-border-light);
-  background-color: transparent;
-  color: var(--color-text);
-  transition: var(--transition);
+  border-bottom: 2px solid #bdc3c7;
+  background-color: #ffffff;
+  color: #2c3e50;
+  transition: all 0.3s ease;
   appearance: none;
   cursor: pointer;
   outline: none;
-  height: var(--height-input);
+  height: 50px;
+  border-radius: 0;
 }
 
 .dropdown-select.with-icon {
   padding-left: calc(var(--spacing-md) + 24px);
 }
 
-.dropdown-select:hover {
+.dropdown-container .dropdown-select:hover {
   border-bottom-color: var(--color-border-hover, var(--color-border));
 }
 
-.dropdown-select:focus {
+.dropdown-container .dropdown-select:focus {
   outline: none;
   border-bottom-color: var(--color-border-focus);
   background-color: white;
+  box-shadow: 0 0 0 2px rgba(22, 160, 133, 0.1);
 }
 
-.dropdown-select:disabled {
+.dropdown-container .dropdown-select:disabled {
   background-color: var(--color-background-muted);
   color: var(--color-text-disabled);
   cursor: not-allowed;
   border-bottom-color: var(--color-border-disabled, var(--color-border-light));
+}
+
+/* Assurer la visibilité des options avec spécificité plus élevée */
+.dropdown-container .dropdown-select option {
+  background-color: white;
+  color: #2c3e50;
+  padding: 8px;
+  min-height: 32px;
+}
+
+.dropdown-container .dropdown-select option:hover,
+.dropdown-container .dropdown-select option:focus {
+  background-color: var(--color-accent);
+  color: var(--color-text-light);
 }
 
 .dropdown-arrow {
@@ -79,6 +96,10 @@
   color: var(--color-text-secondary);
   pointer-events: none;
   transition: var(--transition);
+}
+
+.dropdown-container .dropdown-select:focus + .dropdown-arrow {
+  color: var(--color-border-focus);
 }
 
 .dropdown-select:focus + .dropdown-arrow {

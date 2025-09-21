@@ -4,7 +4,7 @@ export { default as Footer } from './Footer';
 export { default as Button } from './Button';
 
 // Composants de formulaire
-export { default as Input, Textarea, Select, SearchInput } from './Input';
+export { default as Input } from './Input';
 export { default as Dropdown } from './Dropdown';
 export { default as Checkbox } from './Checkbox';
 export { default as FileButton } from './FileButton';

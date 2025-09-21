@@ -3,8 +3,8 @@ import { Input, Dropdown } from '../../index';
 
 const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
   const handleChange = (value, fieldName) => {
-    // fieldName contient le nom du champ
     console.log('PersonalInfoForm handleChange:', fieldName, '=', value);
+    console.log('Options disponibles pour debug:', { genres, situationsMatrimoniales: situationsMatrimoniales.slice(0, 2) });
     updateFormData({ [fieldName]: value });
   };
 

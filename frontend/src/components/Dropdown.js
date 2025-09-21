@@ -6,7 +6,7 @@ const Dropdown = ({
   value, 
   onChange, 
   options = [], 
-  placeholder = "Sélectionner...",
+  placeholder = "Sélectionner",
   name,
   required = false,
   error,
