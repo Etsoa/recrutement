@@ -145,7 +145,6 @@ const RhSuggestions = () => {
     try {
       let dateDepart;
 
-      // Première fois -> partir du champ choisi
       if (prochaineStack.length === 0) {
         if (!selectedDate || !selectedTime) {
           setMessage("Veuillez choisir une date et une heure de départ");
@@ -154,7 +153,6 @@ const RhSuggestions = () => {
         }
         dateDepart = `${selectedDate} ${selectedTime}:00`;
       } else {
-        // Ensuite -> repartir de la dernière dispo trouvée
         dateDepart = prochaineStack[prochaineIndex].date_disponible;
       }
 
@@ -233,26 +231,63 @@ const RhSuggestions = () => {
                 </div>
 
                 <div className="rh-suggestions__entretien">
-                  <h4>Détails de l'entretien :</h4>
+                  <h4>Détails de l'entretien avec l'unite :</h4>
                   <p>Date: {formatDateTime(suggestion.entretien?.date_entretien)}</p>
                   <p>Durée: {suggestion.entretien?.duree || '-'} minutes</p>
+
+                  {/* Dernier score */}
+                  <p>
+                    Score:{" "}
+                    {suggestion.entretien?.scores?.length > 0
+                      ? `${suggestion.entretien.scores[0].score}/20 (le ${formatDateTime(suggestion.entretien.scores[0].date_score)})`
+                      : "Aucun score"}
+                  </p>
+
+                  {/* Dernier statut */}
+                  <p>
+                    Statut:{" "}
+                    {suggestion.status?.length > 0
+                      ? `${suggestion.status[suggestion.status.length - 1].typeStatus.valeur} (depuis le ${formatDateTime(suggestion.status[suggestion.status.length - 1].date_changement)})`
+                      : "Aucun statut"}
+                  </p>
+                      {/* <div>
+                        Statuts:
+                        {suggestion.status?.length > 0 ? (
+                          suggestion.status.map((s, i) => (
+                            <div key={i}>
+                              {s.typeStatus.valeur} (depuis le {formatDateTime(s.date_changement)})
+                            </div>
+                          ))
+                        ) : (
+                          "Aucun statut"
+                        )}
+                      </div> */}
+
+
                 </div>
               </div>
 
               <div className="rh-suggestions__item-actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <Button variant="primary" onClick={() => handleDisponibilites(suggestion)}>Vérifier créneaux</Button>
-                <Button variant="secondary" onClick={() => handleProchaineDispo(suggestion)}>Prochaine dispo</Button>
+                <Button variant="success" onClick={() => handleDisponibilites(suggestion)}>
+                  Confirmer
+                </Button>
+                <Button variant="danger" onClick={async () => {
+                  await rhService.updateStatusSuggestion({
+                    id_rh_suggestion: suggestion.id_rh_suggestion,
+                    id_type_status_suggestion: 2 // Invalide
+                  });
+                  fetchSuggestions();
+                }}>Annuler</Button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Modale créneaux */}
-        {selectedSuggestion && !prochaineModalOpen && (
+        {/* Modale créneaux pour confirmation */}
+        {selectedSuggestion && (
           <div className="rh-suggestions__modal">
             <div className="rh-suggestions__modal-content">
-              <h3>Planifier l'entretien </h3>
-
+              <h3>Planifier l'entretien</h3>
               <div className="rh-suggestions__form-group">
                 <label>Date</label>
                 <input
@@ -261,7 +296,6 @@ const RhSuggestions = () => {
                   onChange={(e) => handleDateChange(e.target.value)}
                 />
               </div>
-
               <div className="rh-suggestions__form-group">
                 <label>Heure</label>
                 <select
@@ -274,56 +308,13 @@ const RhSuggestions = () => {
                   ))}
                 </select>
               </div>
-
               <div className="rh-suggestions__modal-actions">
-                <Button variant="success" onClick={handleConfirmEntretien}>Confirmer</Button>
-                <Button variant="secondary" onClick={() => setSelectedSuggestion(null)}>Annuler</Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Modale Prochaine dispo */}
-        {prochaineModalOpen && (
-          <div className="rh-suggestions__modal">
-            <div className="rh-suggestions__modal-content">
-              <h3>Prochaine disponibilité</h3>
-
-              {/* Première saisie */}
-              {prochaineStack.length === 0 && (
-                <>
-                  <div className="rh-suggestions__form-group">
-                    <label>Date de départ</label>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="rh-suggestions__form-group">
-                    <label>Heure de départ</label>
-                    <input
-                      type="time"
-                      value={selectedTime}
-                      onChange={(e) => setSelectedTime(e.target.value)}
-                    />
-                  </div>
-                </>
-              )}
-
-              {/* Affichage des dispos trouvées */}
-              {prochaineStack[prochaineIndex] ? (
-                <p>{formatDateTime(prochaineStack[prochaineIndex].date_disponible)}</p>
-              ) : (
-                <p>Aucune dispo</p>
-              )}
-
-              <div className="rh-suggestions__modal-actions" style={{ display: 'flex', gap: '8px' }}>
-                <Button variant="secondary" onClick={handleBackProchaine} disabled={prochaineIndex === 0}>Back</Button>
-                <Button variant="primary" onClick={handleNextProchaine}>Next</Button>
-                <Button variant="success" onClick={handleConfirmProchaine}>Confirmer</Button>
-                <Button variant="secondary" onClick={() => setProchaineModalOpen(false)}>Annuler</Button>
+                <Button variant="success" onClick={handleConfirmEntretien}>
+                  Confirmer
+                </Button>
+                <Button variant="secondary" onClick={() => setSelectedSuggestion(null)}>
+                  Annuler
+                </Button>
               </div>
             </div>
           </div>

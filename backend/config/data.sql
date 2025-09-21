@@ -169,3 +169,12 @@ RETURNING id_ceo_suggestion;
 -- 🔹 Statut suggestion CEO avec timestamp
 INSERT INTO status_ceo_suggestions (id_ceo_suggestion, id_type_status_suggestion, date_changement)
 VALUES (1, 1, '2025-09-19 17:00:00');
+
+INSERT INTO jours_feries (date_ferie, description) VALUES
+('2025-01-01', 'Nouvel An'),
+('2025-05-01', 'Fête du Travail'),
+('2025-12-25', 'Noël');
+
+INSERT INTO horaires_ouvres (heure_debut, heure_fin) VALUES
+('08:00', '12:00'),
+('13:00', '16:00');

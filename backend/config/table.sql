@@ -331,3 +331,16 @@ CREATE TABLE score_minimum_qcm (
 CREATE TABLE pourcentage_minimum_cv (
     valeur INTEGER PRIMARY KEY NOT NULL
 );
+
+CREATE TABLE jours_feries (
+    id_jour_ferie SERIAL PRIMARY KEY,
+    date_ferie DATE NOT NULL UNIQUE,
+    description VARCHAR(255)
+);
+
+CREATE TABLE horaires_ouvres (
+    id_horaire_ouvre SERIAL PRIMARY KEY,
+    heure_debut TIME NOT NULL,
+    heure_fin TIME NOT NULL
+);
+

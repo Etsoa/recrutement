@@ -25,7 +25,7 @@ const StatusRhSuggestion = db.define('StatusRhSuggestion', {
     allowNull: false,
     references: {
       model: TypeStatusSuggestion,
-      key: 'id'
+      key: 'id_type_status_suggestion'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
@@ -38,9 +38,5 @@ const StatusRhSuggestion = db.define('StatusRhSuggestion', {
   tableName: 'status_rh_suggestions',
   timestamps: false
 });
-
-// Associations
-StatusRhSuggestion.belongsTo(RhSuggestion, { foreignKey: 'id_rh_suggestion' });
-StatusRhSuggestion.belongsTo(TypeStatusSuggestion, { foreignKey: 'id_type_status_suggestion' });
 
 module.exports = StatusRhSuggestion;

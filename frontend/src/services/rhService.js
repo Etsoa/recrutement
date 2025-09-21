@@ -1,3 +1,4 @@
+
 const API_URL = 'http://localhost:5000/api/rh';
 
 const rhService = {
@@ -35,6 +36,25 @@ const rhService = {
   // Entretiens RH
   createRhEntretien: async (data) => {
     const response = await fetch(`${API_URL}/create/rh_entretien`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  },
+  
+    // Mettre à jour le statut d'une suggestion RH
+  updateStatusSuggestion: async (data) => {
+    // data doit contenir : id_rh_suggestion, id_type_status_suggestion, date_entretien (optionnel), id_rh (optionnel)
+    // Si data.date_entretien et data.id_rh sont fournis, on vérifie qu'il n'y a pas déjà un entretien prévu ce jour-là pour ce RH
+    if (data.date_entretien && data.id_rh) {
+      const entretiens = await rhService.getEntretiensParJour(data.date_entretien);
+      const dejaPris = entretiens.some(e => e.id_rh === data.id_rh);
+      if (dejaPris) {
+        return { success: false, message: "Un entretien est déjà prévu pour ce RH à cette date." };
+      }
+    }
+    const response = await fetch(`${API_URL}/suggestion/status`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
