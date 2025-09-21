@@ -6,10 +6,10 @@ const uniteController = require('../controllers/uniteController');
 router.get('/annonces', uniteController.getAllAnnonces);
 
 // fiche annonce
-router.get('/annonce/:id', uniteController.getAnnonceById);
+router.get('/annonce', uniteController.getAnnonceById);
 
 // fiche candidat
-router.get('/candidat/:id', uniteController.getCandidatById);
+router.get('/candidat', uniteController.getCandidatById);
 
 // table envoi qcm candidat(email)
 router.post('/send/qcm-candidat', uniteController.sendQcmCandidat);

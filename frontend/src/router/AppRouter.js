@@ -8,14 +8,8 @@ import Layout from '../components/Layout';
 
 // Importation des pages
 import Home from '../pages/Home';
-import Annonces from '../pages/Annonces';
-import DetailQCM from '../pages/DetailQCM';
-import Historiques from '../pages/Historiques';
-import CVtest from '../pages/CVtest';
-import CVList from '../pages/CVList';
-import Users from '../pages/Users';
 import AnnonceList from '../pages/AnnonceList';
-import AnnonceCVComp from '../pages/AnnonceCVComp';
+import DetailsAnnonce from '../pages/DetailsAnnonce';
 
 // Configuration des routes
 const AppRouter = () => {
@@ -24,14 +18,8 @@ const AppRouter = () => {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/annonces" element={<Annonces />} />
-          <Route path="/detailQCM" element={<DetailQCM />} />
-          <Route path="/historique" element={<Historiques />} />
-          <Route path="/cv" element={<CVtest />} />
-          <Route path="/cv-list" element={<CVList />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/annonces-list" element={<AnnonceList />} />
-          <Route path="/comparaison-annonce-cv" element={<AnnonceCVComp />} />
+          <Route path="/annonces" element={<AnnonceList />} />
+          <Route path="/annonces/:id/details" element={<DetailsAnnonce />} />
         </Routes>
       </Layout>
     </Router>

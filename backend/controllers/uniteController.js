@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 
 exports.getAllAnnonces = async (req, res) => {
   try {
-    const id = req.data.id;
+    const id = req.query.id;
     const data = await traitementAnnonceService.getAllAnnonces(id);
     res.json({ 
       message: 'Liste des annonces récupérée avec succès',
@@ -24,7 +24,7 @@ exports.getAllAnnonces = async (req, res) => {
 
 exports.getAnnonceById = async (req, res) => {
   try {
-    const id = req.params.id; // ID depuis l'URL
+    const id = req.query.id; // ID depuis l'URL
     const data = await traitementAnnonceService.getAnnonceById(id);
     if (!data) {
       return res.status(404).json({
@@ -50,7 +50,7 @@ exports.getAnnonceById = async (req, res) => {
 
 exports.getCandidatById = async (req, res) => {
   try {
-    const id = req.params.id; 
+    const id = req.query.id; 
     const data = await traitementAnnonceService.getCandidatById(id);
     if (!data) {
       return res.status(404).json({
@@ -76,7 +76,7 @@ exports.getCandidatById = async (req, res) => {
 
 exports.sendQcmCandidat = async (req, res) => {
   try {
-    const id = req.data.id;
+    const id = req.query.id;
     const data = await traitementDossierService.sendQcmCandidat(id);
     res.status(201).json({
       message: 'QCM candidat envoyé avec succès',
@@ -95,7 +95,7 @@ exports.sendQcmCandidat = async (req, res) => {
 
 exports.sendUniteEntretien = async (req, res) => {
   try {
-    const id = req.data.id;
+    const id = req.query.id;
     const data = await traitementDossierService.sendUniteEntretien(id);
     res.status(201).json({
       message: 'Unité d\'entretien envoyée avec succès',

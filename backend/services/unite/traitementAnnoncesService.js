@@ -229,6 +229,8 @@ exports.getAnnonceById = async (id) => {
     throw new Error('Erreur lors de la récupération des détails : ' + err.message);
   }
 };
+
+
 exports.getCandidatById = async (id_candidat) => {
   try {
     // 0️⃣ Récupérer le candidat (table Candidat) avec les infos Tiers de base
