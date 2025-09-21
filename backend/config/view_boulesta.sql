@@ -49,3 +49,19 @@ LEFT JOIN type_status_entretiens tse ON s.id_type_status_entretien = tse.id_type
 LEFT JOIN rh_suggestions rh ON r.id_rh_suggestion = rh.id_rh_suggestion
 LEFT JOIN last_scores ls ON r.id_rh_entretien = ls.id_rh_entretien;
 
+CREATE OR REPLACE VIEW ceo_suggestions_view AS
+SELECT 
+    cs.id_ceo_suggestion,
+    cs.id_rh_entretien,
+    cs.id_candidat,
+    t.nom AS nom_candidat,
+    t.prenom AS prenom_candidat,
+    cs.date_suggestion,
+    ts.id_type_status_suggestion,
+    ts.valeur AS statut,
+    scs.date_changement AS statut_date
+FROM ceo_suggestions cs
+JOIN candidats c ON cs.id_candidat = c.id_candidat
+JOIN tiers t ON c.id_tiers = t.id_tiers
+LEFT JOIN status_ceo_suggestions scs ON cs.id_ceo_suggestion = scs.id_ceo_suggestion
+LEFT JOIN type_status_suggestions ts ON scs.id_type_status_suggestion = ts.id_type_status_suggestion;

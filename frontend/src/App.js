@@ -7,6 +7,7 @@ import LoginRh from "./pages/LoginRh";// In App.js
 import FormAnnonce from './pages/FormAnnonce';
 import RhCalendrier from './pages/RhCalendrier';
 import RhSuggestions from './pages/RhSuggestions';
+import RhCeoSuggestions from './pages/RhCeoSuggestions';
 
 // Dans tes routes
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/rh/form-annonce" element={<FormAnnonce />} />
           <Route path="/rh/suggestions" element={<RhSuggestions />} />
           <Route path="/rh/entretiens" element={<RhCalendrier />} />
+          <Route path="/rh/ceoSuggestions" element={<RhCeoSuggestions />} />
         </Routes>
     </Router>
   );

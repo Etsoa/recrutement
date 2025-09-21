@@ -14,7 +14,9 @@ const { Op } = require('sequelize');
 const ScoreRhEntretien = require('../models/scoreRhEntretiensModel'); 
 
 const CeoSuggestions = require('../models/ceoSuggestionsModel');
+
 const StatusCeoSuggestions = require('../models/statusCeoSuggestionsModel');
+const TypeStatusSuggestions = require('../models/typeStatusSuggestionsModel');
 
 const loginRh = async (email, mot_de_passe) => {
   return await RhView.findOne({ where: { email, mot_de_passe } });
@@ -269,14 +271,26 @@ const getAllCeoSuggestions = async () => {
             attributes: ['nom', 'prenom', 'email']
           }
         ]
+      },
+      {
+        model: StatusCeoSuggestions,
+        as: 'StatusCeoSuggestions', // ⚡ alias pour association
+        include: [
+          {
+            model: TypeStatusSuggestions,
+            as: 'TypeStatusSuggestion',
+            attributes: ['valeur']
+          }
+        ],
+        attributes: ['date_changement']
       }
     ],
     order: [['date_suggestion', 'DESC']]
   });
 
-
   return suggestions;
 };
+
 
 module.exports = {
   loginRh,
