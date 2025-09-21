@@ -16,6 +16,7 @@ const loginCeo = async (email, mot_de_passe) => {
     return await CeoView.findOne({ where: whereClause });
 };
 
+// Afaka atsaraina ampiana kokoa ilay info an'le Tiers
 const getAllSuggests = async () => {
   const suggestions = await CeoSuggestions.findAll({
     include: [
