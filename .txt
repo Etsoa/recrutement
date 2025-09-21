@@ -1,0 +1,16 @@
+j ai pour objectif trois pages dans frontend/src/pages dont les appels dans le backend sont fais depuis frontend/src/services qui utilisent api.js dans le meme dossier
+le nom des pages seront ListeAnnonces, DetailsAnnonce et FicheCandidat a creer et des services chacuns a  creer aussi
+regarde dans components des trucs a utiliser et utilise les , les changements doivent etre minimes surtout de design color et de police, seules les informations a afficher seront re-organiser dans le besoin
+Dans listeAnnonces.js , je veux que tu prends depuis le backend suivant la route  definit dans backend/server.js et dans backend/routes/uniteRoutes.js (/annonces)
+sera afficher : le poste, le genre , le ville, age min age max (comme definit dans backend/services/unite/traitementAnnoncesServices.js), et un bouton 'voir les dossiers'qui conduit a 
+DetailsAnnonces qui va prndere la route vace l id de l annoce comme dans backend/routes/uniteRoutes.js nomme (/annonce) et affiche alors les details de l annonce 
+c a d av ec niveaufiliere, experience, langue, qualite, historique annonce (table status_annonce et type_annnonce) et la liste des qcm 
+en bas de ca tu vas mettres des fiches des candidats  : avec leur nom, prenom, age,(a partir de date de naissance) , genre, ville, email, photo,un bouton voir dossier complet, 
+- un bouton envoyez qcm si  envoisQcm est null et , une date d envoi du qcm si ya deja un envoi mais pa de reponsesQcm sinon le score dans reponsesQcm et et la duree
+- un bouton envoyez entretien si ya pas d unite_entretiens et une date si ya deja un entretien planifie non passe encore c a d sans score et enfin sinon affiche le score
+- affiche le pourcentage envoye aussi (la suite pour plus tard)
+le clique sur le bouton envoyez qcm renvoie dans la routes defini dans unitesRoutes : (/send/qcm-candidat)
+le clique sur le bouton envoyez entretien renvoie dans la routes defini dans unitesRoutes : (/send/unite-entretien)
+le clique sur le bouton voir dossier appelle la route qui envoi l id_du candidat :( api/unite/candidat) et affiche l integralite de ce qui est envoyes par traitementAnnoncesServices + le meme systeme de bouton que dans le s petits fiches de candidats precedemment
+n oublie pas dans cette partie les parties employe+status employe si existent sinon rien, la partie autres annonces postulees avec une affichage en table mais en sont pas des liens
+PRENDS TON TEMPS POUR COMPRENDRE LA BASE dans backend/config/table.sql + data.sql qui conmmprends les donnneees

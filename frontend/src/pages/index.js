@@ -5,3 +5,6 @@ export { default as CVList } from './CVList';
 export { default as Annonces } from './Annonces';
 export { default as DetailQCM } from './DetailQCM';
 export { default as Historiques } from './Historiques';
+export { default as ListeAnnonces } from './ListeAnnonces';
+export { default as DetailsAnnonce } from './DetailsAnnonce';
+export { default as FicheCandidat } from './FicheCandidat';

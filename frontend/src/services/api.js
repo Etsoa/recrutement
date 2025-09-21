@@ -60,8 +60,10 @@ export const api = {
     return apiCall(url, { method: 'GET' });
   },
 
-  post: (endpoint, data = {}) => {
-    return apiCall(endpoint, {
+  post: (endpoint, data = {}, params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+    return apiCall(url, {
       method: 'POST',
       body: JSON.stringify(data),
     });

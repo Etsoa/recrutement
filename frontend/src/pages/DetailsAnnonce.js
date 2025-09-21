@@ -1,348 +1,439 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { annonceService } from '../services/annonceService';
-import Header from '../components/Header';
-import AnnonceComp from '../components/AnnonceComp';
-import CVComp from '../components/CVComp';
-import CVMiniature from '../components/CVMiniature';
+import { Container, Section } from '../components/Layout';
 import Button from '../components/Button';
-import '../styles/AnnonceCVComp.css';
-import '../styles/CVList.css';
+import annoncesService from '../services/annoncesService';
+import ficheCandidatService from '../services/ficheCandidatService';
+import '../styles/DetailsAnnonce.css';
 
 const DetailsAnnonce = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [annonceDetails, setAnnonceDetails] = useState(null);
+  const { idAnnonce } = useParams();
+  const [annonceData, setAnnonceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCandidat, setSelectedCandidat] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const [actionLoading, setActionLoading] = useState({});
+  const [notifications, setNotifications] = useState([]);
+  const [currentQcmPage, setCurrentQcmPage] = useState(0);
+  const QCM_PER_PAGE = 1;
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadAnnonceDetails = async () => {
+    const fetchAnnonceDetails = async () => {
       try {
         setLoading(true);
-        setError(null);
-
-        const response = await annonceService.getAnnonceById(id);
-
-        if (response.success) {
-          setAnnonceDetails(response.data);
-          console.log('Détails de l\'annonce récupérés:', response.data);
-        } else {
-          setError(response.message || 'Erreur lors du chargement des détails');
-        }
+        const response = await annoncesService.getAnnonceById(idAnnonce);
+        // L'API retourne { message, data, success }
+        setAnnonceData(response.data);
       } catch (err) {
-        setError('Erreur de connexion au serveur');
         console.error('Erreur lors du chargement des détails:', err);
+        setError('Erreur lors du chargement des détails de l\'annonce');
       } finally {
         setLoading(false);
       }
     };
 
-    if (id) {
-      loadAnnonceDetails();
+    if (idAnnonce) {
+      fetchAnnonceDetails();
     }
-  }, [id]);
+  }, [idAnnonce]);
 
-  const formatAnnonceData = (data) => {
-    if (!data || !data.annonce) return null;
-    return {
-      id: data.annonce.id_annonce,
-      post: data.annonce.Poste?.valeur || 'Poste non défini',
-      ville: data.annonce.Ville?.valeur || 'Ville non définie',
-      ageMin: data.annonce.age_min || 0,
-      ageMax: data.annonce.age_max || 0,
-      genre: data.annonce.Genre?.valeur || 'Non spécifié',
-      langues: data.langues?.map(l => l.Langue?.valeur).filter(Boolean) || [],
-      qualites: data.qualites?.map(q => q.Qualite?.valeur).filter(Boolean) || [],
-      experiences: data.experiences?.map(e => ({
-        poste: e.Domaine?.valeur || 'Domaine non défini',
-        duree: e.duree_experience_min ? `${e.duree_experience_min} - ${e.duree_experience_max || e.duree_experience_min} ans` : 'Non spécifié'
-      })) || [],
-      filiere: data.niveauxFiliere?.map(nf => nf.Filiere?.valeur).filter(Boolean) || [],
-      niveau: data.niveauxFiliere?.map(nf => nf.Niveau?.valeur).filter(Boolean) || []
-    };
+  const showNotification = (message, type = 'success') => {
+    const id = Date.now();
+    const notification = { id, message, type };
+    setNotifications(prev => [...prev, notification]);
+    
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+      setNotifications(prev => prev.filter(n => n.id !== id));
+    }, 4000);
   };
 
-  const formatCVData = (candidatDetail) => {
-    if (!candidatDetail || !candidatDetail.candidat?.Tiers) return null;
-    const tiers = candidatDetail.candidat.Tiers;
-    return {
-      id: tiers.id_tiers,
-      nom: tiers.nom || 'Nom non défini',
-      prenom: tiers.prenom || 'Prénom non défini',
-      dateNaissance: tiers.date_naissance || '',
-      contact: tiers.contact || '',
-      email: tiers.email || '',
-      cin: tiers.cin || '',
-      photo: tiers.photo || '',
-      genre: tiers.id_genre || '',
-      situationMatrimoniale: tiers.id_situation_matrimoniale || '',
-      nombreEnfants: tiers.nombre_enfants || 0,
-      ville: tiers.id_ville || '',
-      langues: candidatDetail.langues?.map(l => l.Langue?.valeur).filter(Boolean) || [],
-      qualites: candidatDetail.qualites?.map(q => q.Qualite?.valeur).filter(Boolean) || [],
-      experiences: candidatDetail.experiences?.map(e => ({
-        poste: e.Domaine?.valeur || 'Domaine non défini',
-        duree: e.duree_experience || 'Non spécifié'
-      })) || [],
-      filiere: candidatDetail.niveauxFiliere?.map(nf => nf.Filiere?.valeur).filter(Boolean) || [],
-      niveau: candidatDetail.niveauxFiliere?.map(nf => nf.Niveau?.valeur).filter(Boolean) || [],
-      envoisQcm: candidatDetail.envoisQcm || [],
-      reponsesQcm: candidatDetail.reponsesQcm || [],
-      uniteEntretiens: candidatDetail.unite_entretiens || []
-    };
+  const handleSendQcm = async (candidatId) => {
+    try {
+      setActionLoading(prev => ({ ...prev, [`qcm_${candidatId}`]: true }));
+      await annoncesService.sendQcmCandidat(candidatId);
+      
+      // Recharger les données pour mettre à jour l'état
+      const updatedResponse = await annoncesService.getAnnonceById(idAnnonce);
+      setAnnonceData(updatedResponse.data);
+      
+      showNotification('QCM envoyé avec succès ! Le candidat recevra un email avec le lien.', 'success');
+    } catch (err) {
+      console.error('Erreur lors de l\'envoi du QCM:', err);
+      showNotification('Erreur lors de l\'envoi du QCM. Veuillez réessayer.', 'error');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [`qcm_${candidatId}`]: false }));
+    }
   };
 
-  const formatCVMiniatureData = (candidatDetail) => {
-    if (!candidatDetail || !candidatDetail.candidat?.Tiers) return null;
-    const tiers = candidatDetail.candidat.Tiers;
-    return {
-      id: tiers.id_tiers,
-      nom: tiers.nom || 'Nom non défini',
-      prenom: tiers.prenom || 'Prénom non défini',
-      photo: tiers.photo || null,
-      email: tiers.email || '',
-      contact: tiers.contact || '',
-      ville: tiers.id_ville || 'Ville non définie',
-      filiere: candidatDetail.niveauxFiliere?.map(nf => nf.Filiere?.valeur).filter(Boolean).join(', ') || 'Filière non définie',
-      niveau: candidatDetail.niveauxFiliere?.map(nf => nf.Niveau?.valeur).filter(Boolean).join(', ') || 'Niveau non défini'
-    };
+  const handleSendEntretien = async (candidatId) => {
+    try {
+      setActionLoading(prev => ({ ...prev, [`entretien_${candidatId}`]: true }));
+      
+      // Date par défaut: dans 7 jours, durée 60 minutes
+      const dateEntretien = new Date();
+      dateEntretien.setDate(dateEntretien.getDate() + 7);
+      
+      await annoncesService.sendUniteEntretien(candidatId, dateEntretien.toISOString().split('T')[0], 60);
+      
+      // Recharger les données pour mettre à jour l'état
+      const updatedResponse = await annoncesService.getAnnonceById(idAnnonce);
+      setAnnonceData(updatedResponse.data);
+      
+      const dateFormatted = dateEntretien.toLocaleDateString('fr-FR', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      showNotification(`Convocation d'entretien envoyée ! Date prévue : ${dateFormatted}`, 'success');
+    } catch (err) {
+      console.error('Erreur lors de l\'envoi de la convocation:', err);
+      showNotification('Erreur lors de l\'envoi de la convocation. Veuillez réessayer.', 'error');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [`entretien_${candidatId}`]: false }));
+    }
   };
 
-  const handleCandidatSelect = (candidatDetail) => {
-    setSelectedCandidat(candidatDetail);
+  const handleVoirDossierComplet = (candidatId) => {
+    navigate(`/fiche-candidat/${candidatId}`);
   };
-
-  const totalPages = annonceDetails?.candidatsDetails ? Math.ceil(annonceDetails.candidatsDetails.length / itemsPerPage) : 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentCandidats = annonceDetails?.candidatsDetails ? annonceDetails.candidatsDetails.slice(startIndex, endIndex) : [];
-
-  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
-  const goToPrevious = () => { if (currentPage > 1) setCurrentPage(currentPage - 1); };
-  const goToNext = () => { if (currentPage < totalPages) setCurrentPage(currentPage + 1); };
 
   if (loading) {
     return (
-      <div>
-        <Header />
-        <div className="cv-list__loading">
-          <div className="loading-spinner">
-            <div className="spinner"></div>
-            <p>Chargement des détails de l'annonce...</p>
-          </div>
-        </div>
-      </div>
+        <Container>
+          <Section>
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Chargement des détails de l'annonce...</p>
+            </div>
+          </Section>
+        </Container>
     );
   }
 
-  if (error) {
+  if (error || !annonceData) {
     return (
-      <div>
-        <Header />
-        <div className="cv-list__error">
-          <div className="error-state">
-            <h3>Erreur de chargement</h3>
-            <p>{error}</p>
-            <Button onClick={() => navigate('/annonces')}>Retour aux annonces</Button>
-          </div>
-        </div>
-      </div>
+        <Container>
+          <Section>
+            <div className="error-container">
+              <h2>Erreur</h2>
+              <p>{error || 'Annonce introuvable'}</p>
+              <Button onClick={() => navigate('/liste-annonces')}>
+                Retour à la liste
+              </Button>
+            </div>
+          </Section>
+        </Container>
     );
   }
 
-  if (!annonceDetails) {
-    return (
-      <div>
-        <Header />
-        <Button onClick={() => navigate('/annonces')}>Retour</Button>
-        <div>Aucun détail trouvé pour cette annonce</div>
-      </div>
-    );
-  }
-
-  const annonceData = formatAnnonceData(annonceDetails);
-  const cvData = selectedCandidat ? formatCVData(selectedCandidat) : null;
+  const { annonce, langues, qualites, experiences, niveauxFiliere, statuts, candidatsDetails, qcms } = annonceData;
 
   return (
-    <div>
-      <Header />
-      <Button onClick={() => navigate('/annonces')}>Retour aux annonces</Button>
+      <Container>
+        <Section>
+          {/* Notifications */}
+          {notifications.length > 0 && (
+            <div className="notifications-container">
+              {notifications.map((notification) => (
+                <div 
+                  key={notification.id} 
+                  className={`notification notification--${notification.type}`}
+                >
+                  <span className="notification-icon">
+                    {notification.type === 'success' ? '✅' : '❌'}
+                  </span>
+                  <span className="notification-message">{notification.message}</span>
+                  <button 
+                    className="notification-close"
+                    onClick={() => setNotifications(prev => prev.filter(n => n.id !== notification.id))}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
 
-      {selectedCandidat ? (
-        <div className="annoncecv-container">
-          <div className="annoncecv-left">
-            <AnnonceComp {...annonceData} />
-            <Button onClick={() => setSelectedCandidat(null)} style={{ marginTop: '20px' }}>
-              Retour à la liste des candidats
-            </Button>
-          </div>
-          <div className="annoncecv-right">
-            <CVComp {...cvData} />
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div style={{ marginBottom: '30px' }}>
-            <h2>Détails de l'annonce</h2>
-            <AnnonceComp {...annonceData} />
-          </div>
+          <div className="details-annonce">
+            {/* Header avec bouton retour */}
+            <div className="details-annonce__header">
+              <Button variant="ghost" onClick={() => navigate('/liste-annonces')}>
+                ← Retour à la liste
+              </Button>
+              <h1>Détails de l'annonce #{annonce.id_annonce}</h1>
+            </div>
 
-          <div className="cv-list">
-            <div className="cv-list__header">
-              <div className="cv-list__title-section">
-                <h1 className="cv-list__title">Candidats postulants</h1>
-                <p className="cv-list__count">
-                  {annonceDetails.candidatsDetails?.length || 0} candidat
-                  {(annonceDetails.candidatsDetails?.length || 0) > 1 ? 's' : ''} au total - Page {currentPage} sur {totalPages}
-                </p>
+            {/* Informations de l'annonce */}
+            <div className="annonce-info">
+              <div className="annonce-info__main">
+                <h2>{annonce.Poste?.valeur || 'Poste non défini'}</h2>
+                <div className="annonce-basic-info">
+                  <span>Genre: {annonce.Genre?.valeur}</span>
+                  <span>Ville: {annonce.Ville?.valeur}</span>
+                  <span>
+                    Âge: {annonce.age_min && annonce.age_max 
+                      ? `${annonce.age_min} - ${annonce.age_max} ans` 
+                      : 'Non spécifié'}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {currentCandidats.length === 0 ? (
-              <div className="cv-list__empty">
-                <div className="empty-state">
-                  <svg className="empty-state__icon" width="64" height="64" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                  </svg>
-                  <h3>Aucun candidat</h3>
-                  <p>Aucun candidat n'a postulé pour cette annonce.</p>
+            {/* Détails de l'annonce */}
+            <div className="annonce-details-grid">
+              {/* Niveaux et filières */}
+              {niveauxFiliere && niveauxFiliere.length > 0 && (
+                <div className="details-section">
+                  <h3>Niveaux et Filières requis</h3>
+                  <ul>
+                    {niveauxFiliere.map((nf, index) => (
+                      <li key={index}>
+                        {nf.Niveau?.valeur} en {nf.Filiere?.valeur}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Expériences */}
+              {experiences && experiences.length > 0 && (
+                <div className="details-section">
+                  <h3>Expériences requises</h3>
+                  <ul>
+                    {experiences.map((exp, index) => (
+                      <li key={index}>
+                        {exp.nombre_annee} an{exp.nombre_annee > 1 ? 's' : ''} en {exp.Domaine?.valeur}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Langues */}
+              {langues && langues.length > 0 && (
+                <div className="details-section">
+                  <h3>Langues requises</h3>
+                  <ul>
+                    {langues.map((lang, index) => (
+                      <li key={index}>{lang.Langue?.valeur}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Qualités */}
+              {qualites && qualites.length > 0 && (
+                <div className="details-section">
+                  <h3>Qualités recherchées</h3>
+                  <ul>
+                    {qualites.map((qual, index) => (
+                      <li key={index}>{qual.Qualite?.valeur}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Historique de l'annonce */}
+            {statuts && statuts.length > 0 && (
+              <div className="details-section">
+                <h3>Historique de l'annonce</h3>
+                <div className="historique-timeline">
+                  {statuts.map((status, index) => (
+                    <div key={index} className="timeline-item">
+                      <div className="timeline-date">
+                        {ficheCandidatService.formatDate(status.date_changement)}
+                      </div>
+                      <div className="timeline-content">
+                        {status.TypeStatusAnnonce?.valeur}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="cv-list__horizontal">
-                  {currentCandidats.map((candidatDetail, index) => {
-                    const cvMiniatureData = formatCVMiniatureData(candidatDetail);
-                    if (!cvMiniatureData) return null;
+            )}
+
+            {/* QCMs de l'annonce */}
+            {qcms && qcms.length > 0 && (
+              <div className="details-section qcm-section">
+                <h3>Questions du QCM ({qcms.length})</h3>
+                <div className="qcm-container-compact">
+                  <div className="qcm-navigation-compact">
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      onClick={() => setCurrentQcmPage(Math.max(0, currentQcmPage - 1))}
+                      disabled={currentQcmPage === 0}
+                    >
+                      ←
+                    </Button>
+                    <span className="qcm-page-info-compact">
+                      {currentQcmPage + 1}/{qcms.length}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="xs"
+                      onClick={() => setCurrentQcmPage(Math.min(qcms.length - 1, currentQcmPage + 1))}
+                      disabled={currentQcmPage >= qcms.length - 1}
+                    >
+                      →
+                    </Button>
+                  </div>
+
+                  {qcms[currentQcmPage] && (
+                    <div className="qcm-item-compact">
+                      <div className="qcm-question-compact">
+                        <strong>Q{currentQcmPage + 1}:</strong> {qcms[currentQcmPage].question?.intitule}
+                      </div>
+                      <div className="qcm-reponses-compact">
+                        {qcms[currentQcmPage].reponses && qcms[currentQcmPage].reponses.map((rep, repIndex) => (
+                          <div key={repIndex} className={`qcm-reponse-compact ${rep.modalite ? 'correct' : 'incorrect'}`}>
+                            <span className="qcm-reponse-text-compact">{rep.reponse}</span>
+                            <span className={`qcm-reponse-icon-compact ${rep.modalite ? 'icon-correct' : 'icon-incorrect'}`}>
+                              {rep.modalite ? '✓' : '✗'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Candidats */}
+            <div className="candidats-section">
+              <h3>Candidats postulants ({candidatsDetails ? candidatsDetails.length : 0})</h3>
+              
+              {candidatsDetails && candidatsDetails.length > 0 ? (
+                <div className="candidats-grid">
+                  {candidatsDetails
+                    .filter(candidatData => candidatData?.candidat && candidatData?.candidat?.Tier)
+                    .map((candidatData, index) => {
+                    const candidat = candidatData.candidat;
+                    const tiers = candidat.Tier;
+                    
+                    const age = ficheCandidatService.calculateAge(tiers.date_naissance);
+                    
+                    // Déterminer les statuts QCM et entretien
+                    const qcmStatus = ficheCandidatService.getQcmStatus(
+                      candidatData.envoisQcm || [], 
+                      candidatData.reponsesQcm?.length > 0 ? candidatData.reponsesQcm[0].reponses : []
+                    );
+                    
+                    const entretienStatus = ficheCandidatService.getEntretienStatus(
+                      candidatData.unite_entretiens || []
+                    );
+
+                    // Obtenir la formation principale
+                    const formationPrincipale = candidatData.niveauxFiliere && candidatData.niveauxFiliere.length > 0 
+                      ? candidatData.niveauxFiliere[0] 
+                      : null;
+
                     return (
-                      <CVMiniature
-                        key={cvMiniatureData.id}
-                        {...cvMiniatureData}
-                        onViewDetails={() => handleCandidatSelect(candidatDetail)}
-                        className={`cv-miniature--animation-delay-${index}`}
-                      />
+                      <div key={candidat.id_candidat} className={`cv-miniature candidat-miniature cv-miniature--animation-delay-${index % 3}`}>
+                        {/* Header avec match percentage */}
+                        <div className="cv-miniature__match-indicator">
+                          <div className="cv-miniature__match-circle">
+                            <span className="cv-miniature__match-percentage">{candidatData.pourcentage || 0}%</span>
+                          </div>
+                        </div>
+
+                        {/* En-tête avec photo et infos principales */}
+                        <div className="cv-miniature__header">
+                          <div className="cv-miniature__photo-container">
+                            {tiers.photo ? (
+                              <img src={tiers.photo} alt={`${tiers.prenom} ${tiers.nom}`} className="cv-miniature__photo" />
+                            ) : (
+                              <div className="cv-miniature__photo cv-miniature__photo--placeholder">
+                                {`${tiers.prenom?.charAt(0) || ''}${tiers.nom?.charAt(0) || ''}`.toUpperCase()}
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="cv-miniature__identity">
+                            <h3 className="cv-miniature__name">
+                              <span className="cv-miniature__prenom">{tiers.prenom}</span>
+                              <span className="cv-miniature__nom">{tiers.nom}</span>
+                            </h3>
+                            <p className="cv-miniature__title">
+                              {formationPrincipale?.Filiere?.valeur || 'Formation non spécifiée'}
+                            </p>
+                            <p className="cv-miniature__level">
+                              {formationPrincipale?.Niveau?.valeur || 'Niveau non spécifié'}
+                            </p>
+                            <p className="cv-miniature__age">
+                              {age ? `${age} ans` : 'Âge non renseigné'}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Statuts */}
+                        <div className="cv-miniature__status">
+                          <div className="cv-miniature__status-grid">
+                            <div className={`cv-miniature__status-item cv-miniature__status--${qcmStatus.type}`}>
+                              <span className="cv-miniature__status-label">QCM</span>
+                              {qcmStatus.action === 'send' ? (
+                                <Button
+                                  variant="primary"
+                                  size="xs"
+                                  loading={actionLoading[`qcm_${candidat.id_candidat}`]}
+                                  onClick={() => handleSendQcm(candidat.id_candidat)}
+                                  className="cv-miniature__status-btn cv-miniature__status-btn--qcm"
+                                >
+                                  📧 Envoyer
+                                </Button>
+                              ) : (
+                                <span className="cv-miniature__status-value">{qcmStatus.text}</span>
+                              )}
+                            </div>
+                            <div className={`cv-miniature__status-item cv-miniature__status--${entretienStatus.type}`}>
+                              <span className="cv-miniature__status-label">Entretien</span>
+                              {entretienStatus.action === 'schedule' && qcmStatus.action === 'completed' ? (
+                                <Button
+                                  variant="secondary"
+                                  size="xs"
+                                  loading={actionLoading[`entretien_${candidat.id_candidat}`]}
+                                  onClick={() => handleSendEntretien(candidat.id_candidat)}
+                                  className="cv-miniature__status-btn cv-miniature__status-btn--entretien"
+                                >
+                                  📅 Planifier
+                                </Button>
+                              ) : (
+                                <span className="cv-miniature__status-value">{entretienStatus.text}</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Action principale - Toujours "Voir dossier complet" */}
+                        <div className="cv-miniature__actions">
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => handleVoirDossierComplet(candidat.id_candidat)}
+                            fullWidth
+                            className="cv-miniature__action-btn cv-miniature__action-btn--voir"
+                          >
+                            <span className="btn-icon">👁️</span>
+                            Voir dossier complet
+                          </Button>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
-
-                <div style={{ marginTop: '30px' }}>
-                  <h3 style={{ marginBottom: '20px' }}>Vue en carrés</h3>
-                  <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                    gap: '15px'
-                  }}>
-                    {currentCandidats.map((candidatDetail) => {
-                      const tiers = candidatDetail.candidat?.Tiers;
-                      if (!tiers) return null;
-                      return (
-                        <div key={`card-${tiers.id_tiers}`}
-                          style={{
-                            border: '1px solid #ddd',
-                            borderRadius: '8px',
-                            padding: '15px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            backgroundColor: '#f9f9f9'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-                            e.currentTarget.style.transform = 'translateY(-2px)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.boxShadow = 'none';
-                            e.currentTarget.style.transform = 'translateY(0)';
-                          }}
-                          onClick={() => handleCandidatSelect(candidatDetail)}
-                        >
-                          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                            <div style={{
-                              width: '50px',
-                              height: '50px',
-                              borderRadius: '50%',
-                              backgroundColor: '#007bff',
-                              color: 'white',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '18px',
-                              fontWeight: 'bold',
-                              marginRight: '12px'
-                            }}>
-                              {tiers.nom.charAt(0)}{tiers.prenom.charAt(0)}
-                            </div>
-                            <div>
-                              <h4 style={{ margin: '0', fontSize: '16px' }}>{tiers.nom} {tiers.prenom}</h4>
-                              <p style={{ margin: '0', fontSize: '12px', color: '#666' }}>ID: {tiers.id_tiers}</p>
-                            </div>
-                          </div>
-                          <div style={{ fontSize: '14px', lineHeight: '1.4' }}>
-                            <p style={{ margin: '5px 0' }}><strong>Email:</strong> {tiers.email || 'Non renseigné'}</p>
-                            <p style={{ margin: '5px 0' }}><strong>Contact:</strong> {tiers.contact || 'Non renseigné'}</p>
-                            <p style={{ margin: '5px 0' }}><strong>CIN:</strong> {tiers.cin || 'Non renseigné'}</p>
-                            <p style={{ margin: '5px 0' }}><strong>Date naissance:</strong> {tiers.date_naissance || 'Non renseigné'}</p>
-                            <p style={{ margin: '5px 0' }}><strong>Enfants:</strong> {tiers.nombre_enfants || 0}</p>
-                            {candidatDetail.langues?.length > 0 && (
-                              <p style={{ margin: '5px 0' }}><strong>Langues:</strong> {candidatDetail.langues.map(l => l.Langue?.valeur).join(', ')}</p>
-                            )}
-                            {candidatDetail.qualites?.length > 0 && (
-                              <p style={{ margin: '5px 0' }}><strong>Qualités:</strong> {candidatDetail.qualites.map(q => q.Qualite?.valeur).join(', ')}</p>
-                            )}
-                            {candidatDetail.envoisQcm?.length > 0 && (
-                              <p style={{ margin: '5px 0' }}><strong>QCM:</strong> {candidatDetail.envoisQcm.length} envoi(s)</p>
-                            )}
-                            {candidatDetail.unite_entretiens?.length > 0 && (
-                              <p style={{ margin: '5px 0' }}><strong>Entretiens:</strong> {candidatDetail.unite_entretiens.length} entretien(s)</p>
-                            )}
-                          </div>
-                          <Button style={{ marginTop: '12px', width: '100%', fontSize: '14px' }}>
-                            Voir le détail complet
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
+              ) : (
+                <div className="empty-candidats">
+                  <p>Aucun candidat n'a postulé pour cette annonce.</p>
                 </div>
-
-                {totalPages > 1 && (
-                  <div className="cv-list__pagination">
-                    <button
-                      className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
-                      onClick={goToPrevious}
-                      disabled={currentPage === 1}
-                    >
-                      ‹ Précédent
-                    </button>
-                    <div className="pagination-pages">
-                      {Array.from({ length: totalPages }, (_, index) => (
-                        <button
-                          key={index + 1}
-                          className={`pagination-page ${currentPage === index + 1 ? 'active' : ''}`}
-                          onClick={() => goToPage(index + 1)}
-                        >
-                          {index + 1}
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-                      onClick={goToNext}
-                      disabled={currentPage === totalPages}
-                    >
-                      Suivant ›
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        </Section>
+      </Container>
   );
 };
 

@@ -8,20 +8,20 @@ import Layout from '../components/Layout';
 
 // Importation des pages
 import Home from '../pages/Home';
-import AnnonceList from '../pages/AnnonceList';
-import DetailsAnnonce from '../pages/DetailsAnnonce';
+import { ListeAnnonces, DetailsAnnonce, FicheCandidat } from '../pages';
+import { ROUTES } from './routes';
 
 // Configuration des routes
 const AppRouter = () => {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/annonces" element={<AnnonceList />} />
-          <Route path="/annonces/:id/details" element={<DetailsAnnonce />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Routes avec Layout */}
+        <Route path={ROUTES.HOME} element={<Layout><Home /></Layout>} />
+        <Route path={ROUTES.LISTE_ANNONCES} element={<Layout><ListeAnnonces /></Layout>} />
+        <Route path={ROUTES.DETAILS_ANNONCE} element={<Layout><DetailsAnnonce /></Layout>} />
+        <Route path={ROUTES.FICHE_CANDIDAT} element={<Layout><FicheCandidat /></Layout>} />
+      </Routes>
     </Router>
   );
 };

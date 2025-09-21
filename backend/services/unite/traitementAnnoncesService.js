@@ -198,7 +198,8 @@ exports.getAnnonceById = async (id) => {
           niveauxFiliere: niveauxFiliereTiers,
           envoisQcm: envois.length > 0 ? envois : [],
           reponsesQcm: reponses.length > 0 ? reponses : [],
-          unite_entretiens: uniteAvecScores.length > 0 ? uniteAvecScores : []
+          unite_entretiens: uniteAvecScores.length > 0 ? uniteAvecScores : [],
+          pourcentage: 0
         };
       })
     );
@@ -221,8 +222,7 @@ exports.getAnnonceById = async (id) => {
       niveauxFiliere,
       statuts,
       candidatsDetails,
-      qcms: questions,
-      pourcentage : 0
+      qcms: questions
     };
 
   } catch (err) {
