@@ -205,3 +205,20 @@ exports.accepterSuggestion = async (req, res) => {
     });
   }
 }
+
+exports.getEmpEnContratDEssai = async (req, res) => {
+  try {
+    const emp = await ceoService.getEmpEnContratDEssai();
+    res.json({
+      message: `Liste des employés en contrat d'essai récupérée avec succès`,
+      data: emp,
+      success: true
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des employés',
+      data: null,
+      success: false
+    });
+  }
+}

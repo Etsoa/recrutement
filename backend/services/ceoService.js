@@ -61,6 +61,19 @@ const getAllEmployes = async () => {
   return employes;
 }
 
+const getEmpEnContratDEssai = async () => {
+  const employes = await CeoEmployesView.findAll({
+    include: [
+      {
+        model: ContratEssai,
+        attributes: ["id_contrat_essai", "date_debut", "duree"]
+      }
+    ],
+    where: { id_type_status_employe: 6 } // Tokony hoe 6 ny en contrat d'essaie
+  });
+  return employes;
+}
+
 const getAllSuggestsWaitingValidation = async () => {
   const suggestions = await CeoSuggestions.findAll({
     include: [
@@ -159,19 +172,6 @@ const accepterSuggestion = async (id_ceo_suggestion, date_debut, duree, id_poste
       error: error.message
     };
   }
-}
-
-const getEmpEnContratDEssai = async () => {
-  const employes = await CeoEmployesView.findAll({
-    include: [
-      {
-        model: ContratEssai,
-        attributes: ["id_contrat_essai", "date_debut", "duree"]
-      }
-    ],
-    where: { id_type_status_employe: 6 } // Tokony hoe 6 ny en contrat d'essaie
-  });
-  return employes;
 }
 
 module.exports = {

@@ -17,6 +17,8 @@ router.get('/employes', ceoController.getAllEmployes);
 router.get('/suggestions-waiting', ceoController.getAllSuggestsWaitingValidation);
 
 router.post('/validate-suggestion', ceoController.accepterSuggestion);
-router.post('/reject-suggestion', ceoController.refuserSuggestion)
+router.post('/reject-suggestion', ceoController.refuserSuggestion);
+
+router.get('/emp-contrat-essai', ceoController.getEmpEnContratDEssai);
 
 module.exports = router;
