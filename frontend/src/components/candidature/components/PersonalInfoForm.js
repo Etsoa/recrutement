@@ -49,7 +49,6 @@ const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
   }, []);
 
   const handleChange = (value, fieldName) => {
-    console.log('PersonalInfoForm handleChange:', fieldName, '=', value);
     updateFormData({ [fieldName]: value });
   };
 
@@ -97,6 +96,17 @@ const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
           onChange={handleChange}
           required={true}
           error={errors.date_naissance}
+        />
+
+        <Input
+          label="Numéro CIN"
+          name="cin"
+          value={formData.cin || ''}
+          onChange={handleChange}
+          required={true}
+          placeholder="123456789012"
+          error={errors.cin}
+          maxLength="12"
         />
 
         <Dropdown

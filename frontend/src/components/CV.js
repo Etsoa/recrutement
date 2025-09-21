@@ -23,6 +23,7 @@ const CV = ({
   experiences = [],
   filiere = '',
   niveau = '',
+  posteAnnonce = '', // Nouveau prop pour le poste de l'annonce
   
   // Scores et évaluations
   scoreQCM = null,
@@ -32,6 +33,7 @@ const CV = ({
   // Props optionnelles pour l'affichage
   showQRCode = false,
   isEditable = false,
+  showEvaluation = true, // Nouveau prop pour contrôler l'affichage de l'évaluation
   onDownloadCV = null,
   onSendQCM = null,
   onScheduleUniteInterview = null,
@@ -80,7 +82,11 @@ const CV = ({
         
         <div className="cv-identity">
           <h1 className="cv-name">{prenom} {nom}</h1>
-          <p className="cv-title">{filiere} - {niveau}</p>
+          {posteAnnonce ? (
+            <p className="cv-title">{posteAnnonce}</p>
+          ) : (
+            <p className="cv-title">{filiere} - {niveau}</p>
+          )}
           
           <div className="cv-contact">
             {email && (
@@ -282,6 +288,7 @@ const CV = ({
     </div>
 
     {/* Section d'évaluation - en dehors du CV */}
+    {showEvaluation && (
     <div className="cv-evaluation-wrapper">
       <div className="cv-evaluation-section">
         <h3 className="cv-evaluation-title">Évaluation du candidat</h3>
@@ -358,6 +365,7 @@ const CV = ({
         </div>
       </div>
     </div>
+    )}
     </>
   );
 };

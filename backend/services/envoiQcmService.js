@@ -64,7 +64,7 @@ async function createEnvoiQcm(id_candidat) {
     dateExpiration.setDate(dateExpiration.getDate() + 1);
 
     // Créer l'enregistrement d'envoi QCM selon la structure existante
-    const lienQcm = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/qcm/${token}`;
+    const lienQcm = `${process.env.FRONTEND_URL}/qcm/${token}`;
     
   const envoiQcm = await EnvoiQcmCandidat.create({
       id_candidat,

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { annoncesService } from '../services/annoncesService';
 import Button from '../components/Button';
+import Captcha from '../components/Captcha';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import AnnonceCard from '../components/AnnonceCard';
@@ -32,6 +33,7 @@ const CandidaturePage = () => {
     nom: '',
     prenom: '',
     date_naissance: '',
+    cin: '',
     genre: '',
     email: '',
     telephone: '',
@@ -70,6 +72,9 @@ const CandidaturePage = () => {
   // États pour les résultats de soumission
   const [submissionStatus, setSubmissionStatus] = useState(null); // null, 'success', 'error'
   const [submissionError, setSubmissionError] = useState('');
+
+  // État pour le captcha
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   // Charger les données de l'annonce
   useEffect(() => {
@@ -126,6 +131,10 @@ const CandidaturePage = () => {
         if (!formData.nom?.trim()) newErrors.nom = 'Le nom est requis';
         if (!formData.prenom?.trim()) newErrors.prenom = 'Le prénom est requis';
         if (!formData.date_naissance) newErrors.date_naissance = 'La date de naissance est requise';
+        if (!formData.cin?.trim()) newErrors.cin = 'Le numéro CIN est requis';
+        else if (!/^\d{12}$/.test(formData.cin.trim())) {
+          newErrors.cin = 'Le CIN doit contenir exactement 12 chiffres';
+        }
         if (!formData.genre) newErrors.genre = 'Le genre est requis';
         if (!formData.email?.trim()) newErrors.email = 'L\'email est requis';
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -228,12 +237,19 @@ const CandidaturePage = () => {
     }
   };
 
-  // Soumission du formulaire
+  // Soumission du formulaire - afficher le captcha d'abord
   const handleSubmit = async () => {
     if (!validateStep(3)) {
       return;
     }
 
+    // Afficher le captcha au lieu d'envoyer directement
+    setShowCaptcha(true);
+  };
+
+  // Fonction pour envoyer la candidature après validation du captcha
+  const handleCaptchaVerified = async () => {
+    setShowCaptcha(false);
     setIsSubmitting(true);
     setSubmissionError('');
     
@@ -273,6 +289,11 @@ const CandidaturePage = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Gestionnaires du captcha
+  const handleCaptchaCancel = () => {
+    setShowCaptcha(false);
   };
 
   // Fonction pour réessayer l'envoi
@@ -434,6 +455,14 @@ const CandidaturePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de captcha */}
+      {showCaptcha && (
+        <Captcha
+          onVerify={handleCaptchaVerified}
+          onCancel={handleCaptchaCancel}
+        />
+      )}
     </div>
   );
 };

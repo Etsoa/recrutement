@@ -2,6 +2,7 @@
 export { default as Header } from './Header';
 export { default as Footer } from './Footer';
 export { default as Button } from './Button';
+export { default as Captcha } from './Captcha';
 
 // Composants de formulaire
 export { default as Input } from './Input';
