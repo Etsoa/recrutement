@@ -11,6 +11,12 @@ const FormAnnonce = () => {
     age_max: '',
     id_genre: ''
   });
+  const handleLogout = () => {
+    sessionStorage.removeItem('rhLoggedIn');
+    sessionStorage.removeItem('rhData');
+    alert("Vous avez été déconnecté");
+    window.location.href = '/rh/login';
+  };
   
   const [options, setOptions] = useState({
     postes: [],
@@ -67,6 +73,11 @@ const FormAnnonce = () => {
           <h1 className="form-annonce__title">Créer une annonce</h1>
           <p className="form-annonce__subtitle">Remplissez les informations pour l'annonce</p>
         </div>
+        <form onSubmit={handleLogout}>
+          <Button type="submit">
+            Se Deconnecter
+          </Button>
+        </form>
 
         <form className="form-annonce__form" onSubmit={handleSubmit}>
           <div className="form-annonce__form-group">

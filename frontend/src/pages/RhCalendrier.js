@@ -4,6 +4,12 @@ import '../styles/RhCalendrier.css';
 import { Button } from '../components';
 
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('rhLoggedIn');
+    sessionStorage.removeItem('rhData');
+    alert("Vous avez été déconnecté");
+    window.location.href = '/rh/login';
+  };
 const RhCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [entretiens, setEntretiens] = useState([]);
@@ -282,6 +288,11 @@ const RhCalendar = () => {
           </div>
         </div>
 
+        <form onSubmit={handleLogout}>
+          <Button type="submit">
+            Se Deconnecter
+          </Button>
+        </form>
 
         {/* Calendrier principal */}
         <div className="calendar-main">

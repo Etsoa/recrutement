@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Button from '../components/Button';
 import rhService from "../services/rhService";
 import "../styles/RhCeoSuggestions.css";
 
@@ -96,6 +97,12 @@ const SuggestionsPage = () => {
       </div>
     );
   }
+  const handleLogout = () => {
+    sessionStorage.removeItem('rhLoggedIn');
+    sessionStorage.removeItem('rhData');
+    alert("Vous avez été déconnecté");
+    window.location.href = '/rh/login';
+  };
 
   return (
     <div className="container">
@@ -106,6 +113,11 @@ const SuggestionsPage = () => {
           <p className="subtitle">Gestion des candidatures soumises au comite de direction</p>
         </div>
         
+        <form onSubmit={handleLogout}>
+          <Button type="submit">
+            Se Deconnecter
+          </Button>
+        </form>
 
       </div>
 

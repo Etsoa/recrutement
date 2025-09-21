@@ -13,8 +13,7 @@ FROM employes e
 JOIN tiers t ON e.id_tiers = t.id_tiers
 JOIN postes p ON e.id_poste = p.id_poste
 JOIN unites u ON p.id_unite = u.id_unite
-WHERE u.nom = 'Ressources Humaines'
-  AND p.valeur = 'Responsable RH';
+WHERE u.nom = 'Ressources Humaines';
 
 
 CREATE OR REPLACE VIEW rh_entretiens_view AS

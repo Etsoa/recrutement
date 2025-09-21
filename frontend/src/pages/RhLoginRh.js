@@ -9,21 +9,37 @@ const LoginRh = () => {
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+
+        
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await rhService.login(email, password);
-      if (data.success) {
-        setMessage('Connexion réussie');
-        // Exemple : localStorage.setItem('token', data.data.token);
-        // window.location.href = '/dashboard'; // Redirection si besoin
-      } else {
-        setMessage(data.message);
-      }
-    } catch (err) {
-      setMessage('Erreur serveur');
+  e.preventDefault();
+  try {
+    const data = await rhService.login(email, password);
+
+    if (data.success) {
+      setMessage('Connexion réussie');
+
+      // ⚡ Stockage de la session RH
+      sessionStorage.setItem('rhLoggedIn', 'true');   // pour vérifier la connexion
+      sessionStorage.setItem('rhId', data.data.id);   // optionnel : ID de l'utilisateur
+      sessionStorage.setItem('rhName', data.data.nom); // optionnel : nom pour affichage
+
+      // Redirection vers la page principale RH
+      window.location.href = '/rh/suggestions';
+    } else {
+      setMessage(data.message);
     }
-  };
+  } catch (err) {
+    setMessage('Erreur serveur');
+  }
+};
+const handleLogout = () => {
+  sessionStorage.removeItem('rhLoggedIn');
+  sessionStorage.removeItem('rhData');
+  window.location.href = '/rh/login';
+  alert("Vous avez été déconnecté");
+};
+
 
   return (
     <div className="login-rh">
@@ -73,7 +89,6 @@ const LoginRh = () => {
             </Button>
           </div>
         </form>
-
         {message && (
           <div className={`login-rh__message ${message.includes('réussie') ? 'success' : 'error'}`}>
             {message}

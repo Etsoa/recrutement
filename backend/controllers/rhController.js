@@ -16,14 +16,28 @@ exports.getAllRhs = async (req, res) => {
 
 exports.loginRh = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email ou mot de passe manquant', data: null, success: false });
+  if (!email) {
+    return res.status(400).json({ message: 'Email manquant', data: null, success: false });
+  }
+  if (!password) {
+    return res.status(400).json({ message: 'Mot de passe manquant', data: null, success: false });
   }
 
   try {
     const rh = await rhService.loginRh(email, password);
     if (rh) {
-      res.json({ message: 'Connexion réussie', data: { rh, token: 'fake-jwt-token' }, success: true });
+      // ⚡ Réponse adaptée pour le front
+      res.json({ 
+        message: 'Connexion réussie', 
+        data: { 
+          id: rh.id_employe,
+          nom: rh.nom,
+          prenom: rh.prenom,
+          email: rh.email,
+          token: 'fake-jwt-token' // peut être remplacé par un vrai JWT plus tard
+        }, 
+        success: true 
+      });
     } else {
       res.status(401).json({ message: 'Email ou mot de passe incorrect', data: null, success: false });
     }
