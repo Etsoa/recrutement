@@ -334,5 +334,6 @@ CREATE TABLE pourcentage_minimum_cv (
 );
 
 CREATE TABLE adresse_mail (
-    valeur VARCHAR(100) PRIMARY KEY NOT NULL
+    valeur VARCHAR(100) PRIMARY KEY NOT NULL,
+    mot_de_passe VARCHAR(100) NOT NULL
 );

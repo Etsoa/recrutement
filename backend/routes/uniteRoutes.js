@@ -11,10 +11,11 @@ router.get('/annonce/:id', uniteController.getAnnonceById);
 // fiche candidat
 router.get('/candidat/:id', uniteController.getCandidatById);
 
-// // table envoi qcm candidat(email)
-// router.post('/create/qcm_candidat', uniteController.createQcmCandidat);
-// // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
-// router.post('create/unite_entretien', uniteController.createUniteEntretien);
+// table envoi qcm candidat(email)
+router.post('/send/qcm_candidat', uniteController.sendQcmCandidat);
+
+// table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
+router.post('/send/unite_entretien', uniteController.sendUniteEntretien);
 
 // // liste d entretiens par jour
 // router.get('unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);

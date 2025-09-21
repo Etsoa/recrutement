@@ -10,7 +10,7 @@ const StatusEmploye = db.define('StatusEmploye', {
     primaryKey: true,
     autoIncrement: true
   },
-  id_type_status_employes: {
+  id_type_status_employe: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -41,6 +41,6 @@ const StatusEmploye = db.define('StatusEmploye', {
 
 // Associations
 StatusEmploye.belongsTo(Employe, { foreignKey: 'id_employe' });
-StatusEmploye.belongsTo(TypeStatusEmploye, { foreignKey: 'id_type_status_employes' });
+StatusEmploye.belongsTo(TypeStatusEmploye, { foreignKey: 'id_type_status_employe' });
 
 module.exports = StatusEmploye;

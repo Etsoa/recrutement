@@ -1,8 +1,10 @@
 const traitementAnnonceService = require('../services/unite/traitementAnnoncesService');
+const traitementDossierService = require('../services/unite/traitementDossierService');
 
 exports.getAllAnnonces = async (req, res) => {
   try {
-    const data = await traitementAnnonceService.getAllAnnonces();
+    const id = req.data.id;
+    const data = await traitementAnnonceService.getAllAnnonces(id);
     res.json({ 
       message: 'Liste des annonces récupérée avec succès',
       data: data,
@@ -46,7 +48,7 @@ exports.getAnnonceById = async (req, res) => {
 
 exports.getCandidatById = async (req, res) => {
   try {
-    const id = req.params.id; // ID depuis l'URL
+    const id = req.params.id; 
     const data = await traitementAnnonceService.getCandidatById(id);
     if (!data) {
       return res.status(404).json({
@@ -70,20 +72,44 @@ exports.getCandidatById = async (req, res) => {
   }
 };
 
+exports.sendQcmCandidat = async (req, res) => {
+  try {
+    const id = req.data.id;
+    const data = await traitementDossierService.sendQcmCandidat(id);
+    res.status(201).json({
+      message: 'QCM candidat envoyé avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération du candidat',
+      data: null,
+      success: false
+    });
+  }
+};
 
+exports.sendUniteEntretien = async (req, res) => {
+  try {
+    const id = req.data.id;
+    const data = await traitementDossierService.sendUniteEntretien(id);
+    res.status(201).json({
+      message: 'Unité d\'entretien envoyée avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération du candidat',
+      data: null,
+      success: false
+    });
+  }
+};
 
-// exports.loginUnite = async (req, res) => {
-//   try {
-//     const { username, password } = req.body;
-//     if (username === 'admin' && password === '1234') {
-//       res.json({ message: 'Connexion réussie', data: { token: 'fake-jwt-token' }, success: true });
-//     } else {
-//       res.status(401).json({ message: 'Nom ou mot de passe incorrect', data: null, success: false });
-//     }
-//   } catch (err) {
-//     res.status(500).json({ message: 'Erreur serveur lors de la connexion', data: null, success: false });
-//   }
-// };
 
 
 // exports.getAnnonceById = async (req, res) => {
