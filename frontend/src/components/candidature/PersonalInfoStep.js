@@ -1,5 +1,5 @@
 import React from 'react';
-import { PersonalInfoForm, FormationManager } from './components';
+import { PersonalInfoForm, FormationManager, FileUploader } from './components';
 import '../../styles/CandidatureStep.css';
 
 const PersonalInfoStep = ({ formData, updateFormData, errors = {} }) => {
@@ -12,6 +12,12 @@ const PersonalInfoStep = ({ formData, updateFormData, errors = {} }) => {
       />
       
       <FormationManager 
+        formData={formData}
+        updateFormData={updateFormData}
+        errors={errors}
+      />
+
+      <FileUploader 
         formData={formData}
         updateFormData={updateFormData}
         errors={errors}

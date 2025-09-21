@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExperienceManager, SkillsSelector, FileUploader } from './components';
+import { ExperienceManager, SkillsSelector } from './components';
 import '../../styles/CandidatureStep.css';
 
 const ProfessionalInfoStep = ({ formData, updateFormData, errors = {} }) => {
@@ -12,12 +12,6 @@ const ProfessionalInfoStep = ({ formData, updateFormData, errors = {} }) => {
       />
       
       <SkillsSelector 
-        formData={formData}
-        updateFormData={updateFormData}
-        errors={errors}
-      />
-      
-      <FileUploader 
         formData={formData}
         updateFormData={updateFormData}
         errors={errors}

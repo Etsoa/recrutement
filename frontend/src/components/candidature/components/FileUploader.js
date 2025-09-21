@@ -11,7 +11,7 @@ const FileUploader = ({ formData, updateFormData, errors = {} }) => {
 
   return (
     <div className="section">
-      <h3>Documents</h3>
+      <h3>Photo de profil</h3>
       <div className="form-grid">
         <FileButton
           label="Photo de profil"
@@ -19,22 +19,9 @@ const FileUploader = ({ formData, updateFormData, errors = {} }) => {
           accept="image/jpeg,image/png,image/gif"
           onChange={handleFileChange}
           maxSize={5}
-          showPreview={true}
-          previewType="image"
+          showPreview={false}
           error={errors.photo}
           variant="outline"
-        />
-
-        <FileButton
-          label="CV (PDF ou Image)"
-          name="cv"
-          accept=".pdf,image/jpeg,image/png"
-          onChange={handleFileChange}
-          required={true}
-          maxSize={5}
-          showPreview={true}
-          previewType="document"
-          error={errors.cv}
         />
       </div>
     </div>
