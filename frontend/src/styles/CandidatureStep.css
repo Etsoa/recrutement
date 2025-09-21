@@ -761,17 +761,34 @@ small {
   color: var(--color-primary);
 }
 
+
 .niveaux-checkboxes-inline {
   display: flex !important;
   flex-wrap: wrap !important;
-  gap: var(--spacing-md) !important;
+  gap: 16px !important;
   align-items: center;
   justify-content: flex-start;
 }
 
+
+.niveaux-checkboxes-inline .checkbox-container {
+  flex: 0 1 auto;
+  min-width: 70px;
+  max-width: 140px;
+  margin-bottom: 0;
+}
+
+.niveaux-checkboxes-inline .checkbox-label,
+niveau-checkbox {
+  width: 100%;
+  min-width: 70px;
+  max-width: 140px;
+  box-sizing: border-box;
+}
+
 .niveaux-checkboxes-inline .checkbox-container {
   flex: 0 0 auto;
-  min-width: fit-content;
+  min-width: 70px;
 }
 
 .niveau-checkbox {
