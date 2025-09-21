@@ -1,4 +1,4 @@
-const AnnonceComplet = require('../models/annoncesCompletModel');
+const AnnonceComplet = require('../../models/annoncesCompletModel');
 
 
 // Récupérer toutes les annonces

@@ -1,30 +1,29 @@
-const db = require('../config/db');
-const Annonces = require('../models/annoncesModel');
+const Annonce = require('../../models/annoncesModel');
+
+const createAnnonce = async (data) => {
+    return await Annonce.create(data);
+};
+
+const getAllAnnonces = async () => {
+    return await Annonce.findAll();
+};
+
+const getAnnonceById = async (id) => {
+    return await Annonce.findByPk(id);
+};
+
+const updateAnnonce = async (id, data) => {
+    return await Annonce.update(data, { where: { id } });
+};
+
+const deleteAnnonce = async (id) => {
+    return await Annonce.destroy({ where: { id } });
+};
 
 module.exports = {
-  async getAllAnnoncesActives() {
-    try {
-      // Exemple: récupérer toutes les annonces actives
-      const result = await Annonces.getAllActives(db);
-      return result;
-    } catch (error) {
-      console.error('Erreur dans getAllAnnoncesActives:', error.message);
-      throw new Error(`Erreur lors de la récupération des annonces actives: ${error.message}`);
-    }
-  },
-  
-  async getAnnonceCompleteById(id) {
-    try {
-      if (!id) {
-        throw new Error('ID annonce requis');
-      }
-      
-      // Exemple: récupérer une annonce complète par ID
-      const result = await Annonces.getCompleteById(db, id);
-      return result;
-    } catch (error) {
-      console.error('Erreur dans getAnnonceCompleteById:', error.message);
-      throw new Error(`Erreur lors de la récupération de l'annonce: ${error.message}`);
-    }
-  }
+    createAnnonce,
+    getAllAnnonces,
+    getAnnonceById,
+    updateAnnonce,
+    deleteAnnonce
 };
