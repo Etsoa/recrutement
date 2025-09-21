@@ -42,10 +42,16 @@ const rhService = {
     return response.json();
   },
 
-  getEntretiensJour: async (date) => {
+  getEntretiensParJour: async (date) => {
     const response = await fetch(`${API_URL}/rh_entretiens_jour?day=${date}`);
     return response.json();
   },
+
+  getEntretiensParMois: async (start, end) => {
+    const response = await fetch(`${API_URL}/rh_entretiens_mois?start=${start}&end=${end}`);
+    return response.json();
+  },
+
 
   updateDateEntretien: async (id_rh_entretien, nouvelle_date) => {
     const response = await fetch(`${API_URL}/update/date/rh_entretien`, {

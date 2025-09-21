@@ -19,6 +19,10 @@ router.post('/create/rh_entretien', rhController.createRhEntretien);
 // liste d entretiens par jour
 router.get('/rh_entretiens_jour', rhController.getAllRhEntretiensParJour);
 
+// liste d entretiens par mois
+router.get('/rh_entretiens_mois', rhController.getEntretiensParMois);
+
+
 // modifier entretien unite a la date
 router.post('/update/date/rh_entretien', rhController.updateDateRhEntretien);
 
@@ -33,7 +37,6 @@ router.post('/prochaine_disponibilite/rh', rhController.getProchaineDisponibilit
 
 // ajouter score dans score_rh_entretien
 router.post('/create/score/rh_entretien', rhController.createScoreRhEntretien);
-
 
 // suggestion au ceo
 router.post('/suggest/ceo', rhController.suggestToCeo);

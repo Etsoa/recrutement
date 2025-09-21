@@ -98,6 +98,24 @@ const getEntretiensParJour = async (day) => {
   }
 };
 
+const getEntretiensParMois = async (start, end) => {
+  try {
+    const entretiens = await RhEntretiensView.findAll({
+      where: {
+        date_entretien: {
+          [Op.between]: [start + ' 00:00:00', end + ' 23:59:59']
+        }
+      },
+      order: [['date_entretien', 'ASC']]
+    });
+    return entretiens;
+  } catch (err) {
+    console.error('Erreur dans getEntretiensParMois:', err);
+    throw err;
+  }
+};
+
+
 const updateDateRhEntretien = async (id_rh_entretien, nouvelle_date) => {
   const entretien = await RhEntretien.findByPk(id_rh_entretien);
   if (!entretien) throw new Error('Entretien non trouvé');
@@ -123,7 +141,7 @@ const updateStatusRhEntretien = async (id_rh_entretien, id_type_status_entretien
 
 // Obtenir créneaux disponibles pour une date
 const getDisponibilitesRh = async (id_rh, date) => {
-  // Créneaux possibles de 8h à 16h, toutes les heures
+  // Créneaux possibles de 8h à 16h
   const horaires = [];
   for (let h = 8; h <= 16; h++) {
     horaires.push(`${h}:00`);
@@ -139,9 +157,20 @@ const getDisponibilitesRh = async (id_rh, date) => {
     }
   });
 
-  const horairesPrises = existants.map(e => new Date(e.date_entretien).getHours() + ':00');
+  // Extraire l'heure locale correctement
+  const horairesPrises = existants.map(e => {
+    // Convertir en string si c'est un Date
+    let dateStr;
+    if (e.date_entretien instanceof Date) {
+      dateStr = e.date_entretien.toLocaleString('fr-FR', { hour12: false });
+    } else {
+      dateStr = e.date_entretien; // déjà string depuis la base
+    }
+    const heure = parseInt(dateStr.split(' ')[1].split(':')[0], 10);
+    return `${heure}:00`;
+  });
 
-  // Retirer les horaires déjà pris
+  // Retirer les créneaux déjà pris
   const disponibles = horaires.filter(h => !horairesPrises.includes(h));
 
   return disponibles;
@@ -254,6 +283,7 @@ module.exports = {
   getAllSuggests,
   createRhEntretien,
   getEntretiensParJour, 
+  getEntretiensParMois,
   updateDateRhEntretien,
   updateStatusRhEntretien, 
   getDisponibilitesRh,

@@ -98,6 +98,19 @@ exports.getAllRhEntretiensParJour = async (req, res) => {
   }
 };
 
+exports.getEntretiensParMois = async (req, res) => {
+  try {
+    const { start, end } = req.query;
+    if (!start || !end) return res.status(400).json({ success: false, message: 'Dates manquantes' });
+
+    const entretiens = await rhService.getEntretiensParMois(start, end);
+    res.json({ success: true, data: entretiens, message: 'Entretiens récupérés' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+};
+
 exports.updateDateRhEntretien = async (req, res) => {
   try {
     const { id_rh_entretien, nouvelle_date } = req.body;
@@ -172,8 +185,11 @@ exports.updateStatusRhEntretien = async (req, res) => {
 exports.getDisponibilitesRh = async (req, res) => {
   try {
     const { id_rh, date } = req.body; // date au format 'YYYY-MM-DD'
-    if (!id_rh || !date) {
-      return res.status(400).json({ message: 'ID RH ou date manquante', success: false });
+    if (!id_rh) {
+      return res.status(400).json({ message: 'ID RH manquant', success: false });
+    } 
+    if (!date) {
+      return res.status(400).json({ message: 'Date manquante', success: false });
     }
 
     const disponibilites = await rhService.getDisponibilitesRh(id_rh, date);
@@ -216,8 +232,11 @@ exports.reserveEntretienRh = async (req, res) => {
 exports.getProchaineDisponibiliteRh = async (req, res) => {
   try {
     const { id_rh, date_depart } = req.body; 
-    if (!id_rh || !date_depart) {
-      return res.status(400).json({ message: 'ID RH ou date de départ manquante', data: null, success: false });
+    if (!id_rh) {
+      return res.status(400).json({ message: 'ID RH', data: null, success: false });
+    } 
+    if (!date_depart) {
+      return res.status(400).json({ message: 'Date de départ manquante', data: null, success: false });
     }
 
     const prochaineDisponibilite = await rhService.getProchaineDisponibilite(id_rh, date_depart);
