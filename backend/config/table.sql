@@ -71,6 +71,17 @@ CREATE TABLE annonces (
     id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE,
     id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE
 );
+CREATE TABLE question_qcms (
+    id_question_qcm SERIAL PRIMARY KEY,
+    intitule VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE reponse_qcms (
+    id_reponse_qcm SERIAL PRIMARY KEY,
+    id_question_qcm INTEGER REFERENCES question_qcms(id_question_qcm) ON DELETE CASCADE,
+    reponse VARCHAR(255) NOT NULL,
+    modalite BOOLEAN NOT NULL
+);
 
 CREATE TABLE qcm_annonces (
     id_qcm_annonce SERIAL PRIMARY KEY,

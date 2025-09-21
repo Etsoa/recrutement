@@ -8,3 +8,8 @@ export { default as Historiques } from './Historiques';
 export { default as ListeAnnonces } from './ListeAnnonces';
 export { default as DetailsAnnonce } from './DetailsAnnonce';
 export { default as FicheCandidat } from './FicheCandidat';
+export { default as Unites } from './loginUnites';
+export { default as Dashboard } from './Dashboard';
+export { default as Parametres } from './Parametres';
+export { default as CreateAnnonce } from './CreateAnnonce';
+export { default as QCM } from './QCM';
