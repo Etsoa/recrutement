@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import '../styles/globals.css';
 import '../styles/variables.css';
@@ -13,10 +12,8 @@ import Annonces from '../pages/Annonces';
 import CandidaturePage from '../pages/CandidaturePage';
 import QCMPage from '../pages/QCMPage';
 import DetailQCM from '../pages/DetailQCM';
-import Historiques from '../pages/Historiques';
 import CVtest from '../pages/CVtest';
 import CVList from '../pages/CVList';
-import Users from '../pages/Users';
 
 // Configuration des routes
 const AppRouter = () => {
@@ -35,13 +32,12 @@ const AppRouter = () => {
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/annonces" element={<Annonces />} />
               <Route path="/candidature/:annonceId" element={<CandidaturePage />} />
               <Route path="/detailQCM" element={<DetailQCM />} />
-              <Route path="/historique" element={<Historiques />} />
               <Route path="/cv" element={<CVtest />} />
               <Route path="/cv-list" element={<CVList />} />
-              <Route path="/users" element={<Users />} />
             </Routes>
           </Layout>
         } />

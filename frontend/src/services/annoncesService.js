@@ -9,10 +9,15 @@ export const annoncesService = {
   async getAllAnnonces() {
     try {
       const response = await api.annonces.getAll();
+      // L'API retourne déjà la structure { success, data, message }
       return response;
     } catch (error) {
       console.error('Erreur lors de la récupération des annonces:', error);
-      throw new Error(`Impossible de charger les annonces: ${error.message}`);
+      return {
+        success: false,
+        data: null,
+        message: error.message || 'Impossible de charger les annonces'
+      };
     }
   },
 
@@ -24,14 +29,22 @@ export const annoncesService = {
   async getAnnonceById(id) {
     try {
       if (!id) {
-        throw new Error('ID de l\'annonce requis');
+        return {
+          success: false,
+          data: null,
+          message: 'ID de l\'annonce requis'
+        };
       }
       
       const response = await api.annonces.getById(id);
       return response;
     } catch (error) {
       console.error('Erreur lors de la récupération de l\'annonce:', error);
-      throw new Error(`Impossible de charger l'annonce: ${error.message}`);
+      return {
+        success: false,
+        data: null,
+        message: error.message || 'Impossible de charger l\'annonce'
+      };
     }
   },
 
@@ -47,14 +60,22 @@ export const annoncesService = {
       const missingFields = requiredFields.filter(field => !candidatData[field]);
       
       if (missingFields.length > 0) {
-        throw new Error(`Champs obligatoires manquants: ${missingFields.join(', ')}`);
+        return {
+          success: false,
+          data: null,
+          message: `Champs obligatoires manquants: ${missingFields.join(', ')}`
+        };
       }
 
       const response = await api.annonces.createCandidat(candidatData);
       return response;
     } catch (error) {
       console.error('Erreur lors de la création de la candidature:', error);
-      throw new Error(`Impossible de soumettre la candidature: ${error.message}`);
+      return {
+        success: false,
+        data: null,
+        message: error.message || 'Impossible de soumettre la candidature'
+      };
     }
   },
 

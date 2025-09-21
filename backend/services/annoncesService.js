@@ -39,7 +39,26 @@ async function getAllAnnoncesActives() {
 				},
 				{ model: Poste },
 				{ model: Ville },
-				{ model: Genre }
+				{ model: Genre },
+				{
+					model: NiveauFiliereAnnonce,
+					include: [
+						{ model: Filiere },
+						{ model: Niveau }
+					]
+				},
+				{
+					model: LangueAnnonce,
+					include: [ { model: Langue } ]
+				},
+				{
+					model: QualiteAnnonce,
+					include: [ { model: Qualite } ]
+				},
+				{
+					model: ExperienceAnnonce,
+					include: [ { model: Domaine } ]
+				}
 			]
 		});
 		return annonces;

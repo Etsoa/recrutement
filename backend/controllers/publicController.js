@@ -229,135 +229,135 @@ exports.createCandidat = async (req, res) => {
   }
 };
 
-// // Récupérer les questions QCM pour un candidat avec token
-// exports.qcmQuestions = async (req, res) => {
-//   try {
-//     const { token } = req.body;
+// Récupérer les questions QCM pour un candidat avec token
+exports.qcmQuestions = async (req, res) => {
+  try {
+    const { token } = req.body;
     
-//     if (!token) {
-//       return res.status(400).json({
-//         message: 'Token requis',
-//         data: null,
-//         success: false
-//       });
-//     }
+    if (!token) {
+      return res.status(400).json({
+        message: 'Token requis',
+        data: null,
+        success: false
+      });
+    }
     
-//     // Vérifier la validité du token
-//     const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
-//     if (!envoiQcm) {
-//       return res.status(404).json({
-//         message: 'Token invalide ou expiré',
-//         data: null,
-//         success: false
-//       });
-//     }
+    // Vérifier la validité du token
+    const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
+    if (!envoiQcm) {
+      return res.status(404).json({
+        message: 'Token invalide ou expiré',
+        data: null,
+        success: false
+      });
+    }
     
-//     // Vérifier si le QCM n'a pas déjà été répondu
-//     const qcmCompleted = await envoiQcmService.checkQcmCompleted(envoiQcm.id_envoi_qcm_candidat);
-//     if (qcmCompleted) {
-//       return res.status(409).json({
-//         message: 'Ce QCM a déjà été complété',
-//         data: null,
-//         success: false
-//       });
-//     }
+    // Vérifier si le QCM n'a pas déjà été répondu
+    const qcmCompleted = await envoiQcmService.checkQcmCompleted(envoiQcm.id_envoi_qcm_candidat);
+    if (qcmCompleted) {
+      return res.status(409).json({
+        message: 'Ce QCM a déjà été complété',
+        data: null,
+        success: false
+      });
+    }
     
-//     // Récupérer les questions pour cette annonce
-//     const questions = await questionQcmsService.getQuestionsByAnnonce(envoiQcm.id_annonce);
+    // Récupérer les questions pour cette annonce
+    const questions = await questionQcmsService.getQuestionsByAnnonce(envoiQcm.id_annonce);
     
-//     const data = {
-//       id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
-//       candidat: {
-//         nom: envoiQcm.nom,
-//         prenom: envoiQcm.prenom,
-//         poste: envoiQcm.poste
-//       },
-//       questions,
-//       debut_qcm: new Date().toISOString()
-//     };
+    const data = {
+      id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
+      candidat: {
+        nom: envoiQcm.nom,
+        prenom: envoiQcm.prenom,
+        poste: envoiQcm.poste
+      },
+      questions,
+      debut_qcm: new Date().toISOString()
+    };
     
-//     res.json({
-//       message: 'Questions QCM envoyées avec succès',
-//       data,
-//       success: true
-//     });
-//   } catch (err) {
-//     console.error('Erreur qcmQuestions:', err);
-//     res.status(500).json({
-//       message: 'Erreur lors de l\'envoi des questions QCM',
-//       data: null,
-//       success: false
-//     });
-//   }
-// };
+    res.json({
+      message: 'Questions QCM envoyées avec succès',
+      data,
+      success: true
+    });
+  } catch (err) {
+    console.error('Erreur qcmQuestions:', err);
+    res.status(500).json({
+      message: 'Erreur lors de l\'envoi des questions QCM',
+      data: null,
+      success: false
+    });
+  }
+};
 
-// // Enregistrer les réponses QCM et calculer le score
-// exports.qcmReponses = async (req, res) => {
-//   try {
-//     const { token, reponses, debut, fin } = req.body;
+// Enregistrer les réponses QCM et calculer le score
+exports.qcmReponses = async (req, res) => {
+  try {
+    const { token, reponses, debut, fin } = req.body;
     
-//     if (!token || !reponses || !Array.isArray(reponses)) {
-//       return res.status(400).json({
-//         message: 'Token et réponses requis',
-//         data: null,
-//         success: false
-//       });
-//     }
+    if (!token || !reponses || !Array.isArray(reponses)) {
+      return res.status(400).json({
+        message: 'Token et réponses requis',
+        data: null,
+        success: false
+      });
+    }
     
-//     // Vérifier le token
-//     const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
-//     if (!envoiQcm) {
-//       return res.status(404).json({
-//         message: 'Token invalide',
-//         data: null,
-//         success: false
-//       });
-//     }
+    // Vérifier le token
+    const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
+    if (!envoiQcm) {
+      return res.status(404).json({
+        message: 'Token invalide',
+        data: null,
+        success: false
+      });
+    }
     
-//     // Calculer la durée
-//     const duree = Math.round((new Date(fin) - new Date(debut)) / 1000); // en secondes
+    // Calculer la durée
+    const duree = Math.round((new Date(fin) - new Date(debut)) / 1000); // en secondes
     
-//     // Préparer les données pour l'enregistrement
-//     const reponsesData = [];
+    // Préparer les données pour l'enregistrement
+    const reponsesData = [];
     
-//     for (const reponse of reponses) {
-//       const { id_question, id_reponse_selectionnee } = reponse;
+    for (const reponse of reponses) {
+      const { id_question, id_reponse_selectionnee } = reponse;
       
-//       // Vérifier si la réponse est correcte
-//       const est_correcte = await questionQcmsService.verifyReponse(id_reponse_selectionnee);
-//       const score_question = est_correcte ? 1 : 0;
+      // Vérifier si la réponse est correcte
+      const est_correcte = await questionQcmsService.verifyReponse(id_reponse_selectionnee);
+      const score_question = est_correcte ? 1 : 0;
       
-//       // Récupérer l'id_qcm_annonce
-//       const id_qcm_annonce = await reponseQcmService.getQcmAnnonceByQuestion(id_question, envoiQcm.id_annonce);
+      // Récupérer l'id_qcm_annonce
+      const id_qcm_annonce = await reponseQcmService.getQcmAnnonceByQuestion(id_question, envoiQcm.id_annonce);
       
-//       reponsesData.push({
-//         id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
-//         id_qcm_annonce,
-//         debut,
-//         fin,
-//         duree,
-//         reponse: id_reponse_selectionnee.toString(),
-//         score: score_question
-//       });
-//     }
+      reponsesData.push({
+        id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
+        id_qcm_annonce,
+        debut,
+        fin,
+        duree,
+        reponse: id_reponse_selectionnee.toString(),
+        score: score_question
+      });
+    }
     
-//     // Enregistrer toutes les réponses
-//     await reponseQcmService.createMultipleReponses(reponsesData);
+    // Enregistrer toutes les réponses
+    await reponseQcmService.createMultipleReponses(reponsesData);
     
-//     // Calculer les statistiques finales
-//     const stats = await reponseQcmService.calculateQcmStats(envoiQcm.id_envoi_qcm_candidat);
+    // Calculer les statistiques finales
+    const stats = await reponseQcmService.calculateQcmStats(envoiQcm.id_envoi_qcm_candidat);
     
-//     res.json({
-//       message: 'Réponses QCM enregistrées avec succès',
-//       data: stats,
-//       success: true
-//     });
-//   } catch (err) {
-//     console.error('Erreur qcmReponses:', err);
-//     res.status(500).json({
-//       message: 'Erreur lors de l\'enregistrement des réponses QCM',
-//       data: null,
-//       success: false
-//     });
-//   }
-// };
+    res.json({
+      message: 'Réponses QCM enregistrées avec succès',
+      data: stats,
+      success: true
+    });
+  } catch (err) {
+    console.error('Erreur qcmReponses:', err);
+    res.status(500).json({
+      message: 'Erreur lors de l\'enregistrement des réponses QCM',
+      data: null,
+      success: false
+    });
+  }
+};

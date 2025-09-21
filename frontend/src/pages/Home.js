@@ -1,36 +1,26 @@
 
-import React, { useState, useEffect } from "react";
-import { getUsers } from "../api/userApi";
-import Header from "../components/Header";
-import UserList from "../components/UserList";
-
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Container, Section, Button } from '../components';
+import '../styles/Home.css';
 
 function Home() {
-  const [message, setMessage] = useState("");
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getUsers();
-        setMessage(data.message);
-        setUsers(data.users || []);
-      } catch (error) {
-        setMessage("Hello World from Frontend! (Backend not connected)");
-      }
-    };
-
-    fetchData();
-  }, []);
+  const navigate = useNavigate();
 
   return (
-    <div>
-      <main className="App-main">
-        <h1>Hello World Annonce</h1>
-        <p>{message}</p>
-        <UserList users={users} />
-      </main>
-    </div>
+    <Container>
+      <Section className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title">
+            App de Recrutement
+          </h1>
+          <p className="hero-subtitle">
+            Connectons les talents aux opportunités. Notre plateforme moderne facilite 
+            la rencontre entre candidats qualifiés et entreprises d'exception.
+          </p>
+        </div>
+      </Section>
+    </Container>
   );
 }
 

@@ -1,0 +1,145 @@
+/* Home.css - Design professionnel et épuré */
+
+.hero-section {
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: transparent;
+  position: relative;
+  padding: var(--spacing-2xl) 0;
+}
+
+.hero-content {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  text-rendering: optimizeLegibility;
+}
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+  margin-bottom: var(--spacing-2xl);
+  font-weight: 400;
+  max-width: 580px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.9;
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: var(--spacing-xl);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 40vh;
+    padding: var(--spacing-xl) 0;
+  }
+  
+  .hero-content {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .hero-title {
+    font-size: 2.25rem;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .hero-subtitle {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-xl);
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+  }
+  
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100%;
+    max-width: 280px;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.875rem;
+    line-height: 1.15;
+  }
+  
+  .hero-subtitle {
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+  }
+  
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Animation d'entrée progressive */
+.hero-content > * {
+  animation-fill-mode: both;
+}
+
+.hero-title {
+  animation-delay: 0.1s;
+}
+
+.hero-subtitle {
+  animation-delay: 0.2s;
+}
+
+.hero-actions {
+  animation-delay: 0.3s;
+}
+
+/* Préfère les animations réduites pour l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .hero-content,
+  .hero-content > * {
+    animation: none;
+  }
+  
+  .btn-primary-custom,
+  .btn-secondary-custom {
+    transition: none;
+  }
+}

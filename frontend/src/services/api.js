@@ -108,14 +108,23 @@ export const api = {
     // Récupérer toutes les annonces actives
     getAll: () => apiCall('/public/annonces'),
     
-    // Récupérer une annonce par son ID
-    getById: (id) => apiCall(`/public/annonces/${id}`),
+    // Récupérer une annonce par son ID (POST avec ID dans le body)
+    getById: (id) => apiCall('/public/annonce', {
+      method: 'POST',
+      body: JSON.stringify({ id }),
+    }),
     
     // Créer une candidature
-    createCandidat: (candidatData) => apiCall('/public/candidats', {
+    createCandidat: (candidatData) => apiCall('/public/create/candidat', {
       method: 'POST',
       body: JSON.stringify(candidatData),
     }),
+  },
+
+  // Services pour les paramètres
+  parametres: {
+    // Récupérer tous les paramètres de l'application
+    getAll: () => apiCall('/public/parametres'),
   },
 };
 

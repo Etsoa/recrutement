@@ -8,8 +8,8 @@ import "../styles/AnnoncesPage.css";
 
 function Annonces() {
   // ===== CONFIGURATION =====
-  const USE_TEST_DATA = true;
-  const ITEMS_PER_PAGE = 4;
+  const USE_TEST_DATA = false; // Utiliser le backend réel
+  const ITEMS_PER_PAGE = 3;
   
   // États pour les annonces
   const [allAnnonces, setAllAnnonces] = useState([]);
@@ -40,200 +40,21 @@ function Annonces() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentAnnonces = filteredAnnonces.slice(startIndex, endIndex);
   
-  // Données de test selon la structure de la base de données
-  const donneesTest = [
-    {
-      id_annonce: 1,
-      age_min: 25,
-      age_max: 35,
-      Poste: { valeur: "Développeur Full-Stack" },
-      Ville: { valeur: "Antananarivo" },
-      Genre: { valeur: "Indifférent" },
-      ExperienceAnnonces: [
-        {
-          nombre_annee: 3,
-          Domaine: { valeur: "Développement web" }
-        },
-        {
-          nombre_annee: 2,
-          Domaine: { valeur: "Base de données" }
-        }
-      ],
-      LangueAnnonces: [
-        { Langue: { valeur: "Français" } },
-        { Langue: { valeur: "Anglais" } },
-        { Langue: { valeur: "JavaScript" } }
-      ],
-      QualiteAnnonces: [
-        { Qualite: { valeur: "Autonome" } },
-        { Qualite: { valeur: "Créatif" } },
-        { Qualite: { valeur: "Rigoureux" } }
-      ],
-      NiveauFiliereAnnonces: [
-        {
-          Filiere: { valeur: "Informatique" },
-          Niveau: { valeur: "Licence" }
-        }
-      ]
-    },
-    {
-      id_annonce: 2,
-      age_min: 28,
-      age_max: 40,
-      Poste: { valeur: "Chef de Projet Digital" },
-      Ville: { valeur: "Antananarivo" },
-      Genre: { valeur: "Indifférent" },
-      ExperienceAnnonces: [
-        {
-          nombre_annee: 5,
-          Domaine: { valeur: "Gestion de projet" }
-        },
-        {
-          nombre_annee: 3,
-          Domaine: { valeur: "Marketing digital" }
-        }
-      ],
-      LangueAnnonces: [
-        { Langue: { valeur: "Français" } },
-        { Langue: { valeur: "Anglais" } }
-      ],
-      QualiteAnnonces: [
-        { Qualite: { valeur: "Leadership" } },
-        { Qualite: { valeur: "Communicatif" } },
-        { Qualite: { valeur: "Organisé" } }
-      ],
-      NiveauFiliereAnnonces: [
-        {
-          Filiere: { valeur: "Marketing" },
-          Niveau: { valeur: "Master" }
-        }
-      ]
-    },
-    {
-      id_annonce: 3,
-      age_min: 23,
-      age_max: 32,
-      Poste: { valeur: "Designer UX/UI" },
-      Ville: { valeur: "Antananarivo" },
-      Genre: { valeur: "Indifférent" },
-      ExperienceAnnonces: [
-        {
-          nombre_annee: 2,
-          Domaine: { valeur: "Design graphique" }
-        },
-        {
-          nombre_annee: 1,
-          Domaine: { valeur: "Interface utilisateur" }
-        }
-      ],
-      LangueAnnonces: [
-        { Langue: { valeur: "Français" } },
-        { Langue: { valeur: "Anglais" } }
-      ],
-      QualiteAnnonces: [
-        { Qualite: { valeur: "Créatif" } },
-        { Qualite: { valeur: "Minutieux" } },
-        { Qualite: { valeur: "Innovant" } }
-      ],
-      NiveauFiliereAnnonces: [
-        {
-          Filiere: { valeur: "Design" },
-          Niveau: { valeur: "Licence" }
-        }
-      ]
-    },
-    {
-      id_annonce: 4,
-      age_min: 26,
-      age_max: 38,
-      Poste: { valeur: "Ingénieur DevOps" },
-      Ville: { valeur: "Toamasina" },
-      Genre: { valeur: "Indifférent" },
-      ExperienceAnnonces: [
-        {
-          nombre_annee: 4,
-          Domaine: { valeur: "Administration système" }
-        },
-        {
-          nombre_annee: 3,
-          Domaine: { valeur: "Cloud computing" }
-        }
-      ],
-      LangueAnnonces: [
-        { Langue: { valeur: "Français" } },
-        { Langue: { valeur: "Anglais" } }
-      ],
-      QualiteAnnonces: [
-        { Qualite: { valeur: "Rigoureux" } },
-        { Qualite: { valeur: "Analytique" } },
-        { Qualite: { valeur: "Proactif" } }
-      ],
-      NiveauFiliereAnnonces: [
-        {
-          Filiere: { valeur: "Informatique" },
-          Niveau: { valeur: "Master" }
-        }
-      ]
-    },
-    {
-      id_annonce: 5,
-      age_min: 24,
-      age_max: 35,
-      Poste: { valeur: "Data Analyst" },
-      Ville: { valeur: "Antananarivo" },
-      Genre: { valeur: "Indifférent" },
-      ExperienceAnnonces: [
-        {
-          nombre_annee: 3,
-          Domaine: { valeur: "Analyse de données" }
-        },
-        {
-          nombre_annee: 2,
-          Domaine: { valeur: "Statistiques" }
-        }
-      ],
-      LangueAnnonces: [
-        { Langue: { valeur: "Français" } },
-        { Langue: { valeur: "Anglais" } },
-        { Langue: { valeur: "Python" } },
-        { Langue: { valeur: "SQL" } }
-      ],
-      QualiteAnnonces: [
-        { Qualite: { valeur: "Analytique" } },
-        { Qualite: { valeur: "Méthodique" } },
-        { Qualite: { valeur: "Curieux" } }
-      ],
-      NiveauFiliereAnnonces: [
-        {
-          Filiere: { valeur: "Mathématiques" },
-          Niveau: { valeur: "Master" }
-        }
-      ]
-    }
-  ];
-
-  // Chargement des annonces
   const loadAnnonces = useCallback(async () => {
     setLoading(true);
     setError("");
     
     try {
-      if (USE_TEST_DATA) {
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setAllAnnonces(donneesTest);
-        setFilteredAnnonces(donneesTest);
-      } else {
         const response = await annoncesService.getAllAnnonces();
         if (response.success && response.data) {
           setAllAnnonces(response.data);
           setFilteredAnnonces(response.data);
         } else {
-          throw new Error(response.message || 'Erreur lors du chargement');
+          throw new Error(response.message || 'Erreur lors du chargement des annonces');
         }
-      }
     } catch (err) {
       console.error('Erreur chargement annonces:', err);
-      setError(err.message);
+      setError(err.message || 'Erreur de connexion au serveur');
     } finally {
       setLoading(false);
     }
@@ -250,35 +71,35 @@ function Annonces() {
     // Recherche par mot-clé
     if (searchTerm) {
       filtered = filtered.filter(annonce =>
-        annonce.Poste.valeur.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        annonce.Ville.valeur.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        annonce.ExperienceAnnonces.some(exp => 
-          exp.Domaine.valeur.toLowerCase().includes(searchTerm.toLowerCase())
+        annonce.Poste?.valeur?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        annonce.Ville?.valeur?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (annonce.ExperienceAnnonces || []).some(exp => 
+          exp.Domaine?.valeur?.toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
     }
 
     // Filtres
     if (filters.ville) {
-      filtered = filtered.filter(annonce => annonce.Ville.valeur === filters.ville);
+      filtered = filtered.filter(annonce => annonce.Ville?.valeur === filters.ville);
     }
 
     if (filters.domaine) {
       filtered = filtered.filter(annonce =>
-        annonce.ExperienceAnnonces.some(exp => exp.Domaine.valeur === filters.domaine)
+        (annonce.ExperienceAnnonces || []).some(exp => exp.Domaine?.valeur === filters.domaine)
       );
     }
 
     if (filters.experience_min) {
       const minExp = parseInt(filters.experience_min);
       filtered = filtered.filter(annonce =>
-        annonce.ExperienceAnnonces.some(exp => exp.nombre_annee >= minExp)
+        (annonce.ExperienceAnnonces || []).some(exp => exp.nombre_annee >= minExp)
       );
     }
 
     if (filters.niveau) {
       filtered = filtered.filter(annonce =>
-        annonce.NiveauFiliereAnnonces.some(niv => niv.Niveau.valeur === filters.niveau)
+        (annonce.NiveauFiliereAnnonces || []).some(niv => niv.Niveau?.valeur === filters.niveau)
       );
     }
 
@@ -394,9 +215,9 @@ function Annonces() {
 
   // Extraction des options pour les filtres
   const getFilterOptions = () => {
-    const villes = [...new Set(allAnnonces.map(a => a.Ville.valeur))];
-    const domaines = [...new Set(allAnnonces.flatMap(a => a.ExperienceAnnonces.map(exp => exp.Domaine.valeur)))];
-    const niveaux = [...new Set(allAnnonces.flatMap(a => a.NiveauFiliereAnnonces.map(niv => niv.Niveau.valeur)))];
+    const villes = [...new Set(allAnnonces.map(a => a.Ville?.valeur).filter(Boolean))];
+    const domaines = [...new Set(allAnnonces.flatMap(a => (a.ExperienceAnnonces || []).map(exp => exp.Domaine?.valeur).filter(Boolean)))];
+    const niveaux = [...new Set(allAnnonces.flatMap(a => (a.NiveauFiliereAnnonces || []).map(niv => niv.Niveau?.valeur).filter(Boolean)))];
     
     return { villes, domaines, niveaux };
   };

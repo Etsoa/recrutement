@@ -1,40 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input, Dropdown } from '../../index';
+import parametresService from '../../../services/parametresService';
 
 const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
+  const [parametres, setParametres] = useState({
+    genres: [],
+    situationsMatrimoniales: [],
+    villes: []
+  });
+  const [loading, setLoading] = useState(true);
+
+  // Charger les paramètres au montage du composant
+  useEffect(() => {
+    const loadParametres = async () => {
+      try {
+        setLoading(true);
+        const response = await parametresService.getAllParametres();
+        
+        if (response.success && response.data) {
+          setParametres({
+            genres: parametresService.formatForDropdown(response.data.genres),
+            situationsMatrimoniales: parametresService.formatForDropdown(response.data.situationMatrimoniales),
+            villes: parametresService.formatForDropdown(response.data.villes)
+          });
+        } else {
+          console.error('Erreur lors du chargement des paramètres:', response.message);
+          // Aucun fallback - utiliser uniquement les données du backend
+          setParametres({
+            genres: [],
+            situationsMatrimoniales: [],
+            villes: []
+          });
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des paramètres:', error);
+        // En cas d'erreur réseau, laisser vides les options
+        setParametres({
+          genres: [],
+          situationsMatrimoniales: [],
+          villes: []
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadParametres();
+  }, []);
+
   const handleChange = (value, fieldName) => {
     console.log('PersonalInfoForm handleChange:', fieldName, '=', value);
-    console.log('Options disponibles pour debug:', { genres, situationsMatrimoniales: situationsMatrimoniales.slice(0, 2) });
     updateFormData({ [fieldName]: value });
   };
-
-  const situationsMatrimoniales = [
-    { value: 'Célibataire', label: 'Célibataire' },
-    { value: 'Marié(e)', label: 'Marié(e)' },
-    { value: 'Divorcé(e)', label: 'Divorcé(e)' },
-    { value: 'Veuf/Veuve', label: 'Veuf/Veuve' },
-    { value: 'Union libre', label: 'Union libre' }
-  ];
-
-  const genres = [
-    { value: 'Homme', label: 'Homme' },
-    { value: 'Femme', label: 'Femme' },
-    { value: 'Autre', label: 'Autre' }
-  ];
-
-  const villes = [
-    { value: 'Antananarivo', label: 'Antananarivo' },
-    { value: 'Antsirabe', label: 'Antsirabe' },
-    { value: 'Fianarantsoa', label: 'Fianarantsoa' },
-    { value: 'Toamasina', label: 'Toamasina' },
-    { value: 'Mahajanga', label: 'Mahajanga' },
-    { value: 'Toliara', label: 'Toliara' },
-    { value: 'Antsiranana', label: 'Antsiranana' },
-    { value: 'Morondava', label: 'Morondava' },
-    { value: 'Nosy Be', label: 'Nosy Be' },
-    { value: 'Manakara', label: 'Manakara' },
-    { value: 'Autre', label: 'Autre' }
-  ];
 
   return (
     <div className="section">
@@ -66,9 +83,10 @@ const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
           value={formData.genre || ''}
           onChange={handleChange}
           required={true}
-          options={genres}
-          placeholder="Sélectionner"
+          options={parametres.genres}
+          placeholder={loading ? "Chargement..." : parametres.genres.length === 0 ? "Aucune option disponible" : "Sélectionner"}
           error={errors.genre}
+          disabled={loading || parametres.genres.length === 0}
         />
 
         <Input
@@ -86,9 +104,10 @@ const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
           name="situation_matrimoniale"
           value={formData.situation_matrimoniale || ''}
           onChange={handleChange}
-          options={situationsMatrimoniales}
-          placeholder="Sélectionner"
+          options={parametres.situationsMatrimoniales}
+          placeholder={loading ? "Chargement..." : parametres.situationsMatrimoniales.length === 0 ? "Aucune option disponible" : "Sélectionner"}
           error={errors.situation_matrimoniale}
+          disabled={loading || parametres.situationsMatrimoniales.length === 0}
         />
 
         <Input
@@ -129,9 +148,10 @@ const PersonalInfoForm = ({ formData, updateFormData, errors = {} }) => {
           value={formData.ville || ''}
           onChange={handleChange}
           required={true}
-          options={villes}
-          placeholder="Sélectionner une ville"
+          options={parametres.villes}
+          placeholder={loading ? "Chargement..." : parametres.villes.length === 0 ? "Aucune option disponible" : "Sélectionner une ville"}
           error={errors.ville}
+          disabled={loading || parametres.villes.length === 0}
         />
       </div>
     </div>

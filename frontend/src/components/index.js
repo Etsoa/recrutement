@@ -19,7 +19,6 @@ export { default as SearchBar } from './SearchBar';
 export { default as FilterSection } from './FilterSection';
 
 // Composants spécialisés
-export { default as UserList } from './UserList';
 export { default as CV } from './CV';
 export { default as CVMiniature } from './CVMiniature';
 export { default as AnnonceCard } from './AnnonceCard';
