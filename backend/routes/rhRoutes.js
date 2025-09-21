@@ -5,6 +5,12 @@ const rhController = require('../controllers/rhController');
 // email + mdp a verfieer par rapport au post retour true/false
 router.post('/', rhController.loginRh);
 
+// Récupérer toutes les annonces avec leur statut
+router.get('/annonces', rhController.getAllAnnonces);
+
+// Mettre à jour le statut d'une annonce
+router.post('/annonce/status', rhController.updateAnnonceStatus);
+
 // Récupérer les données pour le formulaire
 router.get('/form-annonce', rhController.getFormAnnonceData);
 // Créer l'annonce

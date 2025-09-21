@@ -57,6 +57,45 @@ exports.getAllSuggests = async (req, res) => {
   }
 };
 
+exports.getAllAnnonces = async (req, res) => {
+  try {
+    const annonces = await rhService.getAllAnnonces();
+    res.json({ message: 'Annonces récupérées avec succès', data: annonces, success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur', data: null, success: false });
+  }
+};
+
+exports.updateAnnonceStatus = async (req, res) => {
+  try {
+    const { id_annonce, id_type_status_annonce, id_unite } = req.body;
+    
+    if (!id_annonce || !id_type_status_annonce) {
+      return res.status(400).json({ 
+        message: 'id_annonce et id_type_status_annonce sont requis', 
+        success: false 
+      });
+    }
+
+    const statusAnnonce = await rhService.updateAnnonceStatus({
+      id_annonce,
+      id_type_status_annonce,
+      id_unite,
+      date_changement: new Date()
+    });
+
+    res.json({
+      message: 'Statut de l\'annonce mis à jour avec succès',
+      data: statusAnnonce,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur: ' + err.message, success: false });
+  }
+};
+
 exports.createAnnonce = async (req, res) => {
   try {
     const { id_poste, id_ville, age_min, age_max, id_genre } = req.query;

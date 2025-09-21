@@ -2,6 +2,7 @@ const RhView = require('../models/rhViewModel');
 const RhSuggestions = require('../models/rhSuggestionsModel');
 const UniteEntretiens = require('../models/uniteEntretiensModel');
 const Candidats = require('../models/candidatsModel');
+const StatusAnnonces = require('../models/statusAnnoncesModel');
 const Tiers = require('../models/tiersModel');
 const Unites = require('../models/unitesModel');
 
@@ -17,9 +18,63 @@ const CeoSuggestions = require('../models/ceoSuggestionsModel');
 
 const StatusCeoSuggestions = require('../models/statusCeoSuggestionsModel');
 const TypeStatusSuggestions = require('../models/typeStatusSuggestionsModel');
+const Annonces = require('../models/annoncesModel');
+const Postes = require('../models/postesModel');
+const Villes = require('../models/villesModel');
+const Genres = require('../models/genresModel');
+const NiveauFiliereAnnonces = require('../models/niveauFiliereAnnoncesModel');
+const Filieres = require('../models/filieresModel');
+const Niveaux = require('../models/niveauxModel');
+const LangueAnnonces = require('../models/langueAnnoncesModel');
+const Langues = require('../models/languesModel');
+const QualiteAnnonces = require('../models/qualiteAnnoncesModel');
+const Qualites = require('../models/qualitesModel');
+const ExperienceAnnonces = require('../models/experienceAnnoncesModel');
+const Domaines = require('../models/domainesModel');
+
+const getAllAnnonces = async () => {
+  try {
+    const annonces = await Annonces.findAll({
+      include: [
+        { model: Postes, as: 'Poste', include: [{ model: Unites, as: 'Unite', attributes: ['id_unite', 'nom'] }] },
+        { model: Villes, as: 'Ville', attributes: ['id_ville', 'valeur'] },
+        { model: Genres, as: 'Genre', attributes: ['id_genre', 'valeur'] },
+        { model: NiveauFiliereAnnonces, as: 'niveauFiliereAnnonces', include: [
+            { model: Filieres, as: 'Filiere', attributes: ['id_filiere', 'valeur'] },
+            { model: Niveaux, as: 'Niveau', attributes: ['id_niveau', 'valeur'] }
+          ] 
+        },
+        { model: LangueAnnonces, as: 'Langues', include: [{ model: Langues, as: 'Langue', attributes: ['id_langue', 'valeur'] }] },
+        { model: QualiteAnnonces, as: 'Qualites', include: [{ model: Qualites, as: 'Qualite', attributes: ['id_qualite', 'valeur'] }] },
+        { model: ExperienceAnnonces, as: 'Experiences', include: [{ model: Domaines, as: 'Domaine', attributes: ['id_domaine', 'valeur'] }] }
+      ]
+    });
+
+    return annonces;
+  } catch (err) {
+    console.error('Erreur getAllAnnonces:', err);
+    throw err;
+  }
+};
+
 
 const loginRh = async (email, mot_de_passe) => {
   return await RhView.findOne({ where: { email, mot_de_passe } });
+};
+
+const updateAnnonceStatus = async ({ id_annonce, id_type_status_annonce, id_unite, date_changement }) => {
+  try {
+    const status = await StatusAnnonces.create({
+      id_annonce,
+      id_type_status_annonce,
+      id_unite,
+      date_changement: date_changement || new Date()
+    });
+    return status;
+  } catch (err) {
+    console.error('Erreur lors de la mise à jour du statut de l\'annonce:', err);
+    throw err;
+  }
 };
 
 const getAllSuggests = async () => {
@@ -305,5 +360,7 @@ module.exports = {
   getProchaineDisponibilite, 
   createScoreRhEntretien,
   suggestToCeo,
-  getAllCeoSuggestions
+  getAllCeoSuggestions,
+  getAllAnnonces,
+  updateAnnonceStatus
 };

@@ -21,11 +21,6 @@ function App() {
           <Route path="/detailQCM" element={<DetailQCM />} />
           <Route path="/historique" element={<Historiques />} />
           <Route path="/back-office" element={<Unites />} />
-          {/* <Route path="/rh/login" element={<LoginRh />} />
-          <Route path="/rh/form-annonce" element={<FormAnnonce />} />
-          <Route path="/rh/suggestions" element={<RhSuggestions />} />
-          <Route path="/rh/entretiens" element={<RhCalendrier />} />
-          <Route path="/rh/ceoSuggestions" element={<RhCeoSuggestions />} /> */}
           <Route path="/rh/login" element={<LoginRh />} />
           <Route path="/rh/suggestions" element={ <ProtectedRoute> <RhSuggestions /> </ProtectedRoute> } />
           <Route path="/rh/form-annonce" element={ <ProtectedRoute> <FormAnnonce /> </ProtectedRoute> } />

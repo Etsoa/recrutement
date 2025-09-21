@@ -10,33 +10,17 @@ const LangueAnnonce = db.define('LangueAnnonce', {
     primaryKey: true,
     autoIncrement: true
   },
-  id_annonce: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Annonce,
-      key: 'id_annonce'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+  id_annonce: { 
+    type: DataTypes.INTEGER, 
+    allowNull: false 
   },
-  id_langue: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Langue,
-      key: 'id_langue'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+  id_langue: { 
+    type: DataTypes.INTEGER, 
+    allowNull: false 
   }
 }, {
   tableName: 'langue_annonces',
   timestamps: false
 });
-
-// Associations
-LangueAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-LangueAnnonce.belongsTo(Langue, { foreignKey: 'id_langue' });
 
 module.exports = LangueAnnonce;

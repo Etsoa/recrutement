@@ -10,33 +10,18 @@ const QualiteAnnonce = db.define('QualiteAnnonce', {
     primaryKey: true,
     autoIncrement: true
   },
-  id_annonce: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Annonce,
-      key: 'id_annonce'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+  
+  id_annonce: { 
+    type: DataTypes.INTEGER, 
+    allowNull: false 
   },
-  id_qualite: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Qualite,
-      key: 'id_qualite'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+  id_qualite: { 
+    type: DataTypes.INTEGER, 
+    allowNull: false 
   }
 }, {
   tableName: 'qualite_annonces',
   timestamps: false
 });
-
-// Associations
-QualiteAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-QualiteAnnonce.belongsTo(Qualite, { foreignKey: 'id_qualite' });
 
 module.exports = QualiteAnnonce;

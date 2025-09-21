@@ -47,6 +47,28 @@ const rhService = {
     return response.json();
   },
 
+  // Récupérer toutes les annonces
+  getAllAnnonces: async () => {
+    const response = await fetch(`${API_URL}/annonces`);
+    return response.json();
+  },
+
+  // Récupérer les données pour le formulaire d'annonce
+  getFormAnnonceData: async () => {
+    const response = await fetch(`${API_URL}/form-annonce`);
+    return response.json();
+  },
+
+  // Mettre à jour le statut d'une annonce
+  updateAnnonceStatus: async (data) => {
+    const response = await fetch(`${API_URL}/annonce/status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  },
+
   getEntretiensParMois: async (start, end) => {
     const response = await fetch(`${API_URL}/rh_entretiens_mois?start=${start}&end=${end}`);
     return response.json();
@@ -76,6 +98,15 @@ const rhService = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id_rh, date })
+    });
+    return response.json();
+  },
+
+  getProchaineDisponibilite: async (id_rh, date_depart) => {
+    const response = await fetch(`${API_URL}/prochaine_disponibilite/rh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_rh, date_depart })
     });
     return response.json();
   },

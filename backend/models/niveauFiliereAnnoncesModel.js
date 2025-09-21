@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Annonce = require('./annoncesModel');
 const Filiere = require('./filieresModel');
 const Niveau = require('./niveauxModel');
 
@@ -12,14 +11,8 @@ const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
     autoIncrement: true
   },
   id_annonce: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Annonce,
-      key: 'id_annonce'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+    type: DataTypes.INTEGER, 
+    allowNull: false 
   },
   id_filiere: {
     type: DataTypes.INTEGER,
@@ -47,7 +40,6 @@ const NiveauFiliereAnnonce = db.define('NiveauFiliereAnnonce', {
 });
 
 // Associations
-NiveauFiliereAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 NiveauFiliereAnnonce.belongsTo(Filiere, { foreignKey: 'id_filiere' });
 NiveauFiliereAnnonce.belongsTo(Niveau, { foreignKey: 'id_niveau' });
 

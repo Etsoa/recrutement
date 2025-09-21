@@ -4,6 +4,13 @@ const db = require('../config/db');
 const Poste = require('./postesModel');
 const Ville = require('./villesModel');
 const Genre = require('./genresModel');
+const NiveauFiliereAnnonce = require('./niveauFiliereAnnoncesModel');
+const LangueAnnonce = require('./langueAnnoncesModel');
+const Langue = require('./languesModel');
+const QualiteAnnonce = require('./qualiteAnnoncesModel');
+const Qualite = require('./qualitesModel');
+const ExperienceAnnonce = require('./experienceAnnoncesModel');
+const Domaine = require('./domainesModel');
 
 const Annonce = db.define('Annonce', {
   id_annonce: {
@@ -58,5 +65,22 @@ const Annonce = db.define('Annonce', {
 Annonce.belongsTo(Poste, { foreignKey: 'id_poste' });
 Annonce.belongsTo(Ville, { foreignKey: 'id_ville' });
 Annonce.belongsTo(Genre, { foreignKey: 'id_genre' });
+Annonce.hasMany(NiveauFiliereAnnonce, { foreignKey: 'id_annonce', as: 'niveauFiliereAnnonces' });
+NiveauFiliereAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce', as: 'Annonce' });
+
+Annonce.hasMany(LangueAnnonce, { foreignKey: 'id_annonce', as: 'Langues' });
+LangueAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+
+LangueAnnonce.belongsTo(Langue, { foreignKey: 'id_langue', as: 'Langue' });
+
+Annonce.hasMany(QualiteAnnonce, { foreignKey: 'id_annonce', as: 'Qualites' });
+QualiteAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+
+QualiteAnnonce.belongsTo(Qualite, { foreignKey: 'id_qualite', as: 'Qualite' });
+
+Annonce.hasMany(ExperienceAnnonce, { foreignKey: 'id_annonce', as: 'Experiences' });
+ExperienceAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+
+ExperienceAnnonce.belongsTo(Domaine, { foreignKey: 'id_domaine', as: 'Domaine' });
 
 module.exports = Annonce;

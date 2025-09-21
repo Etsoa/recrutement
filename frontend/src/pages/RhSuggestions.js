@@ -13,6 +13,11 @@ const RhSuggestions = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
 
+  // Prochaine dispo
+  const [prochaineModalOpen, setProchaineModalOpen] = useState(false);
+  const [prochaineStack, setProchaineStack] = useState([]);
+  const [prochaineIndex, setProchaineIndex] = useState(0);
+
   useEffect(() => {
     fetchSuggestions();
   }, []);
@@ -52,7 +57,6 @@ const RhSuggestions = () => {
     const date = suggestion.entretien?.date_entretien?.split('T')[0] || new Date().toISOString().split('T')[0];
     try {
       const resp = await rhService.getDisponibilites(suggestion.id_rh_suggestion, date);
-      console.log('Créneaux reçus :', resp); // debug
       if (resp.success) {
         setDisponibilites(resp.data || []);
         setSelectedSuggestion(suggestion);
@@ -73,12 +77,11 @@ const RhSuggestions = () => {
   // === Changer la date pour voir les créneaux ===
   const handleDateChange = async (date) => {
     setSelectedDate(date);
-    setSelectedTime(''); // reset heure
+    setSelectedTime('');
     if (!selectedSuggestion) return;
 
     try {
       const resp = await rhService.getDisponibilites(selectedSuggestion.id_rh_suggestion, date);
-      console.log('Créneaux pour nouvelle date :', resp); // debug
       if (resp.success) {
         setDisponibilites(resp.data || []);
       } else {
@@ -109,8 +112,6 @@ const RhSuggestions = () => {
         duree: 60
       });
 
-      console.log('Réponse réservation :', resp); // debug
-
       if (resp.success) {
         setMessage('Entretien planifié avec succès');
         setMessageType('success');
@@ -128,6 +129,69 @@ const RhSuggestions = () => {
       setMessageType('error');
     }
   };
+
+  // === Prochaine dispo ===
+  const handleProchaineDispo = (suggestion) => {
+    if (!suggestion?.id_rh_suggestion) return;
+    setSelectedSuggestion(suggestion);
+    setProchaineModalOpen(true);
+    setProchaineStack([]);
+    setProchaineIndex(0);
+    setSelectedDate('');
+    setSelectedTime('');
+  };
+
+  const handleNextProchaine = async () => {
+    try {
+      let dateDepart;
+
+      // Première fois -> partir du champ choisi
+      if (prochaineStack.length === 0) {
+        if (!selectedDate || !selectedTime) {
+          setMessage("Veuillez choisir une date et une heure de départ");
+          setMessageType("error");
+          return;
+        }
+        dateDepart = `${selectedDate} ${selectedTime}:00`;
+      } else {
+        // Ensuite -> repartir de la dernière dispo trouvée
+        dateDepart = prochaineStack[prochaineIndex].date_disponible;
+      }
+
+      const resp = await rhService.getProchaineDisponibilite(
+        selectedSuggestion.id_rh_suggestion,
+        dateDepart
+      );
+
+      if (resp.success) {
+        const newStack = [...prochaineStack, resp.data];
+        setProchaineStack(newStack);
+        setProchaineIndex(newStack.length - 1);
+      } else {
+        setMessage(resp.message || "Pas de prochaine dispo");
+        setMessageType("error");
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage("Erreur serveur");
+      setMessageType("error");
+    }
+  };
+
+  const handleBackProchaine = () => {
+    if (prochaineIndex > 0) {
+      setProchaineIndex(prochaineIndex - 1);
+    }
+  };
+
+  const handleConfirmProchaine = () => {
+    if (prochaineStack[prochaineIndex]) {
+      setMessage(`Entretien confirmé le ${formatDateTime(prochaineStack[prochaineIndex].date_disponible)}`);
+      setMessageType('success');
+      setProchaineModalOpen(false);
+    }
+  };
+
   const handleLogout = () => {
     sessionStorage.removeItem('rhLoggedIn');
     sessionStorage.removeItem('rhData');
@@ -177,16 +241,17 @@ const RhSuggestions = () => {
 
               <div className="rh-suggestions__item-actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                 <Button variant="primary" onClick={() => handleDisponibilites(suggestion)}>Vérifier créneaux</Button>
-                <Button variant="warning">Prochaine dispo</Button>
+                <Button variant="secondary" onClick={() => handleProchaineDispo(suggestion)}>Prochaine dispo</Button>
               </div>
             </div>
           ))}
         </div>
 
-        {selectedSuggestion && (
+        {/* Modale créneaux */}
+        {selectedSuggestion && !prochaineModalOpen && (
           <div className="rh-suggestions__modal">
             <div className="rh-suggestions__modal-content">
-              <h3>Planifier l'entretien</h3>
+              <h3>Planifier l'entretien </h3>
 
               <div className="rh-suggestions__form-group">
                 <label>Date</label>
@@ -213,6 +278,52 @@ const RhSuggestions = () => {
               <div className="rh-suggestions__modal-actions">
                 <Button variant="success" onClick={handleConfirmEntretien}>Confirmer</Button>
                 <Button variant="secondary" onClick={() => setSelectedSuggestion(null)}>Annuler</Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modale Prochaine dispo */}
+        {prochaineModalOpen && (
+          <div className="rh-suggestions__modal">
+            <div className="rh-suggestions__modal-content">
+              <h3>Prochaine disponibilité</h3>
+
+              {/* Première saisie */}
+              {prochaineStack.length === 0 && (
+                <>
+                  <div className="rh-suggestions__form-group">
+                    <label>Date de départ</label>
+                    <input
+                      type="date"
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="rh-suggestions__form-group">
+                    <label>Heure de départ</label>
+                    <input
+                      type="time"
+                      value={selectedTime}
+                      onChange={(e) => setSelectedTime(e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Affichage des dispos trouvées */}
+              {prochaineStack[prochaineIndex] ? (
+                <p>{formatDateTime(prochaineStack[prochaineIndex].date_disponible)}</p>
+              ) : (
+                <p>Aucune dispo</p>
+              )}
+
+              <div className="rh-suggestions__modal-actions" style={{ display: 'flex', gap: '8px' }}>
+                <Button variant="secondary" onClick={handleBackProchaine} disabled={prochaineIndex === 0}>Back</Button>
+                <Button variant="primary" onClick={handleNextProchaine}>Next</Button>
+                <Button variant="success" onClick={handleConfirmProchaine}>Confirmer</Button>
+                <Button variant="secondary" onClick={() => setProchaineModalOpen(false)}>Annuler</Button>
               </div>
             </div>
           </div>
