@@ -186,13 +186,23 @@ const RhCalendar = () => {
         date_score: dateScore
       });
       if (resp.success) {
+        // Option 1: Fermer la modale
+        setSelectedDate(null);
+        
+        // OU Option 2: Rafraîchir les données
+        // const dayStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth()+1).padStart(2,'0')}-${String(selectedDate.getDate()).padStart(2,'0')}`;
+        // const updatedData = await rhService.getEntretiensParJour(dayStr);
+        // if (updatedData.success) {
+        //   setEntretiensParJour(updatedData.data);
+        // }
+
         alert("Score enregistré avec succès !");
       } else {
         alert(resp.message || "Erreur serveur");
       }
     } catch (err) {
       console.error(err);
-      alert("Erreur serveur2");
+      alert("Erreur serveur");
     } finally {
       setSending(false);
     }
