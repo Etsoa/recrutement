@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout, { Container, Section } from '../components/Layout';
+import { Container, Section } from '../components/Layout';
 import Button from '../components/Button';
 import annoncesService from '../services/annoncesService';
 import '../styles/ListeAnnonces.css';
@@ -35,7 +35,6 @@ const ListeAnnonces = () => {
 
   if (loading) {
     return (
-      <Layout>
         <Container>
           <Section>
             <div className="loading-container">
@@ -44,13 +43,11 @@ const ListeAnnonces = () => {
             </div>
           </Section>
         </Container>
-      </Layout>
     );
   }
 
   if (error) {
     return (
-      <Layout>
         <Container>
           <Section>
             <div className="error-container">
@@ -62,7 +59,6 @@ const ListeAnnonces = () => {
             </div>
           </Section>
         </Container>
-      </Layout>
     );
   }
 

@@ -167,10 +167,10 @@ INSERT INTO niveau_filiere_annonces (id_annonce, id_niveau, id_filiere) VALUES (
 INSERT INTO niveau_filiere_annonces (id_annonce, id_niveau, id_filiere) VALUES (3, 6, 8);
 
 -- TIERS (CANDIDATS)
-INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Rakoto', 'Jean', '1985-03-15', 1, 2, 2, '0341234567', 'jean.rakoto@email.com', 'AA123456', 1, 'photo1.jpg');
-INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Rasoa', 'Marie', '1990-07-22', 2, 1, 0, '0347654321', 'marie.rasoa@email.com', 'BB987654', 2, 'photo2.jpg');
-INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Rabe', 'Jean', '1985-04-12', 1, 1, 0, '0341234567', 'jean.rabe@mail.com', 'AA123456', 1, 'photo1.jpg');
-INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Andry', 'Paul', '1988-03-15', 1, 1, 0, '0320000003', 'paul.andry@email.com', 'CC345678', 3, 'photo3.jpg');
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Rakoto', 'Jean', '1985-03-15', 1, 2, 2, '0341234567', 'fetraniaina26@gmail.com', 'AA123456', 1, 'photo1.jpg');
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Rasoa', 'Marie', '1990-07-22', 2, 1, 0, '0347654321', 'fetraniaina26@gmail.com', 'BB987654', 2, 'photo2.jpg');
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Rabe', 'Jean', '1985-04-12', 1, 1, 0, '0341234567', 'fetraniaina26@gmail.com', 'AA123456', 1, 'photo1.jpg');
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) VALUES ('Andry', 'Paul', '1988-03-15', 1, 1, 0, '0320000003', 'fetraniaina26@gmail.com', 'CC345678', 3, 'photo3.jpg');
 
 -- CANDIDATS
 INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (1, 1, 'cv_jean_rakoto.pdf');
@@ -255,7 +255,6 @@ INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES (2, 3);
 
 -- ENVOIS QCM
 INSERT INTO envoi_qcm_candidats (id_candidat, lien, token, date_envoi) VALUES (1, 'https://qcm.exemple.com/annonce/1/jean', 'token-jean-001', '2025-09-21');
-INSERT INTO envoi_qcm_candidats (id_candidat, lien, token, date_envoi) VALUES (2, 'https://qcm.exemple.com/annonce/2/marie', 'token-marie-002', '2025-09-21');
 
 -- REPONSES QCM CANDIDATS
 INSERT INTO reponse_qcm_candidats (id_envoi_qcm_candidat, id_qcm_annonce, debut, fin, duree, reponse, score) VALUES (1, 1, '2025-09-21 09:00:00', '2025-09-21 09:02:00', 120, 'Antananarivo', 100);
@@ -267,6 +266,10 @@ INSERT INTO unite_entretiens (id_candidat, id_unite, date_entretien, duree) VALU
 
 -- SCORES ENTRETIENS
 INSERT INTO score_unite_entretiens (id_unite_entretien, score, date_score) VALUES (1, 85, '2025-09-22');
+
+
+INSERT INTO adresse_mail (valeur, mot_de_passe) VALUES ('tsikyrakotonirina20@gmail.com', 'youh xjbi yvwx xeil');
+
 
 WITH new_mail AS (
   INSERT INTO mails (objet, signature)
@@ -329,4 +332,3 @@ UNION ALL
 SELECT id_mail, $$
 En cas de nécessité de report, nous vous contacterons par e-mail pour proposer une nouvelle date. Merci de vérifier régulièrement votre boîte de réception (y compris le dossier spam).
 $$ FROM new_mail;
-

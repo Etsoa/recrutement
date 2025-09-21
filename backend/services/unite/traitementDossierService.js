@@ -2,53 +2,21 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 
-const Annonce = require('../../models/annoncesModel');
-const Poste = require('../../models/postesModel');
-const Ville = require('../../models/villesModel');
-const Genre = require('../../models/genresModel');
-const Unite = require('../../models/unitesModel');
-
-const Langue = require('../../models/languesModel');
-const Qualite = require('../../models/qualitesModel');
-const Domaine = require('../../models/domainesModel');
-const Filiere = require('../../models/filieresModel');
-const Niveau = require('../../models/niveauxModel');
-
-const LangueAnnonce = require('../../models/langueAnnoncesModel');
-const QualiteAnnonce = require('../../models/qualiteAnnoncesModel');
-const ExperienceAnnonce = require('../../models/experienceAnnoncesModel');
-const NiveauFiliereAnnonce = require('../../models/niveauFiliereAnnoncesModel');
-
-const StatusAnnonce = require('../../models/statusAnnoncesModel');
-const TypeStatusAnnonce = require('../../models/typeStatusAnnoncesModel');
-
 const Candidat = require('../../models/candidatsModel');
 const Tiers = require('../../models/tiersModel');
-
-const LangueTiers = require('../../models/langueTiersModel');
-const QualiteTiers = require('../../models/qualiteTiersModel');
-const ExperienceTiers = require('../../models/experienceTiersModel');
-const NiveauFiliereTiers = require('../../models/niveauFiliereTiersModel');
-
-const QuestionQcm = require('../../models/questionQcmsModel');
-const ReponseQcm = require('../../models/reponseQcmsModel');
-const QcmAnnonce = require('../../models/qcmAnnoncesModel');
-
-const Employe = require('../../models/employesModel');
-const TypeStatusEmploye = require('../../models/typeStatusEmployesModel');
-const StatusEmploye = require('../../models/statusEmployesModel');
 
 const EnvoiQcmCandidat = require('../../models/envoiQcmCandidatsModel');
 const ReponseQcmCandidat = require('../../models/reponseQcmCandidatsModel');
 
 const UniteEntretien = require('../../models/uniteEntretiensModel');
 const StatusUniteEntretien = require('../../models/statusUniteEntretiensModel');
-const TypeStatusEntretien = require('../../models/typeStatusEntretiensModel');
-const ScoreUniteEntretien = require('../../models/scoreUniteEntretiensModel');
+const DelaiEntretien = require('../../models/delaiEntretienModel');
 
 const Mail = require('../../models/mailsModel');
 const CorpsMail = require('../../models/corpsMailsModel');
 const AdresseMail = require('../../models/adresseMailModel');
+
+const db = require('../../config/db');
 
 exports.sendQcmCandidat = async (id_candidat) => {
   if (!id_candidat) throw new Error('id_candidat requis');
@@ -62,7 +30,7 @@ exports.sendQcmCandidat = async (id_candidat) => {
 
   // Générer token et lien
   const token = crypto.randomBytes(32).toString('hex');
-  const link = 'http://localhost:5000/verification';
+  const link = 'http://localhost:5000/qcm/' + token;
   const date_envoi = new Date();
 
   // Récupérer objet et parties du mail
@@ -103,7 +71,7 @@ exports.sendQcmCandidat = async (id_candidat) => {
     secure: false,
     auth: {
       user: sender.valeur,
-      pass: sender.mot_de_passe || 'youh xjbi yvwx xeil'
+      pass: sender.mot_de_passe
     }
   });
 

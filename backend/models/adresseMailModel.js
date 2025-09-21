@@ -4,14 +4,15 @@ const db = require('../config/db');
 const AdresseMail= db.define('AdresseMail', {
   valeur: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    primaryKey: true  // Définir valeur comme clé primaire
   },
   mot_de_passe: {
     type: DataTypes.STRING,
     allowNull: false
   }
 }, {
-  tableName: 'adresses_mail',
+  tableName: 'adresse_mail',
   timestamps: false
 });
 
