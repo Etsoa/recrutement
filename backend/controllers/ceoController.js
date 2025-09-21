@@ -172,7 +172,6 @@ exports.accepterSuggestion = async (req, res) => {
   try {
     const {
       id_ceo_suggestion,
-      id_employe,
       date_debut,
       duree,
       id_poste,
@@ -188,7 +187,6 @@ exports.accepterSuggestion = async (req, res) => {
 
     ceoService.accepterSuggestion(
       id_ceo_suggestion, 
-      id_employe, 
       date_debut, 
       duree, 
       id_poste, 

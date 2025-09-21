@@ -74,7 +74,6 @@ const SuggestionTable = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             id_ceo_suggestion: s.id_ceo_suggestion,
-            id_employe: s.id_candidat, // ⚠️ Vérifie ici si c'est bien l'id_employe attendu
             date_debut: decision.date_debut,
             duree: decision.duree,
             id_poste: s.Candidat.Annonce.Poste.id_poste,

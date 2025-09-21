@@ -127,7 +127,8 @@ const refuserSuggestion = async (id_ceo_suggestion) => {
   }
 }
 
-const accepterSuggestion = async (id_ceo_suggestion, id_employe, date_debut, duree, id_poste, id_tiers) => {
+// Fonction be parametre be, azfd fa reraka loatra hiasa saina fa io izy aloha
+const accepterSuggestion = async (id_ceo_suggestion, date_debut, duree, id_poste, id_tiers) => {
   try {
     const suggestion = await CeoSuggestions.findByPk(id_ceo_suggestion);
 
@@ -141,9 +142,10 @@ const accepterSuggestion = async (id_ceo_suggestion, id_employe, date_debut, dur
     // Mise à jour du statut à 1 (valide)
     await suggestion.update({ id_type_status_suggestion: 1 });
 
-    await ContratEssaisService.createContratEssai({ id_employe: id_employe, date_debut: date_debut, duree: duree });
     // id_type_status_employe tokony 6 ny en contrat d'essai
-    await EmployesService.createEmploye({id_tiers: id_tiers, id_type_status_employe: 6, id_poste: id_poste})
+    emp = await EmployesService.createEmploye({ id_tiers: id_tiers, id_type_status_employe: 6, id_poste: id_poste })
+    
+    await ContratEssaisService.createContratEssai({ id_employe: emp.id_employe, date_debut: date_debut, duree: duree });
 
     return {
       success: true,
@@ -159,11 +161,25 @@ const accepterSuggestion = async (id_ceo_suggestion, id_employe, date_debut, dur
   }
 }
 
+const getEmpEnContratDEssai = async () => {
+  const employes = await CeoEmployesView.findAll({
+    include: [
+      {
+        model: ContratEssai,
+        attributes: ["id_contrat_essai", "date_debut", "duree"]
+      }
+    ],
+    where: { id_type_status_employe: 6 } // Tokony hoe 6 ny en contrat d'essaie
+  });
+  return employes;
+}
+
 module.exports = {
   loginCeo,
   getAllSuggests,
   getAllEmployes,
   getAllSuggestsWaitingValidation,
   refuserSuggestion,
-  accepterSuggestion
+  accepterSuggestion,
+  getEmpEnContratDEssai
 }
