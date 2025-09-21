@@ -95,6 +95,7 @@ INSERT INTO type_status_employes (valeur) VALUES ('Demission');
 INSERT INTO type_status_employes (valeur) VALUES ('Renvoi');
 INSERT INTO type_status_employes (valeur) VALUES ('Retraite');
 INSERT INTO type_status_employes (valeur) VALUES ('Deces ');
+INSERT INTO type_status_employes (valeur) VALUES ('En contrat d''essai'); -- Vaovao be ito
 
 INSERT INTO type_status_entretiens (valeur) VALUES ('A venir');
 INSERT INTO type_status_entretiens (valeur) VALUES ('Termine');
