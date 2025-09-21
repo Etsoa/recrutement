@@ -303,4 +303,30 @@ Axiom — Service Recrutement
 $$ FROM new_mail;
 
 
+WITH new_mail AS (
+  INSERT INTO mails (objet, signature)
+  VALUES (
+    'Entretien avec unité au sein de l''entreprise Axiom',
+    'Axiom — Service Recrutement'
+  )
+  RETURNING id_mail
+)
+INSERT INTO corps_mails (id_mail, corps)
+SELECT id_mail, $$
+Félicitations !
+
+Vous êtes accédé(e) à l'étape suivante de notre processus de recrutement. Vous avez obtenu au QCM le score de : {{score}}.
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+Vous allez, dans le cadre de cette candidature, rencontrer l'unité en charge du poste pour un entretien technique qui se tiendra le {{date_entretien}} à {{heure}} dans les locaux de {{unite}}.
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+Veuillez ne pas être en retard, portez une tenue correcte et présentez-vous préparé(e) (CV à jour, pièces demandées, éventuellement supports pertinents).
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+En cas de nécessité de report, nous vous contacterons par e-mail pour proposer une nouvelle date. Merci de vérifier régulièrement votre boîte de réception (y compris le dossier spam).
+$$ FROM new_mail;
 

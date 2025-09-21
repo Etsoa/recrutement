@@ -12,10 +12,10 @@ router.get('/annonce/:id', uniteController.getAnnonceById);
 router.get('/candidat/:id', uniteController.getCandidatById);
 
 // table envoi qcm candidat(email)
-router.post('/send/qcm_candidat', uniteController.sendQcmCandidat);
+router.post('/send/qcm-candidat', uniteController.sendQcmCandidat);
 
 // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
-router.post('/send/unite_entretien', uniteController.sendUniteEntretien);
+router.post('/send/unite-entretien', uniteController.sendUniteEntretien);
 
 // // liste d entretiens par jour
 // router.get('unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);
