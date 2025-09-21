@@ -121,3 +121,49 @@ exports.getAllEmployes = async (req, res) => {
     });
   }
 }
+
+exports.getAllSuggestsWaitingValidation = async (req, res) => {
+  try {
+    const suggestions = await ceoService.getAllSuggestsWaitingValidation();
+
+    res.json({
+      message: 'Liste des suggestions en attente pour CEO récupérée avec succès',
+      data: suggestions,
+      success: true
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des suggestions',
+      data: null,
+      success: false
+    });
+  }
+}
+
+exports.refuserSuggestion = async (req, res) => {
+  try {
+    const { id_ceo_suggestion } = req.body;
+
+    if (!id_ceo_suggestion) {
+      return res.status(400).json({
+        success: false,
+        message: "id_ceo_suggestion est requis",
+        data: null
+      });
+    }
+
+    ceoService.refuserSuggestion(id_ceo_suggestion);
+
+    return res.json({
+      success: true,
+      message: "Suggestion refusée avec succès",
+      data: null
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Erreur serveur lors du refus de la suggestion",
+      data: null
+    });
+  }
+};

@@ -14,4 +14,9 @@ router.get('/suggestions', ceoController.getAllSuggests);
 //liste des emqloyes status machin machin sous forme d'arbre qar unite
 router.get('/employes', ceoController.getAllEmployes);
 
+router.get('/suggestions-waiting', ceoController.getAllSuggestsWaitingValidation);
+
+// router.post('/validate-suggestion');
+router.post('/reject-suggestion', ceoController.refuserSuggestion)
+
 module.exports = router;

@@ -1,5 +1,6 @@
 // backend/models/CeoEmployeView.js
 const { DataTypes } = require('sequelize');
+const ContratEssai = require('./contratEssaisModel');
 const db = require('../config/db');
 
 const CeoEmployeView = db.define('vue_ceo_employes', {
@@ -80,6 +81,16 @@ const CeoEmployeView = db.define('vue_ceo_employes', {
 }, {
   tableName: 'vue_ceo_employes',
   timestamps: false
+});
+
+CeoEmployeView.hasMany(ContratEssai, {
+  foreignKey: "id_employe",
+  sourceKey: "id_employe"   
+});
+
+ContratEssai.belongsTo(CeoEmployeView, {
+  foreignKey: "id_employe",
+  targetKey: "id_employe"
 });
 
 module.exports = CeoEmployeView;

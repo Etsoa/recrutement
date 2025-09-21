@@ -15,3 +15,4 @@ export { default as CV } from './CV';
 export { default as CVMiniature } from './CVMiniature';
 
 export { default as EmployeCEOList } from './EmployeCEOList';
+export { default as SuggestionTable } from './SuggestionTable';

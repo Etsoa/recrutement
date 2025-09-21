@@ -4,6 +4,7 @@ const RhEntretien = require('../models/rhEntretiensModel');
 const Candidats = require('../models/candidatsModel');
 const Tiers = require('../models/tiersModel');
 const CeoEmployesView = require('../models/ceoEmployesViewModel');
+const ContratEssai = require('../models/contratEssaisModel');
 
 const loginCeo = async (email, mot_de_passe) => {
   const type_status_employe = 'Actif';
@@ -45,7 +46,14 @@ const getAllSuggests = async () => {
 };
 
 const getAllEmployes = async () => {
-  const employes = await CeoEmployesView.findAll();
+  const employes = await CeoEmployesView.findAll({
+    include: [
+      {
+        model: ContratEssai,
+        attributes: ["id_contrat_essai", "date_debut", "duree"]
+      }
+    ]
+  });
   return employes;
 }
 
@@ -77,9 +85,38 @@ const getAllSuggestsWaitingValidation = async () => {
   return suggestions;
 };
 
+const refuserSuggestion = async (id_ceo_suggestion) => {
+  try {
+    const suggestion = await CeoSuggestions.findByPk(id_ceo_suggestion);
+
+    if (!suggestion) {
+      return {
+        success: false,
+        message: "Suggestion introuvable"
+      };
+    }
+
+    // Mise à jour du statut à 2 (refusé)
+    await suggestion.update({ id_type_status_suggestion: 2 });
+
+    return {
+      success: true,
+      message: "Suggestion refusée avec succès"
+    };
+  } catch (error) {
+    console.error("Erreur refuserSuggestion:", error);
+    return {
+      success: false,
+      message: "Erreur lors du refus de la suggestion",
+      error: error.message
+    };
+  }
+}
+
 module.exports = {
   loginCeo,
   getAllSuggests,
   getAllEmployes,
-  getAllSuggestsWaitingValidation
+  getAllSuggestsWaitingValidation,
+  refuserSuggestion
 }

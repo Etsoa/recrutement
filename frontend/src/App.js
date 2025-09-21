@@ -3,7 +3,7 @@ import "./styles/globals.css";
 import "./styles/variables.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Annonces, Home, DetailQCM, Historiques, Unites, LoginCeo } from "./pages";
-import { EmployeCEOList } from "./components";
+import { EmployeCEOList, SuggestionTable } from "./components";
 
 function App() {
   return (
@@ -19,6 +19,8 @@ function App() {
         <Route path="/login-ceo" element={<LoginCeo />} /> 
         // Mbola mila asiana page manokana fa juste hoe component aloha eto fa maika
         <Route path="/ceo-emp-list" element={<EmployeCEOList />} /> 
+
+        <Route path="/ceo-sugg-table" element={<SuggestionTable />} /> 
       </Routes>
     </Router>
   );
