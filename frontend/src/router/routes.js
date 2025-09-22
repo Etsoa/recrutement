@@ -18,4 +18,5 @@ export const ROUTES = {
   CREATE_QCM: '/back-office/createQCM/:id',
   DETAIL_QCM: '/back-office/detailQCM/:id',
   HISTORIQUE: '/back-office/historique',
+  STATISTIQUES: '/back-office/statistiques',
 };

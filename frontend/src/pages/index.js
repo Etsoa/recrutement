@@ -10,4 +10,5 @@ export { default as Historiques } from './unite/Historiques';
 export { default as Parametres } from './unite/Parametres';
 export { default as CreateAnnonce } from './unite/CreateAnnonce';
 export { default as QCM } from './unite/QCM';
+export { default as Statistiques } from './unite/Statistiques';
 

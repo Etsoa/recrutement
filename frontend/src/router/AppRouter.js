@@ -17,7 +17,8 @@ import {
   LoginUnites,
   Parametres,
   CreateAnnonce,
-  QCM
+  QCM,
+  Statistiques
 } from '../pages';
 import { ROUTES } from './routes';
 
@@ -43,6 +44,7 @@ const AppRouter = () => {
         <Route path={ROUTES.CREATE_QCM} element={<Layout><QCM /></Layout>} />
         <Route path={ROUTES.DETAIL_QCM} element={<Layout><DetailQCM /></Layout>} />
         <Route path={ROUTES.HISTORIQUE} element={<Layout><Historiques /></Layout>} />
+        <Route path={ROUTES.STATISTIQUES} element={<Layout><Statistiques /></Layout>} />
       </Routes>
     </Router>
   );

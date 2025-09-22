@@ -428,8 +428,8 @@ exports.createAnnonce = async (req, res) => {
     const annonce = await annoncesService.createAnnonce(req.body);
     res.json({ message: 'Annonce créée avec succès', data: annonce, success: true });
   } catch (err) {
-    console.error("Erreur dans createSituationMatrimoniale:", err);
-    res.status(500).json({ message: 'Erreur lors de la création de la situation matrimoniale', data: null, success: false });
+    console.error("Erreur dans creation annonce:", err);
+    res.status(500).json({ message: 'Erreur lors de la création de l annonce', data: null, success: false });
   }
 };
 

@@ -38,6 +38,12 @@ const Header = () => {
           >
             Annonces
           </Link>
+              <Link 
+            to={ROUTES.STATISTIQUES} 
+            className={`header__nav-item ${location.pathname === ROUTES.STATISTIQUES ? 'header__nav-item--active' : ''}`}
+          >
+            Statistique
+          </Link>
           <Link 
             to={ROUTES.PARAMETRES} 
             className={`header__nav-item ${location.pathname === ROUTES.PARAMETRES ? 'header__nav-item--active' : ''}`}

@@ -62,7 +62,8 @@ function CreateAnnonce() {
         id_ville: parseInt(villes),
         age_min: parseInt(ageMin),
         age_max: parseInt(ageMax),
-        id_genre: parseInt(genre)
+        id_genre: parseInt(genre),
+        id_unite: parseInt(unite.id_unite)
       };
       console.log("Données de l'annonce à envoyer :", data);
       const response = await annoncesBackOfficeService.createAnnonce(data);
