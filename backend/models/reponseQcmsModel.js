@@ -31,7 +31,4 @@ const ReponseQcm = db.define('ReponseQcm', {
   timestamps: false
 });
 
-// Association Sequelize
-ReponseQcm.belongsTo(QuestionQcm, { foreignKey: 'id_question_qcm' });
-
 module.exports = ReponseQcm;

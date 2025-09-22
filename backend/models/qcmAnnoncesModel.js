@@ -41,5 +41,6 @@ QcmAnnonce.belongsTo(QuestionQCM, { foreignKey: 'id_question_qcm' });
 
 // Reverse associations
 Annonce.hasMany(QcmAnnonce, { foreignKey: 'id_annonce' });
+QuestionQCM.hasMany(QcmAnnonce, { foreignKey: 'id_question_qcm' });
 
 module.exports = QcmAnnonce;

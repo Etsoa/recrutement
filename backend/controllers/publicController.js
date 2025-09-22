@@ -6,6 +6,7 @@ const candidatsService = require('../services/candidatsService');
 const envoiQcmService = require('../services/envoiQcmService');
 const evaluationService = require('../services/evaluationService');
 const parametresService = require('../services/parametresService');
+const questionQcmsService = require('../services/questionQcmsService');
 
 // Récupérer toutes les annonces actives
 exports.getAllAnnonces = async (req, res) => {
@@ -651,6 +652,37 @@ exports.qcmReponses = async (req, res) => {
     console.error('Erreur qcmReponses:', err);
     res.status(500).json({
       message: 'Erreur lors de l\'enregistrement des réponses QCM',
+      data: null,
+      success: false
+    });
+  }
+};
+
+// Récupérer les questions QCM avec leurs réponses pour une annonce donnée
+exports.getQcmByAnnonce = async (req, res) => {
+  try {
+    const { idAnnonce } = req.params;
+
+    if (!idAnnonce) {
+      return res.status(400).json({
+        message: 'L\'ID de l\'annonce est requis',
+        data: null,
+        success: false
+      });
+    }
+
+    const qcmData = await questionQcmsService.getQcmCompletByAnnonce(parseInt(idAnnonce));
+
+    res.json({
+      message: 'QCM récupéré avec succès',
+      data: qcmData,
+      success: true
+    });
+
+  } catch (err) {
+    console.error('Erreur getQcmByAnnonce:', err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération du QCM',
       data: null,
       success: false
     });

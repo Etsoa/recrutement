@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Question from '../components/Question';
 import Timer from '../components/Timer';
+import { qcmService } from '../services/qcmService';
 import '../styles/QCMPage.css';
 
 const QCMPage = () => {
@@ -29,47 +30,33 @@ const QCMPage = () => {
   // Récupération des paramètres
   const token = searchParams.get('token');
   
-  // Données de test
-  const qcmData = {
-    id: 1,
-    titre: "QCM Développement Web",
-    duree_par_question: 15,
-    questions: [
-      {
-        id: 1,
-        question: "Qu'est-ce que React ?",
-        reponses: [
-          { id: 'a', texte: "Une base de données", valeur: false },
-          { id: 'b', texte: "Une bibliothèque JavaScript", valeur: true },
-          { id: 'c', texte: "Un serveur web", valeur: false },
-          { id: 'd', texte: "Un système d'exploitation", valeur: false }
-        ]
-      },
-      {
-        id: 2,
-        question: "Que fait useEffect(() => {}, []) ?",
-        reponses: [
-          { id: 'a', texte: "Il s'exécute à chaque rendu", valeur: false },
-          { id: 'b', texte: "Il s'exécute uniquement au montage", valeur: true },
-          { id: 'c', texte: "Il ne s'exécute jamais", valeur: false },
-          { id: 'd', texte: "Il provoque une erreur", valeur: false }
-        ]
-      },
-      {
-        id: 3,
-        question: "Comment passer des données d'un parent vers un enfant ?",
-        reponses: [
-          { id: 'a', texte: "Avec des variables globales", valeur: false },
-          { id: 'b', texte: "Avec des props", valeur: true },
-          { id: 'c', texte: "Avec localStorage", valeur: false },
-          { id: 'd', texte: "Avec des cookies", valeur: false }
-        ]
+  // État pour les données QCM
+  const [qcmData, setQcmData] = useState(null);
+  
+  // Charger les données QCM depuis l'API
+  useEffect(() => {
+    const loadQcmData = async () => {
+      try {
+        setLoading(true);
+        const response = await qcmService.getQcmByAnnonce(1); // Annonce 1 par défaut
+        
+        if (response.success) {
+          setQcmData(response.data);
+        } else {
+          setError(response.message);
+        }
+      } catch (err) {
+        setError(err.message || 'Erreur lors du chargement du QCM');
+      } finally {
+        setLoading(false);
       }
-    ]
-  };
+    };
+    
+    loadQcmData();
+  }, []);
 
-  const currentQuestion = qcmData.questions[currentQuestionIndex];
-  const totalQuestions = qcmData.questions.length;
+  const currentQuestion = qcmData?.questions[currentQuestionIndex];
+  const totalQuestions = qcmData?.questions.length || 0;
 
   // Réinitialiser les états quand on change de question (hook au bon endroit)
   useEffect(() => {
@@ -85,20 +72,7 @@ const QCMPage = () => {
     return () => clearTimeout(timer);
   }, [currentQuestionIndex, totalQuestions]);
 
-  // Vérification de sécurité
-  if (!currentQuestion) {
-    return (
-      <div className="qcm-page">
-        <div className="qcm-center">
-          <h2>Erreur</h2>
-          <p>Question non trouvée</p>
-          <button onClick={() => navigate('/')} className="btn btn--outline">
-            Retour à l'accueil
-          </button>
-        </div>
-      </div>
-    );
-  }
+  // ...existing code...
 
   // Gérer les réponses
   const handleAnswerChange = (questionId, selectedAnswers) => {
@@ -158,7 +132,7 @@ const QCMPage = () => {
   };
 
   // Soumettre le QCM
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const endTime = Date.now();
     const duration = Math.floor((endTime - startTime) / 1000);
     
@@ -169,10 +143,41 @@ const QCMPage = () => {
       totalQuestions
     });
     
+    // Soumettre les réponses si on a un token
+    if (token) {
+      try {
+        const response = await qcmService.submitQcmResponses(token, answers, duration);
+        if (response.success) {
+          console.log('Réponses soumises avec succès');
+        } else {
+          console.error('Erreur lors de la soumission:', response.message);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la soumission:', error);
+        // On continue quand même vers la page de completion
+      }
+    }
+    
     setIsCompleted(true);
   };
 
   // Gestion des erreurs et du loading
+
+  // Vérification de sécurité
+  if (!currentQuestion) {
+    return (
+      <div className="qcm-page">
+        <div className="qcm-center">
+          <h2>Erreur</h2>
+          <p>Question non trouvée</p>
+          <button onClick={() => navigate('/')} className="btn btn--outline">
+            Retour à l'accueil
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="qcm-page">
@@ -235,11 +240,11 @@ const QCMPage = () => {
       <div className="qcm-container">
         {/* Header avec info et timer */}
         <div className="qcm-header">
-          <h1>{qcmData.titre}</h1>
+          <h1>{qcmData?.titre}</h1>
           <div className="qcm-meta">
             <span>Question {currentQuestionIndex + 1} sur {totalQuestions}</span>
             <Timer
-              duration={qcmData.duree_par_question}
+              duration={qcmData?.duree_par_question}
               onTimeUp={handleTimeUp}
               autoStart={true}
               key={`timer-${currentQuestionIndex}`}
@@ -262,14 +267,14 @@ const QCMPage = () => {
           <div className="question-section">
             <Question
               questionNumber={currentQuestionIndex + 1}
-              question={currentQuestion.question}
-              options={currentQuestion.reponses.map(rep => ({
+              question={currentQuestion?.question}
+              options={currentQuestion?.reponses?.map(rep => ({
                 id: rep.id,
                 text: rep.texte
-              }))}
-              selectedAnswers={answers[currentQuestion.id] || []}
+              })) || []}
+              selectedAnswers={answers[currentQuestion?.id] || []}
               onChange={(selectedAnswers) => 
-                handleAnswerChange(currentQuestion.id, selectedAnswers)
+                handleAnswerChange(currentQuestion?.id, selectedAnswers)
               }
               disabled={isTimeUp}
             />

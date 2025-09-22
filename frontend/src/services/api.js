@@ -78,6 +78,12 @@ export const api = {
   parametres: {
     getAll: () => apiClient.get('/public/parametres'),
   },
+
+  qcm: {
+    getByAnnonce: (annonceId) => apiClient.get(`/public/qcm/annonce/${annonceId}`),
+    getQuestions: (token) => apiClient.post('/public/qcm/questions', { token }),
+    submitResponses: (data) => apiClient.post('/public/qcm/reponses', data),
+  },
 };
 
 export const authUtils = {

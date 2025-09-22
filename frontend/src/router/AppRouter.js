@@ -3,6 +3,7 @@ import '../styles/globals.css';
 import '../styles/variables.css';
 
 // Importation du Layout
+import QCMPage from '../pages/QCMPage';
 import Layout from '../components/Layout';
 import QCMLayout from '../components/QCMLayout';
 
@@ -10,7 +11,6 @@ import QCMLayout from '../components/QCMLayout';
 import Home from '../pages/Home';
 import Annonces from '../pages/Annonces';
 import CandidaturePage from '../pages/CandidaturePage';
-import QCMPage from '../pages/QCMPage';
 import DetailQCM from '../pages/DetailQCM';
 import CVtest from '../pages/CVtest';
 import CVList from '../pages/CVList';

@@ -127,6 +127,63 @@ INSERT INTO question_qcms (intitule) VALUES
 ('Qu''est-ce qu''une stratégie commerciale ?'),
 ('Comment fidélisez-vous un client ?');
 
+-- Réponses pour les questions QCM
+-- Question 1: Quelle est la différence entre recrutement et sélection ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(1, 'Le recrutement attire les candidats, la sélection les évalue', true),
+(1, 'Il n''y a aucune différence', false),
+(1, 'La sélection attire les candidats, le recrutement les évalue', false),
+(1, 'Ce sont deux processus identiques', false);
+
+-- Question 2: Comment évaluez-vous les compétences d'un candidat ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(2, 'Par des tests techniques et entretiens comportementaux', true),
+(2, 'Uniquement par le CV', false),
+(2, 'Par des références uniquement', false),
+(2, 'Par l''apparence physique', false);
+
+-- Question 3: Quels sont les outils de gestion RH que vous connaissez ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(3, 'SIRH, logiciels de paie, plateformes de recrutement', true),
+(3, 'Uniquement Excel', false),
+(3, 'Seulement les outils gratuits', false),
+(3, 'Aucun outil spécifique', false);
+
+-- Question 4: Qu'est-ce qu'un bilan comptable ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(4, 'Un document qui présente la situation financière à un moment donné', true),
+(4, 'Un rapport mensuel des ventes', false),
+(4, 'La liste des employés', false),
+(4, 'Un planning de travail', false);
+
+-- Question 5: Comment calculez-vous la TVA ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(5, 'Prix HT × Taux de TVA', true),
+(5, 'Prix TTC - Prix HT', false),
+(5, 'Prix TTC × Taux de TVA', false),
+(5, 'Prix HT + Taux de TVA', false);
+
+-- Question 6: Quels sont les principes de base de la comptabilité ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(6, 'Partie double, prudence, continuité d''exploitation', true),
+(6, 'Simplicité et rapidité', false),
+(6, 'Estimation et approximation', false),
+(6, 'Créativité comptable', false);
+
+-- Question 7: Qu'est-ce qu'une stratégie commerciale ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(7, 'Un plan d''actions pour atteindre les objectifs de vente', true),
+(7, 'Une méthode de réduction des coûts', false),
+(7, 'Un système de gestion des stocks', false),
+(7, 'Une technique de recrutement', false);
+
+-- Question 8: Comment fidélisez-vous un client ?
+INSERT INTO reponse_qcms (id_question_qcm, reponse, modalite) VALUES
+(8, 'Service de qualité, écoute, programmes de fidélité', true),
+(8, 'En baissant toujours les prix', false),
+(8, 'En ignorant ses réclamations', false),
+(8, 'En ne communiquant jamais avec lui', false);
+
 -- Annonce 1: Responsable RH
 INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre) 
 VALUES (4, 1, 25, 35, 1); -- Responsable RH à Antananarivo, 25-35 ans, Homme
