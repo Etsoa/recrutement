@@ -13,6 +13,7 @@ function getDBInstance() {
         host: process.env.DB_HOST,
         dialect: "postgres",
         logging: false,
+        timezone: "+03:00", // Madagascar
       }
     );
   }

@@ -4,6 +4,7 @@ const db = require('../config/db');
 const Candidat = require('./candidatsModel');
 const Unite = require('./unitesModel');
 
+const ScoreUniteEntretien = require('./scoreUniteEntretiensModel');
 const UniteEntretien = db.define('UniteEntretien', {
   id_unite_entretien: {
     type: DataTypes.INTEGER,
@@ -43,8 +44,10 @@ const UniteEntretien = db.define('UniteEntretien', {
   timestamps: false
 });
 
+
 // Associations
 UniteEntretien.belongsTo(Candidat, { foreignKey: 'id_candidat' });
 UniteEntretien.belongsTo(Unite, { foreignKey: 'id_unite', as: 'unite' });
 
+UniteEntretien.hasMany(ScoreUniteEntretien, { foreignKey: 'id_unite_entretien', as: 'scores' });
 module.exports = UniteEntretien;

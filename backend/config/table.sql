@@ -167,7 +167,7 @@ CREATE TABLE experience_tiers (
     id_tiers INTEGER REFERENCES tiers(id_tiers) ON DELETE CASCADE,
     id_domaine INTEGER REFERENCES domaines(id_domaine) ON DELETE CASCADE,
     date_debut DATE NOT NULL,
-    date_fin DATE
+    date_fin DATE NULL
 );
 
 CREATE TABLE candidats (
@@ -193,14 +193,14 @@ CREATE TABLE status_employes (
     id_status_employe SERIAL PRIMARY KEY,
     id_employe INTEGER REFERENCES employes(id_employe) ON DELETE CASCADE,
     id_type_status_employe INTEGER REFERENCES type_status_employes(id_type_status_employe) ON DELETE CASCADE,
-    date_changement DATE NOT NULL
+    date_changement TIMESTAMP NOT NULL
 );
 
 CREATE TABLE historique_poste_employes (
     id_historique_poste_employe SERIAL PRIMARY KEY,
     id_employe INTEGER REFERENCES employes(id_employe) ON DELETE CASCADE,
     id_poste INTEGER REFERENCES postes(id_poste) ON DELETE CASCADE,
-    date_changement DATE NOT NULL
+    date_changement TIMESTAMP NOT NULL
 );
 
 CREATE TABLE contrat_essais (
@@ -215,7 +215,7 @@ CREATE TABLE envoi_qcm_candidats (
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
     lien VARCHAR(255) NOT NULL,
     token VARCHAR(255) NOT NULL,
-    date_envoi DATE NOT NULL
+    date_envoi TIMESTAMP NOT NULL
 );
 
 CREATE TABLE reponse_qcm_candidats (
@@ -238,7 +238,7 @@ CREATE TABLE unite_entretiens (
     id_unite_entretien SERIAL PRIMARY KEY,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
     id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE,
-    date_entretien DATE NOT NULL,
+    date_entretien TIMESTAMP NOT NULL,
     duree INTEGER NOT NULL
 );
 
@@ -246,14 +246,14 @@ CREATE TABLE status_unite_entretiens (
     id_status_unite_entretien SERIAL PRIMARY KEY,
     id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
     id_type_status_entretien INTEGER REFERENCES type_status_entretiens(id_type_status_entretien) ON DELETE CASCADE,
-    date_changement DATE NOT NULL
+    date_changement TIMESTAMP NOT NULL
 );
 
 CREATE TABLE score_unite_entretiens (
     id_score_unite_entretien SERIAL PRIMARY KEY,
     id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
     score INTEGER NOT NULL,
-    date_score DATE NOT NULL
+    date_score TIMESTAMP NOT NULL
 );
 
 CREATE TABLE type_status_suggestions (
@@ -265,21 +265,21 @@ CREATE TABLE rh_suggestions (
     id_rh_suggestion SERIAL PRIMARY KEY,
     id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
-    date_suggestion DATE NOT NULL
+    date_suggestion TIMESTAMP NOT NULL
 );
 
 CREATE TABLE status_rh_suggestions (
     id_status_rh_suggestion SERIAL PRIMARY KEY,
     id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
-    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id_type_status_suggestion) ON DELETE CASCADE,
-    date_changement DATE NOT NULL
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id_type_status_suggestion)ON DELETE CASCADE,
+    date_changement TIMESTAMP NOT NULL
 );
 
 CREATE TABLE rh_entretiens (
     id_rh_entretien SERIAL PRIMARY KEY,
     id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
-    date_entretien DATE NOT NULL,
+    date_entretien TIMESTAMP NOT NULL,
     duree INTEGER NOT NULL
 );
 
@@ -287,14 +287,14 @@ CREATE TABLE status_rh_entretiens (
     id_status_rh_entretien SERIAL PRIMARY KEY,
     id_rh_entretien INTEGER REFERENCES rh_entretiens(id_rh_entretien) ON DELETE CASCADE,
     id_type_status_entretien INTEGER REFERENCES type_status_entretiens(id_type_status_entretien) ON DELETE CASCADE,
-    date_changement DATE NOT NULL
+    date_changement TIMESTAMP NOT NULL
 );
 
 CREATE TABLE score_rh_entretiens (
     id_score_rh_entretien SERIAL PRIMARY KEY,
     id_rh_entretien INTEGER REFERENCES rh_entretiens(id_rh_entretien) ON DELETE CASCADE,
     score INTEGER NOT NULL,
-    date_score DATE NOT NULL
+    date_score TIMESTAMP NOT NULL
 );
 
 CREATE TABLE ceo_suggestions (
@@ -308,8 +308,8 @@ CREATE TABLE ceo_suggestions (
 CREATE TABLE status_ceo_suggestions (
     id_status_ceo_suggestion SERIAL PRIMARY KEY,
     id_ceo_suggestion INTEGER REFERENCES ceo_suggestions(id_ceo_suggestion) ON DELETE CASCADE,
-    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id_type_status_suggestion) ON DELETE CASCADE,
-    date_changement DATE NOT NULL
+    id_type_status_suggestion INTEGER REFERENCES type_status_suggestions(id_type_status_suggestion)ON DELETE CASCADE,
+    date_changement TIMESTAMP NOT NULL
 );
 
 CREATE TABLE mails (
@@ -347,4 +347,15 @@ CREATE TABLE pourcentage_minimum_cv (
 CREATE TABLE adresse_mail (
     valeur VARCHAR(100) PRIMARY KEY NOT NULL,
     mot_de_passe VARCHAR(100) NOT NULL
+CREATE TABLE jours_feries (
+    id_jour_ferie SERIAL PRIMARY KEY,
+    date_ferie DATE NOT NULL UNIQUE,
+    description VARCHAR(255)
 );
+
+CREATE TABLE horaires_ouvres (
+    id_horaire_ouvre SERIAL PRIMARY KEY,
+    heure_debut TIME NOT NULL,
+    heure_fin TIME NOT NULL
+);
+

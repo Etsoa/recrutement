@@ -32,7 +32,9 @@ const ScoreUniteEntretien = db.define('ScoreUniteEntretien', {
   timestamps: false
 });
 
-// Associations
-ScoreUniteEntretien.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien' });
+
+// Associations (à placer après l'association hasMany dans UniteEntretien pour éviter les cycles)
+// (optionnel, peut être retiré si non utilisé directement)
+// ScoreUniteEntretien.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien' });
 
 module.exports = ScoreUniteEntretien;

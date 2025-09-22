@@ -3,6 +3,7 @@ const db = require('../config/db');
 
 const UniteEntretien = require('./uniteEntretiensModel');
 const Candidat = require('./candidatsModel');
+const StatusRhSuggestion = require('./statusRhSuggestionsModel');
 
 const RhSuggestion = db.define('RhSuggestion', {
   id_rh_suggestion: {
@@ -32,7 +33,11 @@ const RhSuggestion = db.define('RhSuggestion', {
   },
   date_suggestion: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
+    get() {
+      // Format ISO pour éviter les problèmes avec moment
+      return this.getDataValue('date_suggestion')?.toISOString();
+    }
   }
 }, {
   tableName: 'rh_suggestions',
@@ -42,6 +47,5 @@ const RhSuggestion = db.define('RhSuggestion', {
 // Associations
 RhSuggestion.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien', as: 'entretien' });
 RhSuggestion.belongsTo(Candidat, { foreignKey: 'id_candidat', as: 'candidat' });
-
 
 module.exports = RhSuggestion;
