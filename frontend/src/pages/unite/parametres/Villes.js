@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllParametres, createVille} from "../../api/parametreApi";
-import Input, { Select } from "../../components/Input";
-import { Button } from "../../components";
-import '../../styles/Parametrage.css';
+import { getAllParametres, createVille} from "../../../api/parametreApi";
+import Input, { Select } from "../../../components/Input";
+import { Button } from "../../../components";
+import '../../../styles/Parametrage.css';
 
 function Villes() {
   const navigate = useNavigate();

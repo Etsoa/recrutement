@@ -9,24 +9,39 @@ const ANNONCES_ENDPOINTS = {
 };
 
 export const annoncesService = {
-  // Initialiser la session fictive avec l'id_unite
+  // Initialiser la session avec l'id_unite
   initializeSession: () => {
-    // Créer une variable session fictive si elle n'existe pas
-    if (!localStorage.getItem('id_unite')) {
-      localStorage.setItem('id_unite', '1');
+    // Vérifier si l'utilisateur est connecté
+    const idUnite = localStorage.getItem('id_unite');
+    if (!idUnite) {
+      console.warn('Aucune unité connectée. L\'utilisateur doit se connecter.');
+      return false;
     }
+    return true;
   },
 
   // Récupérer l'id_unite depuis le localStorage
   getIdUnite: () => {
-    return localStorage.getItem('id_unite') || '1';
+    return localStorage.getItem('id_unite');
+  },
+
+  // Vérifier si l'utilisateur est connecté
+  isLoggedIn: () => {
+    return !!localStorage.getItem('id_unite') && !!localStorage.getItem('token');
+  },
+
+  // Récupérer l'unité connectée
+  getSelectedUnite: () => {
+    return localStorage.getItem('selectedUnite');
   },
 
   // Récupérer la liste des annonces
   getAllAnnonces: async () => {
     try {
-      // S'assurer que la session est initialisée
-      annoncesService.initializeSession();
+      // Vérifier que l'utilisateur est connecté
+      if (!annoncesService.isLoggedIn()) {
+        throw new Error('Utilisateur non connecté');
+      }
       
       // Récupérer l'id_unite depuis le localStorage
       const idUnite = annoncesService.getIdUnite();

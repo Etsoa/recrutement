@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getQuestionsReponses } from "../api/parametreApi";
-import { getQCMAnnonce, createQcmAnnonce } from "../api/annonceApi";
-import { Button, Header } from "../components";
-import "../styles/Parametrage.css";
+import { parametresService, annoncesBackOfficeService } from "../../services";
+import { Button } from "../../components";
+import "../../styles/Parametrage.css";
 
 function QCM() {
   const navigate = useNavigate();
@@ -15,10 +14,10 @@ function QCM() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getQuestionsReponses();
+        const response = await parametresService.getQuestionsReponses();
         setAllQuestions(response.data.questions || []);
 
-        const qcmResponse = await getQCMAnnonce(id);
+        const qcmResponse = await annoncesBackOfficeService.getQCMAnnonce(id);
         if (qcmResponse.success) {
           const data = Array.isArray(qcmResponse.data)
             ? qcmResponse.data
@@ -50,14 +49,14 @@ function QCM() {
       }));
 
       for (let q of questionsPayload) {
-        await createQcmAnnonce(q);
+        await annoncesBackOfficeService.createQcmAnnonce(q);
       }
 
       alert("QCM ajouté avec succès !");
       console.log("Payload envoyé :", questionsPayload);
 
       // Recharge après ajout
-      const qcmResponse = await getQCMAnnonce(id);
+      const qcmResponse = await annoncesBackOfficeService.getQCMAnnonce(id);
       const data = Array.isArray(qcmResponse.data)
         ? qcmResponse.data
         : [qcmResponse.data];
@@ -72,7 +71,6 @@ function QCM() {
 
   return (
     <div>
-      <Header />
       <Button variant="primary" onClick={() => navigate(-1)}>
         Retour
       </Button>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createPoste, updatePoste, getPostesByIdUnite } from "../../api/parametreApi";
-import Input from "../../components/Input";
-import { Button } from "../../components";
-import '../../styles/Parametrage.css';
+import { createPoste, updatePoste, getPostesByIdUnite } from "../../../api/parametreApi";
+import Input from "../../../components/Input";
+import { Button } from "../../../components";
+import '../../../styles/Parametrage.css';
 
 function Postes() {
   const navigate = useNavigate();

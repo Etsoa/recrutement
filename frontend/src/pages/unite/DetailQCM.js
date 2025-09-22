@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getDetailsQR } from '../api/annonceApi';
+import { annoncesBackOfficeService } from '../../services';
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/Header";
-import QCM from "../components/QCM";
-import Button from '../components/Button'
+import Header from "../../components/Header";
+import QCM from "../../components/QCM";
+import Button from '../../components/Button'
 
 function AnnonceQCM() {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ function AnnonceQCM() {
         const fetchData = async () => {
             if (!id) return; // sécurité
             try {
-                const response = await getDetailsQR(id);
+                const response = await annoncesBackOfficeService.getDetailsQR(id);
                 setDetail(response.data);
             } catch (error) {
                 console.error(error);
@@ -25,7 +25,6 @@ function AnnonceQCM() {
 
     return (
         <div>
-            <Header />
             <Button onClick={() => navigate(-1)} >
                 Retour {id}
             </Button>

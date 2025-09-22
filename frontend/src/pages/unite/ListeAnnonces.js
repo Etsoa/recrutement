@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Section } from '../components/Layout';
-import Button from '../components/Button';
-import annoncesService from '../services/annoncesService';
-import '../styles/ListeAnnonces.css';
+import { Container, Section } from '../../components/Layout';
+import Button from '../../components/Button';
+import { annoncesService } from '../../services';
+import '../../styles/ListeAnnonces.css';
 
 const ListeAnnonces = () => {
   const [annonces, setAnnonces] = useState([]);
@@ -35,20 +35,17 @@ const ListeAnnonces = () => {
 
   if (loading) {
     return (
-        <Container>
           <Section>
             <div className="loading-container">
               <div className="loading-spinner"></div>
               <p>Chargement des annonces...</p>
             </div>
           </Section>
-        </Container>
     );
   }
 
   if (error) {
     return (
-        <Container>
           <Section>
             <div className="error-container">
               <h2>Erreur</h2>
@@ -58,12 +55,10 @@ const ListeAnnonces = () => {
               </Button>
             </div>
           </Section>
-        </Container>
     );
   }
 
   return (
-      <Container>
         <Section>
           <div className="liste-annonces">
             <div className="liste-annonces__header">
@@ -136,7 +131,6 @@ const ListeAnnonces = () => {
             )}
           </div>
         </Section>
-      </Container>
   );
 };
 

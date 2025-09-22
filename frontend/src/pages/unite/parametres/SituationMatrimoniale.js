@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllParametres, createSituationMatrimoniale } from "../../api/parametreApi";
-import Input from "../../components/Input";
-import { Button } from "../../components";
-import '../../styles/Parametrage.css';
+import { getAllParametres, createSituationMatrimoniale } from "../../../api/parametreApi";
+import Input from "../../../components/Input";
+import { Button } from "../../../components";
+import '../../../styles/Parametrage.css';
 
 function SituationMatrimoniale() {
   const navigate = useNavigate();

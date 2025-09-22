@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllParametres, createQualite } from "../../api/parametreApi";
-import Input from "../../components/Input";
-import { Button } from "../../components";
-import '../../styles/Parametrage.css';
+import { getAllParametres, createQualite } from "../../../api/parametreApi";
+import Input from "../../../components/Input";
+import { Button } from "../../../components";
+import '../../../styles/Parametrage.css';
 
 function Qualites() {
   const navigate = useNavigate();

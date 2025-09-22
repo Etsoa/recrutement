@@ -17,9 +17,7 @@ router.post('/send/qcm-candidat', uniteController.sendQcmCandidat);
 router.post('/send/unite-entretien', uniteController.sendUniteEntretien);
 
 // // liste d entretiens par jour
-// router.get('/unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);
-// // modifier entretien unite a la date
-// router.post('/update/date/unite_entretien', uniteController.updateDateUniteEntretien);
+// router.get('/unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);;
 // // ajouter dans status_unite_entretien (termine id=2/en attente de validation id=3)
 // router.post('/update/status/unite_entretien', uniteController.updateStatusUniteEntretien);
 // // ajouter score dans score_unite_entretien

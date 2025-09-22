@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header";
-import '../styles/Parametrage.css';
+import Header from "../../components/Header";
+import '../../styles/Parametrage.css';
 import Postes from "./parametres/Postes";
 import Genres from "./parametres/Genres";
 import Villes from "./parametres/Villes";
@@ -10,14 +10,13 @@ import Domaines from "./parametres/Domaines";
 import Langues from "./parametres/Langues";
 import Qualites from "./parametres/Qualites";
 import QuestionsReponses from "./parametres/QuestionsReponses";
-import { Button } from "../components";
+import { Button } from "../../components";
 // import SituationMatrimoniale from "./parametres/SituationMatrimoniale";
 
 function Parametres() {
   const navigate = useNavigate();
   return (
     <div>
-      <Header />
       <main className="App-main" style={{ padding: '20px' }}>
         <Button
           variant="primary"

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllUnites, loginUnite } from "../api/unitesApi";
-import Header from "../components/Header";
-import Input, { Select } from "../components/Input";
-import { Button } from "../components";
-import "../styles/axiom-style.css";
+import { unitesService } from "../../services";
+import Header from "../../components/Header";
+import Input, { Select } from "../../components/Input";
+import { Button } from "../../components";
+import "../../styles/axiom-style.css";
 
-function Unites() {
+function LoginUnites() {
   const navigate = useNavigate();
   const [unites, setUnites] = useState([]);
   const [selected, setSelected] = useState(''); // id ou value du select
@@ -16,7 +16,7 @@ function Unites() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAllUnites();
+        const response = await unitesService.getAllUnites();
         setUnites(response.data); // tableau data
       } catch (error) {
         console.error(error);
@@ -33,9 +33,16 @@ function Unites() {
     }
 
     try {
-      const res = await loginUnite(selected, password);
+      // Trouver l'unité complète basée sur le nom sélectionné
+      const selectedUnite = unites.find(unite => unite.nom === selected);
+      
+      const res = await unitesService.loginUnite(selected, password);
       if (res.success) {
-        navigate(`/back-office/dashboard`);
+        // Sauvegarder l'unité sélectionnée et son ID dans la session
+        localStorage.setItem('selectedUnite', selected);
+        localStorage.setItem('id_unite', selectedUnite?.id_unite || res.data?.unite?.id_unite);
+        
+        navigate(`/liste-annonces`);
       } else {
         setMessage("Verifiez l'unité selectionné et mot de passe.");
       }
@@ -86,4 +93,4 @@ function Unites() {
   );
 };
 
-export default Unites;
+export default LoginUnites;

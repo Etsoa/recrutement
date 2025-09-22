@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getQuestionsReponses, createQuestionQcm, createReponseQcm } from "../../api/parametreApi";
-import Input from "../../components/Input";
-import { Button } from "../../components";
-import "../../styles/Parametrage.css";
-import Header from "../../components/Header";
+import { getQuestionsReponses, createQuestionQcm, createReponseQcm } from "../../../api/parametreApi";
+import Input from "../../../components/Input";
+import { Button } from "../../../components";
+import "../../../styles/Parametrage.css";
 
 function QuestionsReponses() {
   const navigate = useNavigate();

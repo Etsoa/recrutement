@@ -1,15 +1,13 @@
 export { default as Home } from './Home';
-export { default as Users } from './Users';
-export { default as CVtest } from './CVtest';
-export { default as CVList } from './CVList';
-export { default as Annonces } from './Annonces';
-export { default as DetailQCM } from './DetailQCM';
-export { default as Historiques } from './Historiques';
-export { default as ListeAnnonces } from './ListeAnnonces';
-export { default as DetailsAnnonce } from './DetailsAnnonce';
-export { default as FicheCandidat } from './FicheCandidat';
-export { default as Unites } from './loginUnites';
-export { default as Dashboard } from './Dashboard';
-export { default as Parametres } from './Parametres';
-export { default as CreateAnnonce } from './CreateAnnonce';
-export { default as QCM } from './QCM';
+
+// Pages Unite (dans le sous-dossier unite/)
+export { default as LoginUnites } from './unite/loginUnites';
+export { default as ListeAnnonces } from './unite/ListeAnnonces';
+export { default as DetailsAnnonce } from './unite/DetailsAnnonce';
+export { default as FicheCandidat } from './unite/FicheCandidat';
+export { default as DetailQCM } from './unite/DetailQCM';
+export { default as Historiques } from './unite/Historiques';
+export { default as Parametres } from './unite/Parametres';
+export { default as CreateAnnonce } from './unite/CreateAnnonce';
+export { default as QCM } from './unite/QCM';
+

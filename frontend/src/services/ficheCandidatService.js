@@ -2,7 +2,7 @@
 import { api } from './api';
 
 const CANDIDAT_ENDPOINTS = {
-  DETAILS: '/unite/candidat'
+  DETAILS: '/unite/candidat-unite'
 };
 
 export const ficheCandidatService = {

@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getAllParametres, createNiveauFiliere, createAnnonce, createExperienceAnnonce, createLanguesAnnonce, createQualitesAnnonce, statusAnnonce } from "../api/annonceApi";
-import { getPostesByIdUnite } from "../api/parametreApi";
-import Input, { Select } from "../components/Input";
-import { Button } from "../components";
-import '../styles/Parametrage.css';
-import Header from "../components/Header";
+import { annoncesBackOfficeService, parametresService } from "../../services";
+import Input, { Select } from "../../components/Input";
+import { Button } from "../../components";
+import '../../styles/Parametrage.css';
 
 function CreateAnnonce() {
   const navigate = useNavigate();
@@ -34,9 +32,9 @@ function CreateAnnonce() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getAllParametres();
+        const response = await parametresService.getAllParametres();
         setparametrages(response.data);
-        const responsePostes = await getPostesByIdUnite(parseInt(unite.id_unite));
+        const responsePostes = await parametresService.getPostesByIdUnite(parseInt(unite.id_unite));
         setListePostes(responsePostes); // on met directement la liste
       } catch (error) {
         console.error(error);
@@ -51,8 +49,6 @@ function CreateAnnonce() {
         alert("Veuillez sélectionner un genre.");
         return;
       }
-
-
       const data = {
         id_poste: parseInt(postes),
         id_ville: parseInt(villes),
@@ -61,7 +57,7 @@ function CreateAnnonce() {
         id_genre: parseInt(genre)
       };
       console.log("Données de l'annonce à envoyer :", data);
-      const response = await createAnnonce(data);
+      const response = await annoncesBackOfficeService.createAnnonce(data);
 
 
       if (response.success) {
@@ -74,7 +70,7 @@ function CreateAnnonce() {
         }));
         // Envoi à l'API
         for (let item of niveau_filiere) {
-          await createNiveauFiliere(item);
+          await annoncesBackOfficeService.createNiveauFiliere(item);
         }
         const experience = experiences.map(item => ({
           id_annonce: response.data.id_annonce,
@@ -82,21 +78,21 @@ function CreateAnnonce() {
           nombre_annee: parseInt(item.nbreAnnee)
         }));
         for (let item of experience) {
-          await createExperienceAnnonce(item);
+          await annoncesBackOfficeService.createExperienceAnnonce(item);
         }
         const languesData = langues.map(item => ({
           id_annonce: response.data.id_annonce,
           id_langue: parseInt(item)
         }));
         for (let item of languesData) {
-          await createLanguesAnnonce(item);
+          await annoncesBackOfficeService.createLanguesAnnonce(item);
         }
         const qualitesData = qualites.map(item => ({
           id_annonce: response.data.id_annonce,
           id_qualite: parseInt(item)
         }));
         for (let item of qualitesData) {
-          await createQualitesAnnonce(item);
+          await annoncesBackOfficeService.createQualitesAnnonce(item);
         }
         const statusAnnonceData = {
           id_annonce: response.data.id_annonce,
@@ -104,7 +100,7 @@ function CreateAnnonce() {
           date_changement: new Date().toISOString().split('T')[0], // juste la date
           id_unite: parseInt(unite.id_unite)
         };
-        await statusAnnonce(statusAnnonceData);
+        await annoncesBackOfficeService.statusAnnonce(statusAnnonceData);
         // ici 
         // Réinitialiser les champs du formulaire
         setPostes(0);
@@ -143,7 +139,6 @@ function CreateAnnonce() {
 
   return (
     <div>
-      <Header />
       <Button
         variant="primary"
         onClick={() => navigate(-1)}

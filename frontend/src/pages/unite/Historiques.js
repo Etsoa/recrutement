@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getDetailsHistorique } from '../api/annonceApi';
+import { annoncesBackOfficeService } from '../../services';
 import { useNavigate, useLocation } from "react-router-dom";
-import Header from "../components/Header";
-import Historique from "../components/Historique";
-import Button from '../components/Button';
+import Header from "../../components/Header";
+import Historique from "../../components/Historique";
+import Button from '../../components/Button';
 
 function Historiques() {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ function Historiques() {
         const fetchData = async () => {
             if (!id) return; // sécurité
             try {
-                const response = await getDetailsHistorique(id);
+                const response = await annoncesBackOfficeService.getDetailsHistorique(id);
                 setDetail(response.data);
             } catch (error) {
                 console.error(error);
@@ -27,7 +27,6 @@ function Historiques() {
 
     return (
         <div>
-            <Header />
             <Button onClick={() => navigate(-1)}>
                 Retour
             </Button>
