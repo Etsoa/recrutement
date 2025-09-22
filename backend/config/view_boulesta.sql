@@ -48,6 +48,38 @@ LEFT JOIN type_status_entretiens tse ON s.id_type_status_entretien = tse.id_type
 LEFT JOIN rh_suggestions rh ON r.id_rh_suggestion = rh.id_rh_suggestion
 LEFT JOIN last_scores ls ON r.id_rh_entretien = ls.id_rh_entretien;
 
+CREATE OR REPLACE VIEW unite_entretiens_view AS
+WITH last_scores AS (
+    SELECT DISTINCT ON (id_unite_entretien)
+        id_unite_entretien,
+        score,
+        date_score
+    FROM score_unite_entretiens
+    ORDER BY id_unite_entretien, date_score DESC
+)
+SELECT
+    ue.id_unite_entretien,
+    ue.date_entretien,
+    ue.duree,
+    c.id_candidat,
+    t.nom AS nom_candidat,
+    t.prenom AS prenom_candidat,
+    ue.id_unite,
+    u.nom AS nom_unite,
+    u.mot_de_passe AS unite_mdp,
+    s.id_type_status_entretien,
+    tse.valeur AS statut,
+    s.date_changement AS status_date,
+    ls.score AS dernier_score,
+    ls.date_score AS date_dernier_score
+FROM unite_entretiens ue
+JOIN candidats c ON ue.id_candidat = c.id_candidat
+JOIN tiers t ON c.id_tiers = t.id_tiers
+JOIN unites u ON ue.id_unite = u.id_unite
+LEFT JOIN status_unite_entretiens s ON ue.id_unite_entretien = s.id_unite_entretien
+LEFT JOIN type_status_entretiens tse ON s.id_type_status_entretien = tse.id_type_status_entretien
+LEFT JOIN last_scores ls ON ue.id_unite_entretien = ls.id_unite_entretien;
+
 CREATE OR REPLACE VIEW ceo_suggestions_view AS
 SELECT 
     cs.id_ceo_suggestion,

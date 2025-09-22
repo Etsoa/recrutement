@@ -5,7 +5,7 @@ class SuggestionsService {
   // Suggestions RH
   async getAllRhSuggestions() {
     try {
-      return await RhSuggestionsModel.getAll();
+      return await RhSuggestionsModel.findAll();
     } catch (error) {
       throw new Error(`Erreur lors de la récupération des suggestions RH : ${error.message}`);
     }

@@ -72,11 +72,14 @@ router.post('/add/qualites', uniteController.addQualitesAnnonce);
 // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
 router.post('/create/unite_entretien', uniteController.createUniteEntretien);
 
-// // suggestion a la RH
-// router.post('/suggest/rh', uniteController.suggestToRh);
-// // liste suggestions
-// router.get('/suggest/', uniteController.getAllRhSuggestions);
+// liste d entretiens par jour
+router.get('/unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);
 
+// suggestion a la RH 
+router.post('/suggest/rh', uniteController.suggestToRh);
 
+// liste des suggestions envoyées à la RH
+router.get('/suggest', uniteController.getAllRhSuggestions);
 
-module.exports = router;  
+module.exports = router;
+module.exports = router;

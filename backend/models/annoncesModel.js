@@ -4,6 +4,7 @@ const db = require('../config/db');
 const Poste = require('./postesModel');
 const Ville = require('./villesModel');
 const Genre = require('./genresModel');
+const Unite = require('./unitesModel');
 const NiveauFiliereAnnonce = require('./niveauFiliereAnnoncesModel');
 const LangueAnnonce = require('./langueAnnoncesModel');
 const Langue = require('./languesModel');

@@ -43,6 +43,8 @@ const vueQuestionReponsesService = require('../services/unite/vueQuestionReponse
 
 // Services externes
 const nodemailer = require('nodemailer');
+const uniteEntretiensService = require('../services/uniteEntretiensService');
+
 
 // ===== CONTROLLERS =====
 
@@ -563,18 +565,6 @@ exports.getAnnonceById = async (req, res) => {
   }
 }
 
-// Nouvelles fonctions pour la gestion des entretiens unité
-exports.getAllUniteEntretiensParJour = async (req, res) => {
-  try {
-    const { date } = req.query;
-    const entretiens = await entretiensService.getUniteEntretiensByDate(date);
-    res.json({ message: 'Liste des entretiens récupérée avec succès', data: entretiens, success: true });
-  } catch (err) {
-    console.error("Erreur dans getAllUniteEntretiensParJour:", err);
-    res.status(500).json({ message: 'Erreur lors de la récupération des entretiens', data: null, success: false });
-  }
-};
-
 exports.updateDateUniteEntretien = async (req, res) => {
   try {
     const { id, nouvelle_date } = req.body;
@@ -630,16 +620,6 @@ exports.createUniteEntretien = async (req, res) => {
   }
 };
 
-exports.suggestToRh = async (req, res) => {
-  try {
-    const suggestionData = req.body;
-    const suggestion = await suggestionsService.suggestToRh(suggestionData);
-    res.json({ message: 'Suggestion envoyée à la RH avec succès', data: suggestion, success: true });
-  } catch (err) {
-    console.error("Erreur dans suggestToRh:", err);
-    res.status(500).json({ message: 'Erreur lors de l\'envoi de la suggestion', data: null, success: false });
-  }
-};
 
 exports.getAllRhSuggestions = async (req, res) => {
   try {
@@ -650,3 +630,59 @@ exports.getAllRhSuggestions = async (req, res) => {
     res.status(500).json({ message: 'Erreur lors de la récupération des suggestions', data: null, success: false });
   }
 };
+
+exports.getAllUniteEntretiensParJour = async (req, res) => {
+  try {
+    const { day } = req.query; // format 'YYYY-MM-DD'
+    if (!day) {
+      return res.status(400).json({ message: 'Jour manquant', data: null, success: false });
+    }
+
+    const entretiens = await uniteEntretiensService.getEntretiensParJour(day);
+    res.json({ message: 'Entretiens récupérés', data: entretiens, success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur', data: null, success: false });
+  }
+};
+
+exports.suggestToRh = async (req, res) => {
+  try {
+    const { id_unite_entretien, id_candidat } = req.body;
+
+    if (!id_unite_entretien || !id_candidat) {
+      return res.status(400).json({ message: 'id_unite_entretien et id_candidat sont requis', data: null, success: false });
+    }
+
+    const suggestion = await uniteEntretiensService.suggestToRh({ id_unite_entretien, id_candidat });
+
+    res.status(201).json({
+      message: 'Suggestion envoyée au RH avec succès',
+      data: suggestion,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message, data: null, success: false });
+  }
+}
+
+
+// exports.getAllRhSuggestions = async (req, res) => {
+//   try {
+//     const suggestions = await uniteEntretiensService.getAllRhSuggestions();
+
+//     res.json({
+//       message: 'Liste des suggestions Rh récupérée avec succès',
+//       data: suggestions,
+//       success: true
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({
+//       message: 'Erreur lors de la récupération des suggestions',
+//       data: null,
+//       success: false
+//     });
+//   }
+// };
