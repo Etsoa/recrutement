@@ -74,13 +74,13 @@ LangueAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 LangueAnnonce.belongsTo(Langue, { foreignKey: 'id_langue', as: 'Langue' });
 
 Annonce.hasMany(QualiteAnnonce, { foreignKey: 'id_annonce', as: 'Qualites' });
-QualiteAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-
-QualiteAnnonce.belongsTo(Qualite, { foreignKey: 'id_qualite', as: 'Qualite' });
 
 Annonce.hasMany(ExperienceAnnonce, { foreignKey: 'id_annonce', as: 'Experiences' });
 ExperienceAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
 
 ExperienceAnnonce.belongsTo(Domaine, { foreignKey: 'id_domaine', as: 'Domaine' });
+QualiteAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
+
+QualiteAnnonce.belongsTo(Qualite, { foreignKey: 'id_qualite', as: 'Qualite' });
 
 module.exports = Annonce;

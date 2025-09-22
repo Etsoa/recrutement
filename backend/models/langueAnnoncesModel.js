@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Annonce = require('./annoncesModel');
 const Langue = require('./languesModel');
 
 const LangueAnnonce = db.define('LangueAnnonce', {
