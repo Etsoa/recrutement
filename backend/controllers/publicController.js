@@ -6,6 +6,8 @@ const candidatsService = require('../services/candidatsService');
 const envoiQcmService = require('../services/envoiQcmService');
 const evaluationService = require('../services/evaluationService');
 const parametresService = require('../services/parametresService');
+const questionQcmsService = require('../services/questionQcmsService');
+const reponseQcmService = require('../services/reponseQcmService');
 
 // Récupérer toutes les annonces actives
 exports.getAllAnnonces = async (req, res) => {
@@ -537,25 +539,44 @@ exports.qcmQuestions = async (req, res) => {
       });
     }
     
-    // Vérifier la validité du token
+    // Vérifier la validité du token et l'utilisation unique
     const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
-    if (!envoiQcm) {
-      return res.status(404).json({
-        message: 'Token invalide ou expiré',
-        data: null,
-        success: false
-      });
-    }
     
-    // Vérifier si le QCM n'a pas déjà été répondu
-    const qcmCompleted = await envoiQcmService.checkQcmCompleted(envoiQcm.id_envoi_qcm_candidat);
-    if (qcmCompleted) {
-      return res.status(409).json({
-        message: 'Ce QCM a déjà été complété',
+    // Gérer les erreurs de vérification du token
+    if (envoiQcm.error) {
+      let statusCode = 400;
+      switch (envoiQcm.error) {
+        case 'TOKEN_EXPIRED':
+          statusCode = 410; // Gone
+          break;
+        case 'TOKEN_ALREADY_USED':
+          statusCode = 409; // Conflict
+          break;
+        case 'TOKEN_NOT_FOUND':
+        case 'CANDIDAT_NOT_FOUND':
+          statusCode = 404; // Not Found
+          break;
+        case 'TOKEN_INVALID':
+          statusCode = 400; // Bad Request
+          break;
+        default:
+          statusCode = 500; // Internal Server Error
+      }
+      
+      return res.status(statusCode).json({
+        message: envoiQcm.message,
         data: null,
-        success: false
+        success: false,
+        error_code: envoiQcm.error
       });
     }
+
+    // Le token est valide et non utilisé - on peut continuer
+    
+    // RÈGLE MÉTIER IMPORTANTE : Marquer le token comme utilisé dès l'ouverture
+    // même si le candidat ne répond à aucune question
+    await envoiQcmService.markTokenAsUsed(envoiQcm.id_envoi_qcm_candidat);
+    console.log('Token QCM marqué comme utilisé dès l\'ouverture pour id_envoi:', envoiQcm.id_envoi_qcm_candidat);
     
     // Récupérer les questions pour cette annonce
     const questions = await questionQcmsService.getQuestionsByAnnonce(envoiQcm.id_annonce);
@@ -599,13 +620,35 @@ exports.qcmReponses = async (req, res) => {
       });
     }
     
-    // Vérifier le token
+    // Vérifier le token et l'utilisation unique
     const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
-    if (!envoiQcm) {
-      return res.status(404).json({
-        message: 'Token invalide',
+    
+    // Gérer les erreurs de vérification du token (même logique que qcmQuestions)
+    if (envoiQcm.error) {
+      let statusCode = 400;
+      switch (envoiQcm.error) {
+        case 'TOKEN_EXPIRED':
+          statusCode = 410; // Gone
+          break;
+        case 'TOKEN_ALREADY_USED':
+          statusCode = 409; // Conflict - QCM déjà soumis
+          break;
+        case 'TOKEN_NOT_FOUND':
+        case 'CANDIDAT_NOT_FOUND':
+          statusCode = 404; // Not Found
+          break;
+        case 'TOKEN_INVALID':
+          statusCode = 400; // Bad Request
+          break;
+        default:
+          statusCode = 500; // Internal Server Error
+      }
+      
+      return res.status(statusCode).json({
+        message: envoiQcm.message,
         data: null,
-        success: false
+        success: false,
+        error_code: envoiQcm.error
       });
     }
     
@@ -631,16 +674,15 @@ exports.qcmReponses = async (req, res) => {
         debut,
         fin,
         duree,
-        reponse: id_reponse_selectionnee.toString(),
         score: score_question
       });
     }
     
-    // Enregistrer toutes les réponses
-    await reponseQcmService.createMultipleReponses(reponsesData);
+    // Enregistrer toutes les réponses (gère le remplacement du placeholder)
+    await reponseQcmService.createMultipleReponses(reponsesData, envoiQcm.id_envoi_qcm_candidat);
     
     // Calculer les statistiques finales
-    const stats = await reponseQcmService.calculateQcmStats(envoiQcm.id_envoi_qcm_candidat);
+    const stats = await reponseQcmService.calculateQcmStats(envoiQcm.id_envoi_qcm_candidat, envoiQcm.id_annonce);
     
     res.json({
       message: 'Réponses QCM enregistrées avec succès',

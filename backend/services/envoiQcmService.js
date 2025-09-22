@@ -275,9 +275,35 @@ async function verifyTokenQcm(token) {
 
 async function creerReponseQcmAbandon(id_envoi_qcm_candidat, id_annonce) {
   try {
+    console.log('Création des réponses d\'abandon pour le QCM:', { id_envoi_qcm_candidat, id_annonce });
+    
+    // Récupérer l'heure de début du placeholder si elle existe
+    const placeholderReponse = await ReponseQcmCandidat.findOne({
+      where: { 
+        id_envoi_qcm_candidat,
+        id_qcm_annonce: null,
+        score: null
+      }
+    });
+    
+    const debutQcm = placeholderReponse ? placeholderReponse.debut : new Date();
+    const finQcm = new Date();
+    const dureeQcm = Math.floor((finQcm - debutQcm) / 1000); // durée en secondes
+
+    // Supprimer le placeholder s'il existe
+    if (placeholderReponse) {
+      await ReponseQcmCandidat.destroy({
+        where: { 
+          id_envoi_qcm_candidat,
+          id_qcm_annonce: null,
+          score: null
+        }
+      });
+    }
+
     // RÈGLE MÉTIER : Si candidat sort sans finir, score = 0
     // Récupérer toutes les questions de l'annonce
-  const questionsQcm = await QcmAnnonce.findAll({
+    const questionsQcm = await QcmAnnonce.findAll({
       where: { id_annonce }
     });
 
@@ -285,15 +311,14 @@ async function creerReponseQcmAbandon(id_envoi_qcm_candidat, id_annonce) {
     const reponsesAbandon = questionsQcm.map(qcmAnnonce => ({
       id_envoi_qcm_candidat,
       id_qcm_annonce: qcmAnnonce.id_qcm_annonce,
-      debut: new Date(),
-      fin: new Date(),
-      duree: 0,
-      reponse: 'ABANDON',
+      debut: debutQcm,
+      fin: finQcm,
+      duree: dureeQcm,
       score: 0
     }));
 
     // Insérer toutes les réponses d'abandon
-  await ReponseQcmCandidat.bulkCreate(reponsesAbandon);
+    await ReponseQcmCandidat.bulkCreate(reponsesAbandon);
 
     return {
       message: 'QCM marqué comme abandonné avec score 0',
@@ -383,4 +408,49 @@ module.exports = {
   creerReponseQcmAbandon,
   getQcmQuestionsByToken,
   checkQcmCompleted
+};
+
+/**
+ * Marquer un token QCM comme utilisé dès l'ouverture
+ * Crée une entrée vide dans reponse_qcm_candidats pour empêcher la réutilisation
+ * @param {number} id_envoi_qcm_candidat - L'ID de l'envoi QCM
+ */
+async function markTokenAsUsed(id_envoi_qcm_candidat) {
+  try {
+    // Vérifier si le token n'est pas déjà marqué comme utilisé
+    const existingReponse = await ReponseQcmCandidat.findOne({
+      where: { id_envoi_qcm_candidat }
+    });
+
+    if (existingReponse) {
+      console.log('Token déjà marqué comme utilisé pour id_envoi:', id_envoi_qcm_candidat);
+      return;
+    }
+
+    // Créer une réponse "placeholder" pour marquer le token comme utilisé
+    // Même si le candidat ne répond à aucune question, le token sera inutilisable
+    await ReponseQcmCandidat.create({
+      id_envoi_qcm_candidat,
+      id_qcm_annonce: null, // NULL indique que c'est un placeholder
+      debut: new Date(), // Début du processus QCM
+      fin: null, // Pas encore terminé
+      duree: null, // Pas de durée pour l'instant
+      score: null // NULL indique que c'est un placeholder
+    });
+
+    console.log('Token QCM marqué comme utilisé (ouverture) pour id_envoi:', id_envoi_qcm_candidat);
+  } catch (error) {
+    console.error('Erreur lors du marquage du token comme utilisé:', error);
+    // Ne pas faire échouer le processus si cette étape échoue
+    // Le QCM peut continuer même si le marquage échoue
+  }
+}
+
+module.exports = {
+  createEnvoiQcm,
+  verifyTokenQcm,
+  creerReponseQcmAbandon,
+  getQcmQuestionsByToken,
+  checkQcmCompleted,
+  markTokenAsUsed
 };

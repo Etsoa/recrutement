@@ -22,7 +22,7 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   },
   id_qcm_annonce: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true, // Peut être NULL pour les placeholders
     references: {
       model: QcmAnnonce,
       key: 'id_qcm_annonce'
@@ -32,11 +32,11 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   },
   debut: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: true // Peut être NULL pour les placeholders
   },
   fin: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: true // Peut être NULL si pas encore terminé
   },
   score: {
     type: DataTypes.INTEGER,
@@ -44,7 +44,7 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   },
   duree: {
     type: DataTypes.INTEGER, // durée en secondes
-    allowNull: false
+    allowNull: true // Peut être NULL pour les placeholders
   }
 }, {
   tableName: 'reponse_qcm_candidats',

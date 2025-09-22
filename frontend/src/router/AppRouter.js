@@ -11,6 +11,7 @@ import Home from '../pages/Home';
 import Annonces from '../pages/Annonces';
 import CandidaturePage from '../pages/CandidaturePage';
 import QCMPage from '../pages/QCMPage';
+import TokenUsedPage from '../pages/TokenUsedPage';
 import DetailQCM from '../pages/DetailQCM';
 import CVtest from '../pages/CVtest';
 import CVList from '../pages/CVList';
@@ -20,10 +21,17 @@ const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        {/* Route QCM sans Layout (pas de header/footer) */}
-        <Route path="/qcm" element={
+        {/* Route QCM sans Layout (pas de header/footer) avec token */}
+        <Route path="/qcm/:token" element={
           <QCMLayout>
             <QCMPage />
+          </QCMLayout>
+        } />
+        
+        {/* Route Token Déjà Utilisé sans Layout */}
+        <Route path="/qcm-completed/:token" element={
+          <QCMLayout>
+            <TokenUsedPage />
           </QCMLayout>
         } />
         

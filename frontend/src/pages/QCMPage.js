@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import Question from '../components/Question';
 import Timer from '../components/Timer';
+import api from '../services/api';
 import '../styles/QCMPage.css';
 
 const QCMPage = () => {
-  const [searchParams] = useSearchParams();
+  const { token } = useParams(); // Récupérer le token depuis l'URL
   const navigate = useNavigate();
   
   // États du composant
@@ -14,9 +15,13 @@ const QCMPage = () => {
   const [isTimeUp, setIsTimeUp] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [startTime] = useState(Date.now());
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Données QCM depuis l'API
+  const [qcmData, setQcmData] = useState(null);
+  const [candidatInfo, setCandidatInfo] = useState(null);
   
   // Ref pour éviter les problèmes de closure
   const currentQuestionRef = useRef(currentQuestionIndex);
@@ -25,65 +30,177 @@ const QCMPage = () => {
   useEffect(() => {
     currentQuestionRef.current = currentQuestionIndex;
   }, [currentQuestionIndex]);
-  
-  // Récupération des paramètres
-  const token = searchParams.get('token');
-  
-  // Données de test
-  const qcmData = {
-    id: 1,
-    titre: "QCM Développement Web",
-    duree_par_question: 15,
-    questions: [
-      {
-        id: 1,
-        question: "Qu'est-ce que React ?",
-        reponses: [
-          { id: 'a', texte: "Une base de données", valeur: false },
-          { id: 'b', texte: "Une bibliothèque JavaScript", valeur: true },
-          { id: 'c', texte: "Un serveur web", valeur: false },
-          { id: 'd', texte: "Un système d'exploitation", valeur: false }
-        ]
-      },
-      {
-        id: 2,
-        question: "Que fait useEffect(() => {}, []) ?",
-        reponses: [
-          { id: 'a', texte: "Il s'exécute à chaque rendu", valeur: false },
-          { id: 'b', texte: "Il s'exécute uniquement au montage", valeur: true },
-          { id: 'c', texte: "Il ne s'exécute jamais", valeur: false },
-          { id: 'd', texte: "Il provoque une erreur", valeur: false }
-        ]
-      },
-      {
-        id: 3,
-        question: "Comment passer des données d'un parent vers un enfant ?",
-        reponses: [
-          { id: 'a', texte: "Avec des variables globales", valeur: false },
-          { id: 'b', texte: "Avec des props", valeur: true },
-          { id: 'c', texte: "Avec localStorage", valeur: false },
-          { id: 'd', texte: "Avec des cookies", valeur: false }
-        ]
+
+  // Réinitialiser les états quand on change de question
+  useEffect(() => {
+    if (qcmData && qcmData.questions) {
+      console.log('Question changée vers:', currentQuestionIndex + 1, '/', qcmData.questions.length);
+      
+      // Reset avec un délai pour éviter les conflits
+      const timer = setTimeout(() => {
+        setIsTimeUp(false);
+        setIsTransitioning(false);
+        console.log('États reset pour question:', currentQuestionIndex + 1);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentQuestionIndex, qcmData]);
+
+  // Gérer la fermeture de page (le token est déjà marqué comme utilisé côté serveur)
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (!isCompleted && qcmData) {
+        // Avertir l'utilisateur qu'il va perdre sa progression
+        const message = 'Attention : Si vous quittez maintenant, ce lien QCM ne sera plus réutilisable et vous ne pourrez pas le refaire.';
+        event.preventDefault();
+        event.returnValue = message;
+        return message;
       }
-    ]
-  };
+    };
+
+    // Ajouter l'event listener seulement si le QCM est chargé
+    if (qcmData && !isCompleted) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      console.log('Protection contre fermeture accidentelle activée');
+    }
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [qcmData, isCompleted]);
+  
+  // Charger les données QCM au montage du composant
+  useEffect(() => {
+    const loadQcmData = async () => {
+      if (!token) {
+        setError('Token QCM manquant');
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        setLoading(true);
+        console.log('Chargement des questions QCM avec token:', token);
+        
+        const response = await api.post('/qcm/questions', { token });
+        
+        if (response.data.success) {
+          const { questions, candidat, id_envoi_qcm_candidat } = response.data.data;
+          
+          setQcmData({
+            id: id_envoi_qcm_candidat,
+            titre: `QCM pour le poste de ${candidat.poste}`,
+            duree_par_question: 30, // 30 secondes par question par défaut
+            questions: questions.map((q, index) => ({
+              id: q.id_question,
+              question: q.question,
+              reponses: q.reponses.map(r => ({
+                id: r.id.toString(),
+                texte: r.texte,
+                valeur: false // Ne pas exposer la bonne réponse
+              }))
+            }))
+          });
+          
+          setCandidatInfo(candidat);
+          setError(null);
+        } else {
+          // Gérer les erreurs spécifiques du serveur
+          const errorCode = response.data.error_code;
+          let errorMessage = response.data.message || 'Erreur lors du chargement du QCM';
+          
+          switch (errorCode) {
+            case 'TOKEN_ALREADY_USED':
+              // Rediriger vers la page spécialisée pour token déjà utilisé
+              navigate(`/qcm-completed/${token}`);
+              return;
+            case 'TOKEN_EXPIRED':
+              errorMessage = '⏰ Ce lien QCM a expiré. Contactez l\'équipe RH pour un nouveau lien.';
+              break;
+            case 'TOKEN_INVALID':
+              errorMessage = '❌ Ce lien QCM est invalide ou corrompu.';
+              break;
+            case 'TOKEN_NOT_FOUND':
+              errorMessage = '🔍 Ce lien QCM n\'existe pas dans notre système.';
+              break;
+            case 'CANDIDAT_NOT_FOUND':
+              errorMessage = '👤 Candidature associée introuvable.';
+              break;
+          }
+          
+          setError(errorMessage);
+        }
+      } catch (err) {
+        console.error('Erreur chargement QCM:', err);
+        
+        // Gérer les erreurs HTTP spécifiques
+        if (err.response?.status === 409) {
+          // Token déjà utilisé - rediriger vers la page spécialisée
+          navigate(`/qcm-completed/${token}`);
+          return;
+        } else if (err.response?.status === 410) {
+          setError('⏰ Ce lien QCM a expiré. Contactez l\'équipe RH pour un nouveau lien.');
+        } else if (err.response?.status === 404) {
+          setError('🔍 Ce lien QCM n\'existe pas ou a été supprimé.');
+        } else {
+          setError(
+            err.response?.data?.message || 
+            '❌ Erreur lors du chargement du QCM. Vérifiez que le lien est valide.'
+          );
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadQcmData();
+  }, [token]);
+
+  // Affichage du loading
+  if (loading) {
+    return (
+      <div className="qcm-page">
+        <div className="qcm-center">
+          <h2>Chargement du QCM...</h2>
+          <p>Veuillez patienter pendant le chargement des questions.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Affichage des erreurs
+  if (error) {
+    return (
+      <div className="qcm-page">
+        <div className="qcm-center">
+          <h2>Erreur</h2>
+          <p>{error}</p>
+          <button onClick={() => navigate('/')} className="btn btn--outline">
+            Retour à l'accueil
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Vérifier que les données QCM sont chargées
+  if (!qcmData || !qcmData.questions || qcmData.questions.length === 0) {
+    return (
+      <div className="qcm-page">
+        <div className="qcm-center">
+          <h2>Aucune question trouvée</h2>
+          <p>Ce QCM ne contient pas de questions ou a expiré.</p>
+          <button onClick={() => navigate('/')} className="btn btn--outline">
+            Retour à l'accueil
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const currentQuestion = qcmData.questions[currentQuestionIndex];
   const totalQuestions = qcmData.questions.length;
-
-  // Réinitialiser les états quand on change de question (hook au bon endroit)
-  useEffect(() => {
-    console.log('Question changée vers:', currentQuestionIndex + 1, '/', totalQuestions);
-    
-    // Reset avec un délai pour éviter les conflits
-    const timer = setTimeout(() => {
-      setIsTimeUp(false);
-      setIsTransitioning(false);
-      console.log('États reset pour question:', currentQuestionIndex + 1);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [currentQuestionIndex, totalQuestions]);
 
   // Vérification de sécurité
   if (!currentQuestion) {
@@ -158,45 +275,76 @@ const QCMPage = () => {
   };
 
   // Soumettre le QCM
-  const handleSubmit = () => {
-    const endTime = Date.now();
-    const duration = Math.floor((endTime - startTime) / 1000);
+  const handleSubmit = async () => {
+    // Protection contre les soumissions multiples
+    if (loading || isCompleted) {
+      console.log('Soumission ignorée - en cours ou déjà complété');
+      return;
+    }
     
-    console.log('QCM terminé:', {
-      token,
-      answers,
-      duration,
-      totalQuestions
+    const endTime = Date.now();
+    const startTimeISO = new Date(startTime).toISOString();
+    const endTimeISO = new Date(endTime).toISOString();
+    
+    // Préparer les réponses pour l'API
+    const reponses = Object.entries(answers).map(([questionId, selectedAnswers]) => {
+      // selectedAnswers est un tableau, on prend le premier élément
+      const selectedId = Array.isArray(selectedAnswers) ? selectedAnswers[0] : selectedAnswers;
+      
+      return {
+        id_question: parseInt(questionId),
+        id_reponse_selectionnee: parseInt(selectedId)
+      };
     });
     
-    setIsCompleted(true);
+    try {
+      setLoading(true);
+      console.log('Soumission QCM avec protection unique:', {
+        token,
+        reponses,
+        debut: startTimeISO,
+        fin: endTimeISO
+      });
+      
+      const response = await api.post('/qcm/reponses', {
+        token,
+        reponses,
+        debut: startTimeISO,
+        fin: endTimeISO
+      });
+      
+      if (response.data.success) {
+        console.log('QCM soumis avec succès:', response.data.data);
+        setIsCompleted(true);
+      } else {
+        // Gérer les erreurs de soumission spécifiques
+        const errorCode = response.data.error_code;
+        let errorMessage = response.data.message || 'Erreur lors de la soumission';
+        
+        if (errorCode === 'TOKEN_ALREADY_USED') {
+          errorMessage = '⚠️ Ce QCM a déjà été soumis. Vous ne pouvez pas le refaire.';
+        }
+        
+        setError(errorMessage);
+      }
+    } catch (err) {
+      console.error('Erreur soumission QCM:', err);
+      
+      // Gérer les erreurs HTTP spécifiques pour la soumission
+      if (err.response?.status === 409) {
+        setError('⚠️ Ce QCM a déjà été soumis. Vous ne pouvez pas le refaire.');
+      } else if (err.response?.status === 410) {
+        setError('⏰ Ce lien QCM a expiré pendant la soumission.');
+      } else {
+        setError(
+          err.response?.data?.message || 
+          '❌ Erreur lors de la soumission du QCM. Veuillez réessayer.'
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
   };
-
-  // Gestion des erreurs et du loading
-  if (loading) {
-    return (
-      <div className="qcm-page">
-        <div className="qcm-center">
-          <h2>Chargement du QCM...</h2>
-          <div className="loading-spinner"></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="qcm-page">
-        <div className="qcm-center">
-          <h2>Erreur</h2>
-          <p>{error}</p>
-          <button onClick={() => navigate('/')} className="btn">
-            Retour à l'accueil
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   // Page de completion
   if (isCompleted) {
