@@ -181,23 +181,84 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
     return null;
   };
 
+  // Fonction utilitaire pour résoudre le genre
+  const resolveGenre = () => {
+    const genreValue = formData.genre;
+    
+    console.log('=== DEBUG GENRE ===');
+    console.log('genreValue:', genreValue);
+    console.log('parametres.genres:', parametres?.genres);
+    
+    if (!genreValue) return '';
+    
+    // Si c'est déjà une string simple, la retourner
+    if (typeof genreValue === 'string' && isNaN(genreValue)) {
+      return genreValue;
+    }
+    
+    // Si c'est un ID, le résoudre avec les paramètres
+    if (parametres && parametres.genres) {
+      const genre = parametres.genres.find(g => g.id_genre === parseInt(genreValue));
+      console.log('genre trouvé:', genre);
+      return genre ? genre.valeur : `ID ${genreValue} non trouvé`;
+    }
+    
+    return `Paramètres non chargés (${genreValue})`;
+  };
+
+  // Fonction utilitaire pour résoudre la ville
+  const resolveVille = () => {
+    const villeValue = formData.ville;
+    
+    console.log('=== DEBUG VILLE ===');
+    console.log('villeValue:', villeValue);
+    console.log('parametres.villes:', parametres?.villes);
+    
+    if (!villeValue) return '';
+    
+    // Si c'est déjà une string simple, la retourner
+    if (typeof villeValue === 'string' && isNaN(villeValue)) {
+      return villeValue;
+    }
+    
+    // Si c'est un ID, le résoudre avec les paramètres
+    if (parametres && parametres.villes) {
+      const ville = parametres.villes.find(v => v.id_ville === parseInt(villeValue));
+      console.log('ville trouvée:', ville);
+      return ville ? ville.valeur : `ID ${villeValue} non trouvé`;
+    }
+    
+    return `Paramètres non chargés (${villeValue})`;
+  };
+
   // Fonction utilitaire pour résoudre la situation matrimoniale
   const resolveSituationMatrimoniale = () => {
     const situationValue = formData.situation_matrimoniale;
     
+    console.log('=== DEBUG SITUATION ===');
+    console.log('situationValue:', situationValue);
+    console.log('parametres.situationMatrimoniales:', parametres?.situationMatrimoniales);
+    
     if (!situationValue) return '';
     
     // Si c'est déjà une string simple, la retourner
-    if (typeof situationValue === 'string') {
+    if (typeof situationValue === 'string' && isNaN(situationValue)) {
       return situationValue;
     }
     
-    // Si c'est un objet avec une propriété value ou label
+    // Si c'est un ID, le résoudre avec les paramètres
+    if (parametres && parametres.situationMatrimoniales) {
+      const situation = parametres.situationMatrimoniales.find(s => s.id_situation === parseInt(situationValue));
+      console.log('situation trouvée:', situation);
+      return situation ? situation.valeur : `ID ${situationValue} non trouvé`;
+    }
+    
+    // Si c'est un objet avec une propriété value ou label (fallback)
     if (typeof situationValue === 'object') {
       return situationValue.value || situationValue.label || situationValue.valeur || '';
     }
     
-    return '';
+    return `Paramètres non chargés (${situationValue})`;
   };
 
   // Mapper les données du formulaire vers les props du CV
@@ -205,7 +266,7 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
     // Informations personnelles (adaptation des noms de props)
     nom: formData.nom || '',
     prenom: formData.prenom || '',
-    genre: formData.genre || '',
+    genre: resolveGenre(),
     dateNaissance: formData.date_naissance || '',
     cin: formData.cin || '',
     situationMatrimoniale: resolveSituationMatrimoniale(),
@@ -213,7 +274,7 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
     // Contact (adaptation des noms de props)
     email: formData.email || '',
     contact: formData.telephone || '', // contact au lieu de telephone
-    ville: formData.ville || '',
+    ville: resolveVille(),
     
     // Photo (formatée pour créer une URL)
     photo: formatPhotoForCV(),

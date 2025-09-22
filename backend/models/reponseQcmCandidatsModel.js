@@ -32,11 +32,11 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   },
   debut: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: true
   },
   fin: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: true
   },
   score: {
     type: DataTypes.INTEGER,
@@ -44,7 +44,7 @@ const ReponseQcmCandidat = db.define('ReponseQcmCandidat', {
   },
   duree: {
     type: DataTypes.INTEGER, // durée en secondes
-    allowNull: false
+    allowNull: true
   }
 }, {
   tableName: 'reponse_qcm_candidats',

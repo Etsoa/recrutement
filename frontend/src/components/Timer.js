@@ -48,7 +48,7 @@ const Timer = ({
   }, [duration]);
 
   const formatTime = (seconds) => {
-    return `${seconds}s`;
+    return `${seconds}`;
   };
 
   return (

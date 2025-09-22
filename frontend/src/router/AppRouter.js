@@ -20,7 +20,15 @@ const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        {/* Route QCM sans Layout (pas de header/footer) */}
+        {/* Routes QCM sans Layout (pas de header/footer) */}
+        {/* Route avec token dans l'URL - utilisée par le lien email */}
+        <Route path="/qcm/:token" element={
+          <QCMLayout>
+            <QCMPage />
+          </QCMLayout>
+        } />
+        
+        {/* Route QCM avec query parameter - fallback */}
         <Route path="/qcm" element={
           <QCMLayout>
             <QCMPage />

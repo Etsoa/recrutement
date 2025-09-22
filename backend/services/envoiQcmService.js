@@ -180,68 +180,136 @@ async function verifyTokenQcm(token) {
       };
     }
 
-    // Vérifier si un envoi QCM existe pour ce token
-  const envoiQcm = await EnvoiQcmCandidat.findOne({
+    // Vérifier si un envoi QCM existe déjà pour ce token
+    let envoiQcm = await EnvoiQcmCandidat.findOne({
       where: { token: token }
     });
 
+    console.log('=== DEBUG TOKEN CHECK ===');
+    console.log('Token recherché:', token);
+    console.log('EnvoiQcm trouvé:', envoiQcm ? 'OUI' : 'NON');
+    if (envoiQcm) {
+      console.log('EnvoiQcm ID:', envoiQcm.id_envoi_qcm_candidat);
+      console.log('EnvoiQcm date_envoi:', envoiQcm.date_envoi);
+    }
+
+    // Si le token n'existe pas encore en base, l'insérer
     if (!envoiQcm) {
-      return { 
-        error: 'TOKEN_NOT_FOUND',
-        message: 'Ce lien n\'existe pas'
-      };
-    }
-
-    // RÈGLE MÉTIER : Vérifier si le token a déjà été utilisé en checkant reponse_qcm_candidats
-  const reponsesExistantes = await ReponseQcmCandidat.findOne({
-      where: { id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat }
-    });
-
-    if (reponsesExistantes) {
-      return { 
-        error: 'TOKEN_ALREADY_USED',
-        message: 'Ce lien a déjà été utilisé et ne peut plus être accessible'
-      };
-    }
-
-    // Récupérer les informations du candidat
-    const candidat = await Candidat.findOne({
-      where: { 
-        id_candidat: decoded.id_candidat,
-        id_annonce: decoded.id_annonce 
-      },
-      include: [
-        {
-          model: Tiers,
-          attributes: ['nom', 'prenom']
-        },
-        {
-          model: Annonce,
-          include: [
-            {
-              model: Poste,
-              attributes: ['valeur']
-            }
-          ]
+      try {
+        // Créer l'URL du QCM
+        const lienQcm = `${process.env.FRONTEND_URL}/qcm/${token}`;
+        
+        envoiQcm = await EnvoiQcmCandidat.create({
+          id_candidat: decoded.id_candidat,
+          lien: lienQcm,
+          token: token,
+          date_envoi: new Date()
+        });
+        
+        console.log('Token inséré en base:', envoiQcm.id_envoi_qcm_candidat);
+        
+        // Trouver le QCM associé à cette annonce
+        const qcmAnnonce = await QcmAnnonce.findOne({
+          where: { id_annonce: decoded.id_annonce }
+        });
+        
+        if (!qcmAnnonce) {
+          console.error('Aucun QCM trouvé pour l\'annonce:', decoded.id_annonce);
+          return { 
+            error: 'NO_QCM_FOR_ANNONCE',
+            message: 'Aucun QCM configuré pour cette annonce'
+          };
         }
-      ]
-    });
-
-    if (!candidat) {
-      return { 
-        error: 'CANDIDAT_NOT_FOUND',
-        message: 'Candidat introuvable'
-      };
+        
+        console.log('QCM trouvé pour annonce:', decoded.id_annonce, '=> QCM ID:', qcmAnnonce.id_qcm_annonce);
+        
+        // Créer un enregistrement initial dans reponse_qcm_candidats pour marquer le début du QCM
+        const reponseQcmCreated = await ReponseQcmCandidat.create({
+          id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
+          id_qcm_annonce: qcmAnnonce.id_qcm_annonce, // Correct ID de qcm_annonces
+          debut: new Date(), // Datetime de commencement du QCM
+          fin: null, // Sera mis à jour à la fin du QCM
+          duree: null, // Sera calculée à la fin du QCM
+          score: null // Sera calculé à la fin du QCM
+        });
+        
+        console.log('ReponseQcmCandidat créé:', reponseQcmCreated.id_reponse_qcm_candidat);
+        
+      } catch (insertError) {
+        console.error('Erreur insertion token:', insertError);
+        return { 
+          error: 'TOKEN_INSERT_ERROR',
+          message: 'Erreur lors de l\'enregistrement du token'
+        };
+      }
+    } else {
+      console.log('=== TOKEN EXISTE DÉJÀ ===');
+      
+      // Le token existe, vérifier si le QCM est déjà terminé
+      let reponseQcm = await ReponseQcmCandidat.findOne({
+        where: { id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat }
+      });
+      
+      console.log('ReponseQcm trouvée:', reponseQcm ? 'OUI' : 'NON');
+      if (reponseQcm) {
+        console.log('Score actuel:', reponseQcm.score);
+        console.log('Debut:', reponseQcm.debut);
+        console.log('Fin:', reponseQcm.fin);
+        console.log('Duree:', reponseQcm.duree);
+      }
+      
+      // Si le QCM est terminé (score non null), refuser l'accès
+      if (reponseQcm && reponseQcm.score !== null) {
+        console.log('REFUS - QCM déjà complété avec score:', reponseQcm.score);
+        return { 
+          error: 'TOKEN_ALREADY_COMPLETED',
+          message: 'Ce QCM a déjà été complété'
+        };
+      }
+      
+      // Si pas de reponseQcm, créer l'enregistrement pour marquer le début du QCM
+      if (!reponseQcm) {
+        console.log('=== CRÉATION REPONSE QCM MANQUANTE ===');
+        
+        // Trouver le QCM associé à cette annonce
+        const qcmAnnonce = await QcmAnnonce.findOne({
+          where: { id_annonce: decoded.id_annonce }
+        });
+        
+        if (!qcmAnnonce) {
+          console.error('Aucun QCM trouvé pour l\'annonce:', decoded.id_annonce);
+          return { 
+            error: 'NO_QCM_FOR_ANNONCE',
+            message: 'Aucun QCM configuré pour cette annonce'
+          };
+        }
+        
+        console.log('QCM trouvé pour annonce:', decoded.id_annonce, '=> QCM ID:', qcmAnnonce.id_qcm_annonce);
+        
+        // Créer l'enregistrement dans reponse_qcm_candidats
+        reponseQcm = await ReponseQcmCandidat.create({
+          id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
+          id_qcm_annonce: qcmAnnonce.id_qcm_annonce,
+          debut: new Date(),
+          fin: null,
+          duree: null,
+          score: null
+        });
+        
+        console.log('ReponseQcmCandidat créé avec ID:', reponseQcm.id_reponse_qcm_candidat);
+      }
+      
+      // Sinon, permettre l'accès (QCM en cours)
+      console.log('AUTORISATION - QCM en cours, score null');
+      console.log('Token réutilisé - QCM en cours:', envoiQcm.id_envoi_qcm_candidat);
     }
 
     return {
       id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
       id_candidat: decoded.id_candidat,
       id_annonce: decoded.id_annonce,
-      nom: candidat.Tiers.nom,
-      prenom: candidat.Tiers.prenom,
-      poste: candidat.Annonce.Poste.valeur,
-      token_valide: true
+      token_valide: true,
+      token_inserted: !envoiQcm.date_envoi
     };
 
   } catch (error) {
@@ -267,117 +335,149 @@ async function verifyTokenQcm(token) {
   }
 }
 
-// Supprimer cette fonction car on n'utilise plus est_utilise
-// La vérification se fait maintenant via reponse_qcm_candidats
-
-async function creerReponseQcmAbandon(id_envoi_qcm_candidat, id_annonce) {
+// Calculer le score du QCM et finaliser
+async function calculateQcmScore(id_envoi_qcm_candidat, id_annonce, reponses, duree) {
   try {
-    // RÈGLE MÉTIER : Si candidat sort sans finir, score = 0
-    // Récupérer toutes les questions de l'annonce
-  const questionsQcm = await QcmAnnonce.findAll({
-      where: { id_annonce }
+    // Récupérer toutes les questions liées à cette annonce avec TOUTES leurs réponses
+    const qcmAnnonces = await QcmAnnonce.findAll({
+      where: { id_annonce: id_annonce },
+      include: [{
+        model: QuestionQcm,
+        include: [{
+          model: ReponseQcm,
+          // Récupérer TOUTES les réponses, pas seulement les bonnes
+        }]
+      }]
     });
 
-    // Créer des réponses avec score 0 pour toutes les questions
-    const reponsesAbandon = questionsQcm.map(qcmAnnonce => ({
-      id_envoi_qcm_candidat,
-      id_qcm_annonce: qcmAnnonce.id_qcm_annonce,
-      debut: new Date(),
-      fin: new Date(),
-      duree: 0,
-      reponse: 'ABANDON',
-      score: 0
-    }));
-
-    // Insérer toutes les réponses d'abandon
-  await ReponseQcmCandidat.bulkCreate(reponsesAbandon);
-
-    return {
-      message: 'QCM marqué comme abandonné avec score 0',
-      total_questions: questionsQcm.length,
-      score_final: 0
-    };
-
-  } catch (error) {
-    console.error('Erreur creerReponseQcmAbandon:', error);
-    throw error;
-  }
-}
-
-async function checkQcmCompleted(id_envoi_qcm_candidat) {
-  try {
-    // Vérifier s'il existe des réponses pour cet envoi QCM
-  const reponses = await ReponseQcmCandidat.findOne({
-      where: { id_envoi_qcm_candidat }
-    });
-
-    return !!reponses; // Retourne true si des réponses existent
-  } catch (error) {
-    console.error('Erreur checkQcmCompleted:', error);
-    throw error;
-  }
-}
-
-async function getQcmQuestionsByToken(token) {
-  try {
-    // D'abord vérifier le token
-    const verification = await verifyTokenQcm(token);
-    
-    if (!verification || verification.error) {
-      return verification; // Retourner l'erreur si le token n'est pas valide
+    if (!qcmAnnonces || qcmAnnonces.length === 0) {
+      return {
+        error: 'NO_QUESTIONS',
+        message: 'Aucune question trouvée pour cette annonce'
+      };
     }
-    
-    // Récupérer les questions QCM spécifiques à cette annonce
-  const questionsQcm = await QcmAnnonce.findAll({
-      where: { id_annonce: verification.id_annonce },
-      include: [
-        {
-          model: QuestionQcm,
-          include: [
-            {
-              model: ReponseQcm, // Les options de réponse
-              attributes: ['id_reponse_qcm', 'reponse']
-              // Note: ne pas inclure 'modalite' pour la sécurité
+
+    console.log('=== CALCUL SCORE QCM ===');
+    console.log('Questions trouvées:', qcmAnnonces.length);
+    console.log('Réponses candidat:', reponses);
+
+    let totalBonnesReponsesPossibles = 0;
+    let bonnesReponsesCandidat = 0;
+
+    // Pour chaque question du QCM
+    for (const qcmAnnonce of qcmAnnonces) {
+      const question = qcmAnnonce.QuestionQcm;
+      const questionId = question.id_question;
+      const toutesReponses = question.ReponseQcms || [];
+      
+      // Filtrer les bonnes réponses
+      const bonnesReponses = toutesReponses.filter(r => r.modalite === true);
+      totalBonnesReponsesPossibles += bonnesReponses.length;
+      
+      console.log(`Question ${questionId}:`, {
+        bonnesReponses: bonnesReponses.map(r => r.id_reponse_qcm),
+        reponsesCandidat: reponses[questionId] || []
+      });
+
+      // Vérifier les réponses du candidat pour cette question
+      const reponsesCandidat = reponses[questionId] || [];
+      
+      if (Array.isArray(reponsesCandidat)) {
+        // Convertir les lettres (a, b, c, d) en IDs réels de réponses
+        for (const lettre of reponsesCandidat) {
+          // Convertir la lettre en index (a=0, b=1, c=2, d=3)
+          const index = lettre.charCodeAt(0) - 97; // 'a'.charCodeAt(0) = 97
+          
+          // Vérifier que l'index est valide
+          if (index >= 0 && index < toutesReponses.length) {
+            const reponseId = toutesReponses[index].id_reponse_qcm;
+            const estBonneReponse = bonnesReponses.some(br => br.id_reponse_qcm === reponseId);
+            
+            console.log(`  Lettre '${lettre}' (index ${index}) -> ID réponse ${reponseId} -> ${estBonneReponse ? 'BONNE' : 'mauvaise'}`);
+            
+            if (estBonneReponse) {
+              bonnesReponsesCandidat++;
             }
-          ]
+          }
         }
-      ],
-      order: [['id_qcm_annonce', 'ASC']] // Ordre par ID
+      }
+    }
+
+    console.log('Calcul final:', {
+      bonnesReponsesCandidat,
+      totalBonnesReponsesPossibles
+    });
+
+    // Calculer le score sur 20
+    const scoreMax = 20;
+    const score = totalBonnesReponsesPossibles > 0 
+      ? Math.round((bonnesReponsesCandidat / totalBonnesReponsesPossibles) * scoreMax)
+      : 0;
+    
+    const pourcentage = totalBonnesReponsesPossibles > 0 
+      ? Math.round((bonnesReponsesCandidat / totalBonnesReponsesPossibles) * 100)
+      : 0;
+
+    // Mettre à jour la table reponse_qcm_candidats avec le score final
+    const dateFinQcm = new Date();
+    console.log('=== MISE À JOUR SCORE QCM ===');
+    console.log('ID envoi QCM candidat:', id_envoi_qcm_candidat);
+    console.log('Date fin:', dateFinQcm);
+    console.log('Durée (secondes):', duree);
+    console.log('Score calculé:', score);
+    
+    const updateResult = await ReponseQcmCandidat.update({
+      fin: dateFinQcm,
+      duree: duree,
+      score: score
+    }, {
+      where: { id_envoi_qcm_candidat: id_envoi_qcm_candidat }
+    });
+
+    console.log('Nombre de lignes mises à jour:', updateResult[0]);
+    
+    // Vérifier que la mise à jour a bien eu lieu
+    const reponseQcmUpdated = await ReponseQcmCandidat.findOne({
+      where: { id_envoi_qcm_candidat: id_envoi_qcm_candidat }
     });
     
-    // Formater les données pour le frontend
-    const questions = questionsQcm.map(qcmAnnonce => ({
-      id_qcm_annonce: qcmAnnonce.id_qcm_annonce,
-      id_question: qcmAnnonce.QuestionQcm.id_question,
-      question: qcmAnnonce.QuestionQcm.intitule,
-      reponses: qcmAnnonce.QuestionQcm.ReponseQcms.map(reponse => ({
-        id_reponse: reponse.id_reponse_qcm,
-        texte: reponse.reponse
-      }))
-    }));
-    
+    console.log('=== VÉRIFICATION APRÈS MISE À JOUR ===');
+    if (reponseQcmUpdated) {
+      console.log('Début:', reponseQcmUpdated.debut);
+      console.log('Fin:', reponseQcmUpdated.fin);
+      console.log('Durée:', reponseQcmUpdated.duree);
+      console.log('Score:', reponseQcmUpdated.score);
+    } else {
+      console.log('ERREUR: Aucun enregistrement trouvé après mise à jour!');
+    }
+
+    console.log('Score final calculé:', {
+      score,
+      scoreMax,
+      pourcentage,
+      bonnesReponsesCandidat,
+      totalBonnesReponsesPossibles
+    });
+
     return {
-      candidat: {
-        id_candidat: verification.id_candidat,
-        nom: verification.nom,
-        prenom: verification.prenom,
-        poste: verification.poste
-      },
-      questions,
-      id_envoi_qcm_candidat: verification.id_envoi_qcm_candidat,
-      total_questions: questions.length
+      score,
+      scoreMax,
+      pourcentage,
+      bonnesReponses: bonnesReponsesCandidat,
+      totalReponses: totalBonnesReponsesPossibles
     };
-    
+
   } catch (error) {
-    console.error('Erreur getQcmQuestionsByToken:', error);
-    throw error;
+    console.error('Erreur calculateQcmScore:', error);
+    return {
+      error: 'CALCULATION_ERROR',
+      message: 'Erreur lors du calcul du score'
+    };
   }
 }
 
 module.exports = {
   createEnvoiQcm,
   verifyTokenQcm,
-  creerReponseQcmAbandon,
-  getQcmQuestionsByToken,
-  checkQcmCompleted
+  calculateQcmScore
 };

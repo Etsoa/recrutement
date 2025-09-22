@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useParams } from 'react-router-dom';
 import Question from '../components/Question';
 import Timer from '../components/Timer';
 import { qcmService } from '../services/qcmService';
@@ -7,6 +7,7 @@ import '../styles/QCMPage.css';
 
 const QCMPage = () => {
   const [searchParams] = useSearchParams();
+  const { token: urlToken } = useParams(); // Token depuis l'URL (/qcm/:token)
   const navigate = useNavigate();
   
   // États du composant
@@ -28,22 +29,43 @@ const QCMPage = () => {
   }, [currentQuestionIndex]);
   
   // Récupération des paramètres
-  const token = searchParams.get('token');
+  const queryToken = searchParams.get('token'); // Token depuis query parameter (?token=...)
+  const token = urlToken || queryToken; // Priorité au token dans l'URL
   
   // État pour les données QCM
   const [qcmData, setQcmData] = useState(null);
+  const [candidatInfo, setCandidatInfo] = useState(null);
   
   // Charger les données QCM depuis l'API
   useEffect(() => {
     const loadQcmData = async () => {
       try {
         setLoading(true);
-        const response = await qcmService.getQcmByAnnonce(1); // Annonce 1 par défaut
         
-        if (response.success) {
-          setQcmData(response.data);
+        if (token) {
+          // Si on a un token, utiliser getQcmWithToken pour récupérer toutes les infos
+          const response = await qcmService.getQcmWithToken(token);
+          
+          if (response.success) {
+            setQcmData(response.data.qcm);
+            setCandidatInfo({
+              id_candidat: response.data.id_candidat,
+              id_annonce: response.data.id_annonce,
+              candidat: response.data.candidat,
+              id_envoi_qcm_candidat: response.data.id_envoi_qcm_candidat
+            });
+          } else {
+            setError(response.message);
+          }
         } else {
-          setError(response.message);
+          // Fallback : utiliser l'annonce 1 par défaut
+          const response = await qcmService.getQcmByAnnonce(1);
+          
+          if (response.success) {
+            setQcmData(response.data);
+          } else {
+            setError(response.message);
+          }
         }
       } catch (err) {
         setError(err.message || 'Erreur lors du chargement du QCM');
@@ -53,7 +75,7 @@ const QCMPage = () => {
     };
     
     loadQcmData();
-  }, []);
+  }, [token, urlToken, queryToken]);
 
   const currentQuestion = qcmData?.questions[currentQuestionIndex];
   const totalQuestions = qcmData?.questions.length || 0;
@@ -140,7 +162,8 @@ const QCMPage = () => {
       token,
       answers,
       duration,
-      totalQuestions
+      totalQuestions,
+      candidatInfo
     });
     
     // Soumettre les réponses si on a un token
@@ -163,21 +186,6 @@ const QCMPage = () => {
 
   // Gestion des erreurs et du loading
 
-  // Vérification de sécurité
-  if (!currentQuestion) {
-    return (
-      <div className="qcm-page">
-        <div className="qcm-center">
-          <h2>Erreur</h2>
-          <p>Question non trouvée</p>
-          <button onClick={() => navigate('/')} className="btn btn--outline">
-            Retour à l'accueil
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   if (loading) {
     return (
       <div className="qcm-page">
@@ -196,6 +204,21 @@ const QCMPage = () => {
           <h2>Erreur</h2>
           <p>{error}</p>
           <button onClick={() => navigate('/')} className="btn">
+            Retour à l'accueil
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Vérification de sécurité - seulement si pas d'erreur
+  if (!currentQuestion) {
+    return (
+      <div className="qcm-page">
+        <div className="qcm-center">
+          <h2>Erreur</h2>
+          <p>Question non trouvée</p>
+          <button onClick={() => navigate('/')} className="btn btn--outline">
             Retour à l'accueil
           </button>
         </div>
@@ -241,6 +264,7 @@ const QCMPage = () => {
         {/* Header avec info et timer */}
         <div className="qcm-header">
           <h1>{qcmData?.titre}</h1>
+          
           <div className="qcm-meta">
             <span>Question {currentQuestionIndex + 1} sur {totalQuestions}</span>
             <Timer

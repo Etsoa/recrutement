@@ -31,4 +31,10 @@ const ReponseQcm = db.define('ReponseQcm', {
   timestamps: false
 });
 
+// Associations
+ReponseQcm.belongsTo(QuestionQcm, { foreignKey: 'id_question_qcm' });
+
+// Reverse association
+QuestionQcm.hasMany(ReponseQcm, { foreignKey: 'id_question_qcm' });
+
 module.exports = ReponseQcm;

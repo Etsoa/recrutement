@@ -77,15 +77,20 @@ export const qcmService = {
     try {
       const response = await api.post('/public/qcm/questions', { token });
       
+      // Si la vérification du token échoue, retourner immédiatement l'erreur
       if (!response.success) {
-        return response;
+        return {
+          success: false,
+          data: null,
+          message: response.message || 'Erreur de vérification du token'
+        };
       }
 
       // Les données contiennent déjà les informations décodées du token
       const { data } = response;
       
       // Récupérer les questions formatées pour l'annonce
-      const qcmResponse = await this.getQcmByAnnonce(data.id_annonce || 1);
+      const qcmResponse = await this.getQcmByAnnonce(data.id_annonce);
       
       if (!qcmResponse.success) {
         return qcmResponse;
