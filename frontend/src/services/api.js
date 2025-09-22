@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000, // 60 secondes de timeout pour debug
+  timeout: 10000, // 10 secondes de timeout
   // Retirer le Content-Type par défaut pour permettre FormData
   // headers: { 'Content-Type': 'application/json' } // Commenté pour permettre FormData
 });
@@ -38,27 +38,41 @@ apiClient.interceptors.response.use(
     console.error('🔴 API Error config:', error.config?.url);
     
     if (error.code === 'ECONNABORTED') {
-      throw new Error('La requête a pris trop de temps. Veuillez réessayer.');
+      const timeoutError = new Error('La requête a pris trop de temps. Veuillez réessayer.');
+      timeoutError.code = 'TIMEOUT';
+      throw timeoutError;
     } else if (error.response) {
       const status = error.response.status;
-      const message = error.response.data?.message;
+      const responseData = error.response.data;
+      const message = responseData?.message;
+      const errorCode = responseData?.error_code;
       
       console.error('🔴 Response status:', status);
-      console.error('🔴 Response data:', error.response.data);
+      console.error('🔴 Response data:', responseData);
+      
+      // Créer une erreur enrichie avec les données de la réponse
+      const apiError = new Error(message || `Erreur ${status}`);
+      apiError.status = status;
+      apiError.errorCode = errorCode;
+      apiError.responseData = responseData;
       
       if (status === 408) {
-        throw new Error('Timeout du serveur. Veuillez réessayer.');
+        apiError.message = 'Timeout du serveur. Veuillez réessayer.';
       } else if (status >= 500) {
-        throw new Error('Erreur serveur temporaire. Veuillez réessayer.');
-      } else {
-        throw new Error(message || `Erreur ${status}`);
+        apiError.message = 'Erreur serveur temporaire. Veuillez réessayer.';
       }
+      
+      throw apiError;
     } else if (error.request) {
       console.error('🔴 No response received:', error.request);
-      throw new Error('Impossible de se connecter au serveur. Vérifiez votre connexion.');
+      const connectionError = new Error('Impossible de se connecter au serveur. Vérifiez votre connexion.');
+      connectionError.code = 'CONNECTION_ERROR';
+      throw connectionError;
     } else {
       console.error('🔴 Request setup error:', error.message);
-      throw new Error('Erreur lors de la configuration de la requête');
+      const setupError = new Error('Erreur lors de la configuration de la requête');
+      setupError.code = 'SETUP_ERROR';
+      throw setupError;
     }
   }
 );

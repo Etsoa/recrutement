@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
-const QuestionQcm = require('./questionQcmsModel'); 
+const QuestionQcm = require('./questionQcmsModel');
 
 const ReponseQcm = db.define('ReponseQcm', {
   id_reponse_qcm: {
@@ -31,7 +31,16 @@ const ReponseQcm = db.define('ReponseQcm', {
   timestamps: false
 });
 
-// Association Sequelize
-ReponseQcm.belongsTo(QuestionQcm, { foreignKey: 'id_question_qcm' });
+// Association directe avec QuestionQcm
+ReponseQcm.belongsTo(QuestionQcm, { 
+  foreignKey: 'id_question_qcm',
+  as: 'QuestionQcm'
+});
+
+// Association inverse - QuestionQcm hasMany ReponseQcm
+QuestionQcm.hasMany(ReponseQcm, { 
+  foreignKey: 'id_question_qcm',
+  as: 'ReponseQcms'
+});
 
 module.exports = ReponseQcm;

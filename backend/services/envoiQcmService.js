@@ -9,7 +9,6 @@ const QuestionQcm = require('../models/questionQcmsModel');
 const ReponseQcm = require('../models/reponseQcmsModel');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const { getFrontendUrl } = require('../utils/getLocalIp');
 
 // Configuration du transporteur email (à adapter selon votre fournisseur)
 const transporter = nodemailer.createTransport({
@@ -77,16 +76,15 @@ async function createEnvoiQcm(id_candidat) {
       expiresIn: '1D' // Le token expire dans 7 jours
     });
     
-    // Calculer la date d'expiration du token (7 jours)
+    // Calculer la date d'expiration du token (1 jour)
     const dateExpiration = new Date();
     dateExpiration.setDate(dateExpiration.getDate() + 1);
 
-    // Créer l'enregistrement d'envoi QCM avec URL dynamique
-    const frontendUrl = getFrontendUrl(3000); // Port 3000 pour le frontend React
-    const lienQcm = `${frontendUrl}/qcm/${token}`;
-    console.log(`Lien QCM généré avec IP dynamique: ${lienQcm}`);
+    // Créer l'enregistrement d'envoi QCM avec URL localhost
+    const lienQcm = `http://localhost:3000/qcm/${token}`;
+    console.log(`Lien QCM généré: ${lienQcm}`);
     
-  const envoiQcm = await EnvoiQcmCandidat.create({
+    const envoiQcm = await EnvoiQcmCandidat.create({
       id_candidat,
       lien: lienQcm,
       token,
@@ -172,63 +170,70 @@ async function envoyerEmailQcm(emailData) {
 
 async function verifyTokenQcm(token) {
   try {
+    console.log('🔍 Début vérification token:', token.substring(0, 50) + '...');
     // Vérifier et décoder le token JWT
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('🔍 Token JWT décodé:', {
+      id_candidat: decoded.id_candidat,
+      id_annonce: decoded.id_annonce,
+      type: decoded.type,
+      exp: decoded.exp,
+      iat: decoded.iat
+    });
     
     // Vérifier que c'est bien un token QCM
     if (decoded.type !== 'qcm') {
+      console.log('🔴 Token type incorrect:', decoded.type);
       return { 
         error: 'TOKEN_INVALID',
         message: 'Ce lien est invalide'
       };
     }
 
-    // Vérifier si un envoi QCM existe pour ce token
-  const envoiQcm = await EnvoiQcmCandidat.findOne({
+    // Vérifier si un envoi QCM existe déjà pour ce token (usage unique)
+    console.log('🔍 Recherche token dans base de données:', token);
+    let envoiQcm = await EnvoiQcmCandidat.findOne({
       where: { token: token }
     });
+    console.log('🔍 Résultat recherche token:', envoiQcm ? 'déjà existant' : 'nouveau');
 
+    // Si le token n'existe pas encore, créer l'entrée (premier clic sur le lien)
     if (!envoiQcm) {
-      return { 
-        error: 'TOKEN_NOT_FOUND',
-        message: 'Ce lien n\'existe pas'
-      };
+      console.log('� Première utilisation du token, création de l\'entrée...');
+      try {
+        envoiQcm = await EnvoiQcmCandidat.create({
+          id_candidat: decoded.id_candidat,
+          token: token,
+          lien: `${process.env.FRONTEND_URL}/qcm?token=${token}`,
+          date_envoi: new Date()
+        });
+        console.log('🟢 Entrée envoi QCM créée avec succès, id:', envoiQcm.id_envoi_qcm_candidat);
+      } catch (createError) {
+        console.error('🔴 Erreur création envoi QCM:', createError);
+        return {
+          error: 'TOKEN_CREATE_ERROR',
+          message: 'Erreur lors de l\'initialisation du QCM'
+        };
+      }
     }
 
     // RÈGLE MÉTIER : Vérifier si le token a déjà été utilisé en checkant reponse_qcm_candidats
-  const reponsesExistantes = await ReponseQcmCandidat.findOne({
+    console.log('🔍 Vérification usage unique pour id_envoi:', envoiQcm.id_envoi_qcm_candidat);
+    const reponsesExistantes = await ReponseQcmCandidat.findOne({
       where: { id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat }
     });
+    console.log('🔍 Réponses existantes:', reponsesExistantes ? 'oui (déjà utilisé)' : 'non (première fois)');
 
     if (reponsesExistantes) {
+      console.log('🔴 Token déjà utilisé');
       return { 
         error: 'TOKEN_ALREADY_USED',
         message: 'Ce lien a déjà été utilisé et ne peut plus être accessible'
       };
     }
 
-    // Récupérer les informations du candidat
-    const candidat = await Candidat.findOne({
-      where: { 
-        id_candidat: decoded.id_candidat,
-        id_annonce: decoded.id_annonce 
-      },
-      include: [
-        {
-          model: Tiers,
-          attributes: ['nom', 'prenom']
-        },
-        {
-          model: Annonce,
-          include: [
-            {
-              model: Poste,
-              attributes: ['valeur']
-            }
-          ]
-        }
-      ]
-    });
+    // Récupérer les informations du candidat avec requêtes séparées pour éviter les problèmes d'associations
+    const candidat = await Candidat.findByPk(decoded.id_candidat);
 
     if (!candidat) {
       return { 
@@ -237,13 +242,50 @@ async function verifyTokenQcm(token) {
       };
     }
 
+    // Vérifier que le candidat est bien associé à l'annonce du token
+    if (candidat.id_annonce !== decoded.id_annonce) {
+      return { 
+        error: 'TOKEN_ANNONCE_MISMATCH',
+        message: 'Token non valide pour cette annonce'
+      };
+    }
+
+    // Récupérer les informations du tiers séparément
+    const tiers = await Tiers.findByPk(candidat.id_tiers, {
+      attributes: ['nom', 'prenom']
+    });
+
+    if (!tiers) {
+      return { 
+        error: 'TIERS_NOT_FOUND',
+        message: 'Informations candidat introuvables'
+      };
+    }
+
+    // Récupérer les informations de l'annonce et du poste séparément
+    const annonce = await Annonce.findByPk(candidat.id_annonce, {
+      include: [
+        {
+          model: Poste,
+          attributes: ['valeur']
+        }
+      ]
+    });
+
+    if (!annonce || !annonce.Poste) {
+      return { 
+        error: 'ANNONCE_NOT_FOUND',
+        message: 'Informations annonce introuvables'
+      };
+    }
+
     return {
       id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
       id_candidat: decoded.id_candidat,
       id_annonce: decoded.id_annonce,
-      nom: candidat.Tiers.nom,
-      prenom: candidat.Tiers.prenom,
-      poste: candidat.Annonce.Poste.valeur,
+      nom: tiers.nom,
+      prenom: tiers.prenom,
+      poste: annonce.Poste.valeur,
       token_valide: true
     };
 
@@ -410,47 +452,10 @@ module.exports = {
   checkQcmCompleted
 };
 
-/**
- * Marquer un token QCM comme utilisé dès l'ouverture
- * Crée une entrée vide dans reponse_qcm_candidats pour empêcher la réutilisation
- * @param {number} id_envoi_qcm_candidat - L'ID de l'envoi QCM
- */
-async function markTokenAsUsed(id_envoi_qcm_candidat) {
-  try {
-    // Vérifier si le token n'est pas déjà marqué comme utilisé
-    const existingReponse = await ReponseQcmCandidat.findOne({
-      where: { id_envoi_qcm_candidat }
-    });
-
-    if (existingReponse) {
-      console.log('Token déjà marqué comme utilisé pour id_envoi:', id_envoi_qcm_candidat);
-      return;
-    }
-
-    // Créer une réponse "placeholder" pour marquer le token comme utilisé
-    // Même si le candidat ne répond à aucune question, le token sera inutilisable
-    await ReponseQcmCandidat.create({
-      id_envoi_qcm_candidat,
-      id_qcm_annonce: null, // NULL indique que c'est un placeholder
-      debut: new Date(), // Début du processus QCM
-      fin: null, // Pas encore terminé
-      duree: null, // Pas de durée pour l'instant
-      score: null // NULL indique que c'est un placeholder
-    });
-
-    console.log('Token QCM marqué comme utilisé (ouverture) pour id_envoi:', id_envoi_qcm_candidat);
-  } catch (error) {
-    console.error('Erreur lors du marquage du token comme utilisé:', error);
-    // Ne pas faire échouer le processus si cette étape échoue
-    // Le QCM peut continuer même si le marquage échoue
-  }
-}
-
 module.exports = {
   createEnvoiQcm,
   verifyTokenQcm,
   creerReponseQcmAbandon,
   getQcmQuestionsByToken,
-  checkQcmCompleted,
-  markTokenAsUsed
+  checkQcmCompleted
 };

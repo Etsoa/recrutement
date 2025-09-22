@@ -529,9 +529,12 @@ exports.createCandidat = async (req, res) => {
 // Récupérer les questions QCM pour un candidat avec token
 exports.qcmQuestions = async (req, res) => {
   try {
+    console.log('🟢 qcmQuestions appelée');
     const { token } = req.body;
+    console.log('🟢 Token reçu:', token ? 'présent' : 'absent');
     
     if (!token) {
+      console.log('🔴 Token manquant');
       return res.status(400).json({
         message: 'Token requis',
         data: null,
@@ -539,11 +542,14 @@ exports.qcmQuestions = async (req, res) => {
       });
     }
     
+    console.log('🟢 Vérification du token...');
     // Vérifier la validité du token et l'utilisation unique
     const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
+    console.log('🟢 Résultat vérification token:', envoiQcm.error ? 'erreur' : 'succès');
     
     // Gérer les erreurs de vérification du token
     if (envoiQcm.error) {
+      console.log('🔴 Erreur token:', envoiQcm.error);
       let statusCode = 400;
       switch (envoiQcm.error) {
         case 'TOKEN_EXPIRED':
@@ -571,15 +577,15 @@ exports.qcmQuestions = async (req, res) => {
       });
     }
 
+    console.log('🟢 Token valide, récupération des questions...');
     // Le token est valide et non utilisé - on peut continuer
     
-    // RÈGLE MÉTIER IMPORTANTE : Marquer le token comme utilisé dès l'ouverture
-    // même si le candidat ne répond à aucune question
-    await envoiQcmService.markTokenAsUsed(envoiQcm.id_envoi_qcm_candidat);
-    console.log('Token QCM marqué comme utilisé dès l\'ouverture pour id_envoi:', envoiQcm.id_envoi_qcm_candidat);
+    // Le token sera marqué comme utilisé seulement lors de la soumission (submitQcm)
     
+    console.log('🟢 Récupération des questions pour annonce:', envoiQcm.id_annonce);
     // Récupérer les questions pour cette annonce
     const questions = await questionQcmsService.getQuestionsByAnnonce(envoiQcm.id_annonce);
+    console.log('🟢 Questions récupérées:', questions.length, 'questions');
     
     const data = {
       id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
@@ -592,13 +598,14 @@ exports.qcmQuestions = async (req, res) => {
       debut_qcm: new Date().toISOString()
     };
     
+    console.log('🟢 Envoi réponse réussie');
     res.json({
       message: 'Questions QCM envoyées avec succès',
       data,
       success: true
     });
   } catch (err) {
-    console.error('Erreur qcmQuestions:', err);
+    console.error('🔴 Erreur qcmQuestions:', err);
     res.status(500).json({
       message: 'Erreur lors de l\'envoi des questions QCM',
       data: null,
@@ -620,35 +627,47 @@ exports.qcmReponses = async (req, res) => {
       });
     }
     
-    // Vérifier le token et l'utilisation unique
-    const envoiQcm = await envoiQcmService.verifyTokenQcm(token);
-    
-    // Gérer les erreurs de vérification du token (même logique que qcmQuestions)
-    if (envoiQcm.error) {
-      let statusCode = 400;
-      switch (envoiQcm.error) {
-        case 'TOKEN_EXPIRED':
-          statusCode = 410; // Gone
-          break;
-        case 'TOKEN_ALREADY_USED':
-          statusCode = 409; // Conflict - QCM déjà soumis
-          break;
-        case 'TOKEN_NOT_FOUND':
-        case 'CANDIDAT_NOT_FOUND':
-          statusCode = 404; // Not Found
-          break;
-        case 'TOKEN_INVALID':
-          statusCode = 400; // Bad Request
-          break;
-        default:
-          statusCode = 500; // Internal Server Error
-      }
-      
-      return res.status(statusCode).json({
-        message: envoiQcm.message,
+    // Décoder le token pour récupérer les informations
+    const jwt = require('jsonwebtoken');
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Token invalide',
         data: null,
         success: false,
-        error_code: envoiQcm.error
+        error_code: 'TOKEN_INVALID'
+      });
+    }
+    
+    // Trouver l'envoi QCM correspondant
+    const EnvoiQcmCandidat = require('../models/envoiQcmCandidatsModel');
+    const envoiQcm = await EnvoiQcmCandidat.findOne({
+      where: { token: token }
+    });
+    
+    if (!envoiQcm) {
+      return res.status(404).json({
+        message: 'Token QCM introuvable',
+        data: null,
+        success: false,
+        error_code: 'TOKEN_NOT_FOUND'
+      });
+    }
+    
+    // Vérifier si le QCM n'a pas déjà été soumis
+    const ReponseQcmCandidat = require('../models/reponseQcmCandidatsModel');
+    const reponsesExistantes = await ReponseQcmCandidat.findOne({
+      where: { id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat }
+    });
+    
+    if (reponsesExistantes) {
+      return res.status(409).json({
+        message: 'Ce QCM a déjà été soumis',
+        data: null,
+        success: false,
+        error_code: 'TOKEN_ALREADY_USED'
       });
     }
     
@@ -666,7 +685,7 @@ exports.qcmReponses = async (req, res) => {
       const score_question = est_correcte ? 1 : 0;
       
       // Récupérer l'id_qcm_annonce
-      const id_qcm_annonce = await reponseQcmService.getQcmAnnonceByQuestion(id_question, envoiQcm.id_annonce);
+      const id_qcm_annonce = await reponseQcmService.getQcmAnnonceByQuestion(id_question, decoded.id_annonce);
       
       reponsesData.push({
         id_envoi_qcm_candidat: envoiQcm.id_envoi_qcm_candidat,
@@ -678,11 +697,11 @@ exports.qcmReponses = async (req, res) => {
       });
     }
     
-    // Enregistrer toutes les réponses (gère le remplacement du placeholder)
+    // Enregistrer toutes les réponses (ceci marque automatiquement le token comme utilisé)
     await reponseQcmService.createMultipleReponses(reponsesData, envoiQcm.id_envoi_qcm_candidat);
     
     // Calculer les statistiques finales
-    const stats = await reponseQcmService.calculateQcmStats(envoiQcm.id_envoi_qcm_candidat, envoiQcm.id_annonce);
+    const stats = await reponseQcmService.calculateQcmStats(envoiQcm.id_envoi_qcm_candidat, decoded.id_annonce);
     
     res.json({
       message: 'Réponses QCM enregistrées avec succès',

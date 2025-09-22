@@ -9,6 +9,11 @@ const QCMPage = () => {
   const { token } = useParams(); // Récupérer le token depuis l'URL
   const navigate = useNavigate();
   
+  // Debug: log du token récupéré
+  console.log('🔍 Token récupéré depuis useParams:', token);
+  console.log('🔍 Type du token:', typeof token);
+  console.log('🔍 Longueur du token:', token ? token.length : 'undefined');
+  
   // États du composant
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -83,7 +88,7 @@ const QCMPage = () => {
         setLoading(true);
         console.log('Chargement des questions QCM avec token:', token);
         
-        const response = await api.post('/qcm/questions', { token });
+        const response = await api.post('/public/qcm/questions', { token });
         
         if (response.data.success) {
           const { questions, candidat, id_envoi_qcm_candidat } = response.data.data;
@@ -134,20 +139,41 @@ const QCMPage = () => {
       } catch (err) {
         console.error('Erreur chargement QCM:', err);
         
-        // Gérer les erreurs HTTP spécifiques
-        if (err.response?.status === 409) {
-          // Token déjà utilisé - rediriger vers la page spécialisée
-          navigate(`/qcm-completed/${token}`);
-          return;
-        } else if (err.response?.status === 410) {
-          setError('⏰ Ce lien QCM a expiré. Contactez l\'équipe RH pour un nouveau lien.');
-        } else if (err.response?.status === 404) {
-          setError('🔍 Ce lien QCM n\'existe pas ou a été supprimé.');
+        // Vérifier si c'est une erreur avec un code spécifique du backend
+        if (err.errorCode) {
+          console.log('🔍 Code erreur détecté:', err.errorCode);
+          
+          switch (err.errorCode) {
+            case 'TOKEN_ALREADY_USED':
+              // Rediriger vers la page spécialisée pour token déjà utilisé
+              navigate(`/qcm-completed/${token}`);
+              return;
+            case 'TOKEN_EXPIRED':
+              setError('⏰ Ce lien QCM a expiré. Contactez l\'équipe RH pour un nouveau lien.');
+              return;
+            case 'TOKEN_INVALID':
+              setError('❌ Ce lien QCM est invalide ou corrompu.');
+              return;
+            case 'TOKEN_NOT_FOUND':
+              setError('🔍 Ce lien QCM n\'existe pas dans notre système.');
+              return;
+            case 'CANDIDAT_NOT_FOUND':
+              setError('👤 Candidature associée introuvable.');
+              return;
+            case 'TOKEN_CREATE_ERROR':
+              setError('🔧 Erreur lors de l\'initialisation du QCM. Veuillez réessayer.');
+              return;
+          }
+        }
+        
+        // Gérer les erreurs de connexion (backend non démarré)
+        if (err.code === 'CONNECTION_ERROR' || err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+          setError('🔌 Impossible de se connecter au serveur. Veuillez vérifier que le backend est démarré.');
+        } else if (err.code === 'TIMEOUT') {
+          setError('⏱️ La requête a pris trop de temps. Veuillez réessayer.');
         } else {
-          setError(
-            err.response?.data?.message || 
-            '❌ Erreur lors du chargement du QCM. Vérifiez que le lien est valide.'
-          );
+          // Erreur générique
+          setError(err.message || 'Erreur lors du chargement du QCM');
         }
       } finally {
         setLoading(false);
@@ -171,14 +197,36 @@ const QCMPage = () => {
 
   // Affichage des erreurs
   if (error) {
+    const isNetworkError = error.includes('Impossible de se connecter au serveur');
+    
     return (
       <div className="qcm-page">
         <div className="qcm-center">
-          <h2>Erreur</h2>
+          <h2>Erreur lors du chargement</h2>
           <p>{error}</p>
-          <button onClick={() => navigate('/')} className="btn btn--outline">
-            Retour à l'accueil
-          </button>
+          
+          {isNetworkError && (
+            <div className="error-details">
+              <p><small>
+                <strong>Informations techniques :</strong><br/>
+                • Vérifiez que le serveur backend est démarré sur le port 5000<br/>
+                • Assurez-vous que votre connexion internet fonctionne<br/>
+                • Ce problème est généralement temporaire
+              </small></p>
+            </div>
+          )}
+          
+          <div className="error-actions">
+            <button 
+              onClick={() => window.location.reload()} 
+              className="btn btn--primary"
+            >
+              🔄 Recharger la page
+            </button>
+            <button onClick={() => navigate('/')} className="btn btn--outline">
+              Retour à l'accueil
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -306,7 +354,7 @@ const QCMPage = () => {
         fin: endTimeISO
       });
       
-      const response = await api.post('/qcm/reponses', {
+      const response = await api.post('/public/qcm/reponses', {
         token,
         reponses,
         debut: startTimeISO,

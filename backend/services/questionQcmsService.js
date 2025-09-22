@@ -14,42 +14,43 @@ async function getQuestionsByAnnonce(id_annonce) {
     // Récupérer les QCM liés à cette annonce
     const qcmAnnonces = await QcmAnnonce.findAll({
       where: { id_annonce },
-      include: [
-        {
-          model: QuestionQcm,
-          include: [
-            {
-              model: ReponseQcm,
-              attributes: ['id_reponse_qcm', 'reponse'] // Retirer 'valeur' qui n'existe pas
-            }
-          ]
-        }
-      ]
+      attributes: ['id_question_qcm'] // Utiliser id_question_qcm au lieu de id_qcm
     });
-    
+
     if (!qcmAnnonces.length) {
       console.log('Aucun QCM trouvé pour cette annonce');
       return [];
     }
+
+    const questionIds = qcmAnnonces.map(qa => qa.id_question_qcm); // Changer le nom de variable
     
-    // Formater les données pour le frontend
-    const questions = qcmAnnonces.map(qcmAnnonce => {
-      const question = qcmAnnonce.QuestionQcm;
-      
-      return {
-        id_question: question.id_question_qcm,
-        question: question.intitule,
-        reponses: question.ReponseQcms.map(reponse => ({
-          id: reponse.id_reponse_qcm,
-          texte: reponse.reponse,
-          // Ne pas exposer la bonne réponse côté frontend
-          // modalite: reponse.modalite
-        }))
-      };
+    // Récupérer les questions avec leurs réponses
+    const questions = await QuestionQcm.findAll({
+      where: {
+        id_question: questionIds // Utiliser les IDs des questions
+      },
+      include: [
+        {
+          model: ReponseQcm,
+          as: 'ReponseQcms',
+          attributes: ['id_reponse_qcm', 'reponse']
+        }
+      ],
+      order: [['id_question', 'ASC']]
     });
     
-    console.log(`${questions.length} questions trouvées`);
-    return questions;
+    // Formater les données pour le frontend
+    const formattedQuestions = questions.map(question => ({
+      id_question: question.id_question,
+      question: question.intitule,
+      reponses: question.ReponseQcms.map(reponse => ({
+        id: reponse.id_reponse_qcm,
+        texte: reponse.reponse
+      }))
+    }));
+    
+    console.log(`${formattedQuestions.length} questions trouvées`);
+    return formattedQuestions;
     
   } catch (error) {
     console.error('Erreur lors de la récupération des questions:', error);
