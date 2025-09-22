@@ -9,6 +9,7 @@ const QuestionQcm = require('../models/questionQcmsModel');
 const ReponseQcm = require('../models/reponseQcmsModel');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
+const { getFrontendUrl } = require('../utils/getLocalIp');
 
 // Configuration du transporteur email (à adapter selon votre fournisseur)
 const transporter = nodemailer.createTransport({
@@ -80,8 +81,10 @@ async function createEnvoiQcm(id_candidat) {
     const dateExpiration = new Date();
     dateExpiration.setDate(dateExpiration.getDate() + 1);
 
-    // Créer l'enregistrement d'envoi QCM selon la structure existante
-    const lienQcm = `${process.env.FRONTEND_URL}/qcm/${token}`;
+    // Créer l'enregistrement d'envoi QCM avec URL dynamique
+    const frontendUrl = getFrontendUrl(3000); // Port 3000 pour le frontend React
+    const lienQcm = `${frontendUrl}/qcm/${token}`;
+    console.log(`Lien QCM généré avec IP dynamique: ${lienQcm}`);
     
   const envoiQcm = await EnvoiQcmCandidat.create({
       id_candidat,

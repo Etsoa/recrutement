@@ -11,7 +11,7 @@ const SuccessMessage = ({ annonce, onBackToAnnonces }) => {
         <h2>Candidature envoyée avec succès !</h2>
         
         <p className="success-description">
-          Votre candidature pour le poste de <strong>{annonce?.Poste?.valeur}</strong> 
+          Votre candidature pour le poste de <strong>{annonce?.Poste?.valeur} </strong> 
           a été transmise avec succès à l'équipe de recrutement.
         </p>
         
@@ -31,12 +31,6 @@ const SuccessMessage = ({ annonce, onBackToAnnonces }) => {
             onClick={onBackToAnnonces}
           >
             Retour aux annonces
-          </button>
-          <button 
-            className="btn-secondary"
-            onClick={() => window.print()}
-          >
-            Imprimer le récapitulatif
           </button>
         </div>
         
