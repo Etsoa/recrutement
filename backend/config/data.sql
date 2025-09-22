@@ -162,12 +162,65 @@ RETURNING id_rh_suggestion;
 INSERT INTO status_rh_suggestions (id_rh_suggestion, id_type_status_suggestion, date_changement)
 VALUES (1, 1, '2025-09-18');
 
--- 9️⃣ Suggestion CEO
-INSERT INTO ceo_suggestions (id_rh_entretien, id_candidat, id_type_status_suggestion, date_suggestion)
-VALUES (1, 1, 1, '2025-09-19')
-RETURNING id_ceo_suggestion;
--- id_ceo_suggestion = 1
 
---  🔹 Statut de la suggestion CEO
+-- Tiers #4 : Candidat femme
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES ('Randria', 'Marie', '1995-07-21', 2, 1, 0, '0345566778', 'marie.randria@email.com', 'DD112233', 1, 'photo_marie.jpg')
+RETURNING id_tiers; -- id_tiers = 4
+
+-- Tiers #5 : Employé Comptable
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES ('Rasoanaivo', 'Joseph', '1988-11-10', 1, 2, 3, '0334455667', 'joseph.rasoanaivo@email.com', 'EE334455', 3, 'photo_joseph.jpg')
+RETURNING id_tiers; -- id_tiers = 5
+
+-- Employé Comptable (poste 8 = Comptable, status 1 = Actif)
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
+VALUES (5, 1, 8)
+RETURNING id_employe; -- id_employe = 2
+
+-- Annonce #2 : Poste de Commercial à Toamasina
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre)
+VALUES (14, 3, 22, 35, NULL) -- 14 = Commercial, 3 = Toamasina
+RETURNING id_annonce; -- id_annonce = 2
+
+-- Candidat #2 : Marie (tiers 4) postule pour l’annonce #2
+INSERT INTO candidats (id_tiers, id_annonce, cv)
+VALUES (4, 2, 'cv_marie.pdf')
+RETURNING id_candidat; -- id_candidat = 2
+
+-- Entretien RH pour Marie
+INSERT INTO unite_entretiens (id_candidat, id_unite, date_entretien, duree)
+VALUES (2, 2, '2025-09-26', 50) -- 2 = Ressources Humaines
+RETURNING id_unite_entretien; -- id_unite_entretien = 2
+
+-- Statut de l’entretien (Terminé)
+INSERT INTO status_unite_entretiens (id_unite_entretien, id_type_status_entretien, date_changement)
+VALUES (2, 2, '2025-09-26');
+
+-- Suggestion RH pour Marie
+INSERT INTO rh_suggestions (id_unite_entretien, id_candidat, date_suggestion)
+VALUES (2, 2, '2025-09-26')
+RETURNING id_rh_suggestion; -- id_rh_suggestion = 2
+
+-- Validation de la suggestion RH
+INSERT INTO status_rh_suggestions (id_rh_suggestion, id_type_status_suggestion, date_changement)
+VALUES (2, 1, '2025-09-26'); -- 1 = Valide
+
+-- Entretien RH validé
+INSERT INTO rh_entretiens (id_rh_suggestion, id_candidat, date_entretien, duree)
+VALUES (2, 2, '2025-09-27', 60)
+RETURNING id_rh_entretien; -- id_rh_entretien = 2
+
+-- Score à l’entretien RH
+INSERT INTO score_rh_entretiens (id_rh_entretien, score, date_score)
+VALUES (2, 17, '2025-09-27');
+
+-- CEO reçoit la suggestion
+INSERT INTO ceo_suggestions (id_rh_entretien, id_candidat, id_type_status_suggestion, date_suggestion)
+VALUES (2, 2, 1, '2025-09-28')
+RETURNING id_ceo_suggestion; -- id_ceo_suggestion = 2
+
+-- Statut validé par le CEO
 INSERT INTO status_ceo_suggestions (id_ceo_suggestion, id_type_status_suggestion, date_changement)
-VALUES (1, 1, '2025-09-19');
+VALUES (2, 1, '2025-09-28');
+
