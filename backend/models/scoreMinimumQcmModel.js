@@ -2,9 +2,13 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const ScoreMinimumQcm = db.define('ScoreMinimumQcm', {
-  valeur: {
+  id_score_minimum_qcm: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    autoIncrement: true
+  },
+  valeur: {
+    type: DataTypes.INTEGER,
     allowNull: false
   }
 }, {

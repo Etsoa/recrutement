@@ -1,4 +1,4 @@
-// routes.js - Constantes des chemins de routes
+// routes.js - Définition des chemins de routes (version simplifiée)
 export const ROUTES = {
   HOME: '/',
   ANNONCES: '/annonces',

@@ -27,3 +27,7 @@ export { default as AnnonceCard } from './AnnonceCard';
 // Composants QCM
 export { default as Question } from './Question';
 export { default as Timer } from './Timer';
+
+export { default as EmployeCEOList } from './EmployeCEOList';
+export { default as SuggestionTable } from './SuggestionTable';
+export { default as EmpContratEssaiList } from './EmpContratEssaiList';
