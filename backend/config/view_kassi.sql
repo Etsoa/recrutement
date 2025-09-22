@@ -37,7 +37,7 @@ FROM annonces a
 LEFT JOIN postes p ON p.id_poste = a.id_poste
 LEFT JOIN villes v ON v.id_ville = a.id_ville
 LEFT JOIN genres g ON g.id_genre = a.id_genre
-LEFT JOIN status_annonce sa ON sa.id_annonce = a.id_annonce
+LEFT JOIN status_annonces sa ON sa.id_annonce = a.id_annonce
 LEFT JOIN type_status_annonces tsa ON tsa.id_type_status = sa.id_type_status_annonce
 LEFT JOIN unites u ON u.id_unite = sa.id_unite
 LEFT JOIN niveau_filiere_annonces nfa ON nfa.id_annonce = a.id_annonce
@@ -47,7 +47,7 @@ LEFT JOIN langue_annonces la ON la.id_annonce = a.id_annonce
 LEFT JOIN langues l ON l.id_langue = la.id_langue
 LEFT JOIN qualite_annonces qa ON qa.id_annonce = a.id_annonce
 LEFT JOIN qualites q ON q.id_qualite = qa.id_qualite
-LEFT JOIN experience_annonce ea ON ea.id_annonce = a.id_annonce
+LEFT JOIN experience_annonces ea ON ea.id_annonce = a.id_annonce
 LEFT JOIN domaines d ON d.id_domaine = ea.id_domaine
 GROUP BY a.id_annonce, p.valeur, v.valeur, a.age_min, a.age_max, g.valeur, tsa.valeur, sa.date_changement, u.nom;
 
@@ -66,7 +66,7 @@ SELECT
     tsa.valeur AS type_status,
     -- Unite
     u.nom AS unite_nom
-FROM status_annonce sa
+FROM status_annonces sa
 LEFT JOIN annonces a ON a.id_annonce = sa.id_annonce
 LEFT JOIN postes p ON p.id_poste = a.id_poste
 LEFT JOIN villes v ON v.id_ville = a.id_ville
@@ -78,13 +78,13 @@ CREATE OR REPLACE VIEW vue_detail_qcm AS
 SELECT 
     a.id_annonce,
     qa.id_qcm_annonce,
-    q.id_question_qcm,
+    q.id_question,
     q.intitule AS question,
     r.id_reponse_qcm,
     r.reponse,
     r.modalite
 FROM annonces a
 JOIN qcm_annonces qa ON qa.id_annonce = a.id_annonce
-JOIN question_qcms q ON q.id_question_qcm = qa.id_question_qcm
-LEFT JOIN reponse_qcms r ON r.id_question_qcm = q.id_question_qcm
-ORDER BY a.id_annonce, q.id_question_qcm, r.id_reponse_qcm;
+JOIN question_qcms q ON q.id_question = qa.id_question_qcm
+LEFT JOIN reponse_qcms r ON r.id_question_qcm = q.id_question
+ORDER BY a.id_annonce, q.id_question, r.id_reponse_qcm;
