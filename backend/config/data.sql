@@ -96,6 +96,8 @@ INSERT INTO villes (valeur) VALUES ('Antsiranana');
 INSERT INTO type_status_annonces (valeur) VALUES ('En cours de demande');
 INSERT INTO type_status_annonces (valeur) VALUES ('Publie');
 INSERT INTO type_status_annonces (valeur) VALUES ('Non publie');
+INSERT INTO type_status_annonces (valeur) VALUES ('Refuse');
+INSERT INTO type_status_annonces (valeur) VALUES ('Modifie');
 INSERT INTO type_status_employes (valeur) VALUES ('Actif');
 INSERT INTO type_status_employes (valeur) VALUES ('Demission');
 INSERT INTO type_status_employes (valeur) VALUES ('Renvoi');

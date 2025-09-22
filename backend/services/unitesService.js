@@ -16,7 +16,7 @@ const getUniteByCredentials = async (username, password) => {
     return await Unite.findOne({
         where: {
             nom: username,
-            motdepasse: password
+            mot_de_passe: password
         }
     });
 };

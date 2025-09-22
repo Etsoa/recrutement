@@ -11,7 +11,7 @@ const api = axios.create({
 
 export const getAllUnites = async () => {
   try {
-    const response = await api.get('http://localhost:5000/api/unite/');
+    const response = await api.get('/unite/');
     return response.data;
   } catch (error) {
     throw error;
@@ -21,6 +21,10 @@ export const getAllUnites = async () => {
 export const loginUnite = async (username, password) => {
   try {
     const response = await api.post('/unite/login', { username, password });
+    if (response.data.success) {
+      localStorage.setItem('token', response.data.data.token);
+      localStorage.setItem('unite', JSON.stringify(response.data.data.unite));
+    }
     return response.data; // { message, data: { token, unite }, success }
   } catch (error) {
     throw error;

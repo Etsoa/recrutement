@@ -12,7 +12,7 @@ const ReponseQcm = db.define('ReponseQcm', {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-  model: QuestionQcm,
+      model: QuestionQcm,
       key: 'id_question_qcm'
     },
     onUpdate: 'CASCADE',
