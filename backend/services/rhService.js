@@ -444,12 +444,22 @@ const getHorairesOuvres = async () => {
 };
 
 
+const createStatusSuggestion = async ({ id_rh_suggestion, id_type_status_suggestion, date_changement }) => {
+  const status = await StatusRhSuggestion.create({
+    id_rh_suggestion,
+    id_type_status_suggestion,
+    date_changement: date_changement || new Date()
+  });
+  return status;
+};
+
 module.exports = {
   loginRh,
   getAllSuggests,
   createRhEntretien,
   getEntretiensParJour, 
   getEntretiensParMois,
+  createStatusSuggestion,
   updateDateRhEntretien,
   updateStatusRhEntretien, 
   getDisponibilitesRh,
