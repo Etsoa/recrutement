@@ -1,23 +1,42 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../router/routes";
+import { ceoService } from "../services/ceoService";
 import "../styles/EmployeCEOList.css";
 
 const EmployeCEOList = () => {
+    const navigate = useNavigate();
     const [employes, setEmployes] = useState([]);
     const [filters, setFilters] = useState({});
     const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        // Vérifier l'authentification
+        if (!ceoService.isLoggedIn()) {
+            navigate(ROUTES.LOGIN_CEO);
+            return;
+        }
+
+        // Charger les données des employés
+        const fetchEmployes = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/ceo/employes");
-                const data = await res.json();
+                const response = await fetch("http://localhost:5000/api/ceo/employes", {
+                    headers: {
+                        Authorization: `Bearer ${ceoService.getToken()}`,
+                    },
+                });
+                const data = await response.json();
                 setEmployes(Array.isArray(data.data) ? data.data : []);
             } catch (err) {
                 console.error("Erreur API :", err);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchData();
-    }, []);
+
+        fetchEmployes();
+    }, [navigate]);
 
     /** Gestion des filtres avec checkboxes **/
     const handleCheckboxChange = (col, value) => {
@@ -95,10 +114,17 @@ const EmployeCEOList = () => {
     const getUniqueValues = (col) =>
         [...new Set(employes.map((emp) => emp[col]).filter(Boolean))];
 
+    const handleLogout = () => {
+        ceoService.logout();
+        navigate(ROUTES.LOGIN_CEO);
+    };
+
+    if (loading) {
+        return <div>Chargement des employés...</div>;
+    }
+
     return (
         <div className="employe-table-container fade-in">
-            <h2 className="table-title">Liste des Employés</h2>
-
             {/* Conteneur scrollable */}
             <div className="table-scroll-container">
                 <table className="employe-table">
@@ -162,6 +188,9 @@ const EmployeCEOList = () => {
                                     {visibleColumns.map((col) => (
                                         <td key={col}>{emp[col] ?? "-"}</td>
                                     ))}
+                                    <td>
+                                        <button className="btn btn-small">Détails</button>
+                                    </td>
                                 </tr>
                             ))
                         ) : (

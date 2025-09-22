@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/LoginCeo.css";
+import { ROUTES } from "../router/routes";
 
 const LoginCeo = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [motDePasse, setMotDePasse] = useState("");
   const [message, setMessage] = useState(null);
@@ -23,8 +26,9 @@ const LoginCeo = () => {
       setMessage(result.message);
 
       if (result.success) {
-        // Stocker le token si besoin
+        // Stocker le token et rediriger vers la liste des employés
         localStorage.setItem("ceoToken", result.data.token);
+        navigate(ROUTES.CEO_EMP_LIST);
       }
     } catch (err) {
       setMessage("Erreur réseau, veuillez réessayer.");

@@ -47,45 +47,50 @@ exports.getCeoById = async (req, res) => {
 exports.loginCeo = async (req, res) => {
   const { email, mot_de_passe } = req.body;
 
-  if (!email || !mot_de_passe) {
-    return res.status(400)
-      .json({
-        message: 'Email ou mot de passe manquant',
-        data: null,
-        success: false
-      });
+  // Vérification des champs obligatoires
+  if (!email) {
+    return res.status(400).json({
+      message: 'Email manquant',
+      data: null,
+      success: false
+    });
+  }
+
+  if (!mot_de_passe) {
+    return res.status(400).json({
+      message: 'Mot de passe manquant',
+      data: null,
+      success: false
+    });
   }
 
   try {
     const ceo = await ceoService.loginCeo(email, mot_de_passe);
 
-    if (ceo) {
-      res
-        .json({
-          message: 'Connexion réussie',
-          data: { ceo, token: 'fake-jwt-token' },
-          success: true
-        });
-    } else {
-      res
-        .status(401)
-        .json({
-          message: `Nom ou mot de passe incorrect, 
-          ou bien vous n'êtes plus un CEO actif dans l'entreprise`,
-          data: null,
-          success: false
-        });
-    }
-  } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: 'Erreur serveur lors de la connexion',
+    if (!ceo) {
+      return res.status(401).json({
+        message: `Nom ou mot de passe incorrect, 
+                  ou bien vous n'êtes plus un CEO actif dans l'entreprise`,
         data: null,
         success: false
       });
+    }
+
+    return res.json({
+      message: 'Connexion réussie',
+      data: { ceo, token: 'fake-jwt-token' },
+      success: true
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Erreur serveur lors de la connexion',
+      data: null,
+      success: false
+    });
   }
 };
+
 
 exports.getAllSuggests = async (req, res) => {
   try {
