@@ -13,7 +13,3 @@ export { default as Layout, Container, Section, Grid, Flex } from './Layout';
 export { default as UserList } from './UserList';
 export { default as CV } from './CV';
 export { default as CVMiniature } from './CVMiniature';
-
-export { default as EmployeCEOList } from './EmployeCEOList';
-export { default as SuggestionTable } from './SuggestionTable';
-export { default as EmpContratEssaiList } from './EmpContratEssaiList';
