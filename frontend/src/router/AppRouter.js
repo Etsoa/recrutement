@@ -72,14 +72,11 @@ const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        {/* Redirection racine vers login */}
-        <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
-        
+         {/* Page d'accueil */}
+        <Route path={ROUTES.HOME} element={<Home />} />
+
         {/* Page de connexion (sans layout) */}
-        <Route path={ROUTES.LOGIN} element={<LoginUnites />} />
-        
-        {/* Page d'accueil */}
-        <Route path={ROUTES.HOME} element={<Layout><Home /></Layout>} />
+        <Route path={ROUTES.LOGIN_UNITES} element={<LoginUnites />} />
         
         {/* Routes Back-Office Unite */}
         <Route path={ROUTES.LISTE_ANNONCES} element={<Layout><ListeAnnonces /></Layout>} />
@@ -98,7 +95,7 @@ const AppRouter = () => {
         <Route path={ROUTES.RH_SUGGESTIONS} element={<Layout><RhSuggestions /></Layout>} />
         <Route path={ROUTES.RH_CEO_SUGGESTIONS} element={<Layout><RhCeoSuggestions /></Layout>} />
         <Route path={ROUTES.RH_FORM_ANNONCE} element={<Layout><RhFormAnnonce /></Layout>} />
-        
+
         {/* Route 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
