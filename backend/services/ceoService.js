@@ -9,6 +9,8 @@ const ContratEssaisService = require('./contratEssaisService');
 const Annonces = require('../models/annoncesModel');
 const Postes = require('../models/postesModel');
 const EmployesService = require('../services/employesService');
+const nodemailer = require('nodemailer');
+const Poste = require('../models/postesModel')
 
 const loginCeo = async (email, mot_de_passe) => {
   const type_status_employe = 'Actif';
@@ -108,7 +110,6 @@ const getAllSuggestsWaitingValidation = async () => {
     where: { id_type_status_suggestion: 3 } // Ito no important sy mila jerena hoe 3 tokoa ve ny en attente
   });
 
-
   return suggestions;
 };
 
@@ -157,20 +158,86 @@ const accepterSuggestion = async (id_ceo_suggestion, date_debut, duree, id_poste
 
     // id_type_status_employe tokony 6 ny en contrat d'essai
     emp = await EmployesService.createEmploye({ id_tiers: id_tiers, id_type_status_employe: 6, id_poste: id_poste })
-    
+
     await ContratEssaisService.createContratEssai({ id_employe: emp.id_employe, date_debut: date_debut, duree: duree });
+
+    const poste = await Poste.findByPk(id_poste);
+    const tiers = await Tiers.findByPk(id_tiers);
+
+    emailData = {
+      date_debut: date_debut,
+      duree: duree,
+      poste: poste.valeur,
+      nom: tiers.nom,
+      prenom: tiers.prenom,
+      email: tiers.email
+    }
+
+    await envoyerContratMail(emailData);
 
     return {
       success: true,
-      message: "Suggestion refusée avec succès"
+      message: "Suggestion accepté avec succès"
     };
   } catch (error) {
-    console.error("Erreur refuserSuggestion:", error);
+    // console.error("Erreur accepterSuggestion:", error);
     return {
       success: false,
-      message: "Erreur lors du refus de la suggestion",
+      message: "Erreur lors de la validation de la suggestion",
       error: error.message
     };
+  }
+}
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: process.env.SMTP_PORT,
+  secure: false,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD
+  }
+});
+
+const envoyerContratMail = async (emailData) => {
+  try {
+    const mailOptions = {
+      from: process.env.SMTP_FROM,
+      to: emailData.email,
+      subject: `Contrat d'essaie pour le poste ${emailData.poste}`,
+      html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <h2 style="color: #2c3e50;">Bonjour ${emailData.prenom} ${emailData.nom},</h2>
+          
+          <p>Nous avons le plaisir de vous informer que vous êtes retenu pour un <strong>contrat d'essai</strong> au poste de 
+          <strong>${emailData.poste}</strong>.</p>
+          
+          <p>Voici les détails de votre contrat d'essai :</p>
+          
+          <table style="border-collapse: collapse; margin: 15px 0; width: 100%; max-width: 600px;">
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 8px;"><strong>Date de début</strong></td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${emailData.date_debut}</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 8px;"><strong>Durée</strong></td>
+              <td style="border: 1px solid #ccc; padding: 8px;">${emailData.duree} mois</td>
+            </tr>
+          </table>
+          
+          <p>Nous comptons sur votre implication et espérons que cette période d’essai sera concluante pour les deux parties.</p>
+          
+          <p style="margin-top: 20px;">Cordialement,</p>
+          <p><strong>L'équipe RH</strong></p>
+    </div>`
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    return info;
+
+  } catch (error) {
+    console.error('Erreur envoi email:', error);
+    throw error;
   }
 }
 
