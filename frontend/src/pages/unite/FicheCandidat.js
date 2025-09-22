@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Layout, { Container, Section, Grid } from '../../components/Layout';
+import Layout, { Container, Section, Grid } from '../../components/LayoutUnite';
 import Button from '../../components/Button';
 import { ficheCandidatService, annoncesService } from '../../services';
 import '../../styles/FicheCandidat.css';

@@ -11,6 +11,10 @@ export { default as Historiques } from './unite/Historiques';
 export { default as Parametres } from './unite/Parametres';
 export { default as CreateAnnonce } from './unite/CreateAnnonce';
 export { default as QCM } from './unite/QCM';
+// Nouvelles pages Unite
+export { default as UniteCalendrier } from './unite/UniteCalendrier';
+export { default as UniteSuggestions } from './unite/UniteSuggestions';
+export { default as UniteRhSuggestions } from './unite/UniteRhSuggestions';
 
 // Pages RH
 export { default as RhLoginRh } from './RhLoginRh';

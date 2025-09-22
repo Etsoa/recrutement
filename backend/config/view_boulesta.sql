@@ -88,7 +88,7 @@ SELECT
     t.nom AS nom_candidat,
     t.prenom AS prenom_candidat,
     cs.date_suggestion,
-    ts.id_type_status_suggestion,
+    scs.id_type_status_suggestion,
     ts.valeur AS statut,
     scs.date_changement AS statut_date
 FROM ceo_suggestions cs

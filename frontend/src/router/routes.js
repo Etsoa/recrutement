@@ -16,6 +16,10 @@ export const ROUTES = {
   CREATE_QCM: '/back-office/create-qcm/:id',
   DETAIL_QCM: '/back-office/detail-qcm/:id',
   HISTORIQUE: '/back-office/historique',
+  // Nouvelles routes Unité
+  UNITE_CALENDRIER: '/back-office/calendrier',
+  UNITE_SUGGESTIONS: '/back-office/suggestions',
+  UNITE_RH_SUGGESTIONS: '/back-office/rh-suggestions',
   
   // Routes RH
   RH_LOGIN: '/rh/login',
@@ -48,6 +52,21 @@ export const ROUTE_METADATA = {
   },
   [ROUTES.PARAMETRES]: {
     title: 'Paramètres',
+    requiresAuth: true,
+    layout: true
+  },
+  [ROUTES.UNITE_CALENDRIER]: {
+    title: 'Calendrier des Entretiens',
+    requiresAuth: true,
+    layout: true
+  },
+  [ROUTES.UNITE_SUGGESTIONS]: {
+    title: 'Candidats à Suggérer',
+    requiresAuth: true,
+    layout: true
+  },
+  [ROUTES.UNITE_RH_SUGGESTIONS]: {
+    title: 'Suggestions Envoyées',
     requiresAuth: true,
     layout: true
   },

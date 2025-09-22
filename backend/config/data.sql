@@ -272,9 +272,9 @@ INSERT INTO unite_entretiens (id_candidat, id_unite, date_entretien, duree) VALU
 -- SCORES ENTRETIENS
 INSERT INTO score_unite_entretiens (id_unite_entretien, score, date_score) VALUES (1, 85, '2025-09-22');
 
-
 INSERT INTO adresse_mail (valeur, mot_de_passe) VALUES ('tsikyrakotonirina20@gmail.com', 'youh xjbi yvwx xeil');
 
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (3, 1, 4);
 
 WITH new_mail AS (
   INSERT INTO mails (objet, signature)
@@ -398,3 +398,153 @@ INSERT INTO jours_feries (date_ferie, description) VALUES
 INSERT INTO horaires_ouvres (heure_debut, heure_fin) VALUES
 ('08:00', '12:00'),
 ('13:00', '16:00');
+
+-- ===============================================
+-- DONNÉES LOGIQUES - 4 TIERS SPÉCIFIQUES
+-- ===============================================
+
+-- 🔹 1. TIERS RH - Responsable des Ressources Humaines
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) 
+VALUES ('Rasoamalala', 'Hery', '1980-03-15', 1, 2, 2, '0341111111', 'hery.rh@axiom.mg', 'RH123456', 1, 'photo_hery_rh.jpg');
+
+-- Employé RH (id_tiers = 5 car on a déjà 4 tiers dans les données précédentes)
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (5, 1, 4); -- Poste 4 = Responsable RH
+
+-- Status employé RH
+INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES (2, 1, '2022-01-15');
+
+-- Compétences RH - Langues
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (5, 1); -- Malgache
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (5, 2); -- Français
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (5, 3); -- Anglais
+
+-- Compétences RH - Qualités
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (5, 2); -- Rigoureux
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (5, 4); -- Esprit d'équipe
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (5, 7); -- Communicatif
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (5, 6); -- Organisé
+
+-- Formation RH
+INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (5, 5, 7); -- Master en Gestion
+
+-- Expérience RH
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (5, 4, '2015-01-01', '2021-12-31'); -- Administration
+
+-- 🔹 2. TIERS CEO - Directeur Général
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) 
+VALUES ('Rakotomalala', 'Andry', '1975-08-22', 1, 2, 3, '0342222222', 'andry.ceo@axiom.mg', 'CEO789123', 1, 'photo_andry_ceo.jpg');
+
+-- Employé CEO (id_tiers = 6)
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (6, 1, 1); -- Poste 1 = Directeur Général
+
+-- Status employé CEO
+INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES (3, 1, '2020-01-01');
+
+-- Compétences CEO - Langues
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (6, 1); -- Malgache
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (6, 2); -- Français
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (6, 3); -- Anglais
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (6, 4); -- Espagnol
+
+-- Compétences CEO - Qualités
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (6, 9); -- Leader
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (6, 2); -- Rigoureux
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (6, 6); -- Organisé
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (6, 7); -- Communicatif
+
+-- Formation CEO
+INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (6, 6, 11); -- Doctorat en Économie
+
+-- Expérience CEO
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (6, 4, '2010-01-01', '2019-12-31'); -- Administration
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (6, 6, '2005-01-01', '2009-12-31'); -- Commerce
+
+-- 🔹 3. ANCIEN EMPLOYÉ avec MAUVAISES COMPÉTENCES candidat à 2 annonces
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) 
+VALUES ('Randriamampionona', 'Soa', '1988-12-10', 2, 3, 1, '0343333333', 'soa.ancien@email.com', 'ANC456789', 2, 'photo_soa_ancien.jpg');
+
+-- Ancien employé (DÉMISSION) - id_tiers = 7
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (7, 2, 11); -- Poste 11 = Ouvrier, Status 2 = Démission
+
+-- Status employé (démission)
+INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES (4, 1, '2023-01-01'); -- Actif d'abord
+INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES (4, 2, '2024-06-15'); -- Puis démission
+
+-- MAUVAISES Compétences - Langues limitées
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (7, 1); -- Seulement Malgache
+
+-- MAUVAISES Compétences - Qualités inadaptées pour les postes visés
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (7, 8); -- Flexible (pas assez spécialisé)
+
+-- Formation inadéquate
+INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (7, 1, 1); -- BEPC Série A (niveau bas)
+
+-- Expérience limitée et inadéquate
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (7, 5, '2023-01-01', '2024-06-15'); -- Industrie seulement
+
+-- Candidature 1 : Poste Comptable (inadéquat)
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (7, 7, 'cv_soa_comptabilite.pdf'); -- Annonce 7 = poste comptabilité
+
+-- Candidature 2 : Poste Commercial (inadéquat)
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (7, 9, 'cv_soa_commercial.pdf'); -- Annonce 9 = poste commercial
+
+-- 🔹 4. BON CANDIDAT pour poste Comptabilité
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) 
+VALUES ('Andrianarivelo', 'Miora', '1992-06-18', 2, 1, 0, '0344444444', 'miora.comptable@email.com', 'BON123789', 1, 'photo_miora_bon.jpg');
+
+-- EXCELLENTES Compétences - Langues
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (8, 1); -- Malgache
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (8, 2); -- Français
+INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (8, 3); -- Anglais
+
+-- EXCELLENTES Compétences - Qualités parfaites pour comptabilité
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (8, 1); -- Ponctuel
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (8, 2); -- Rigoureux
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (8, 3); -- Autonome
+INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (8, 6); -- Organisé
+
+-- Formation PARFAITE pour comptabilité
+INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (8, 4, 7); -- Licence Pro en Gestion
+INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (8, 5, 7); -- Master en Gestion
+
+-- Expérience EXCELLENTE en comptabilité
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (8, 2, '2018-01-01', '2022-12-31'); -- Banque
+INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (8, 4, '2023-01-01', '2024-12-31'); -- Administration
+
+-- Candidature pour poste Comptabilité (annonce 7 - unité Comptabilité)
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (8, 7, 'cv_miora_comptable_excellent.pdf');
+
+-- ===============================================
+-- ANNONCE SUPPLÉMENTAIRE POUR COMPTABILITÉ
+-- ===============================================
+
+-- Nouvelle annonce pour poste Comptable (unité Comptabilité = 3)
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre, id_unite) VALUES (8, 1, 25, 40, 2, 3); -- Poste 8 = Comptable, Unité 3 = Comptabilité
+
+-- Status de la nouvelle annonce
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (11, 2, '2025-01-15', 3); -- Annonce 11 publiée
+
+-- Exigences pour la nouvelle annonce comptabilité
+-- Langues requises
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (11, 1); -- Malgache
+INSERT INTO langue_annonces (id_annonce, id_langue) VALUES (11, 2); -- Français
+
+-- Qualités requises
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (11, 1); -- Ponctuel
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (11, 2); -- Rigoureux
+INSERT INTO qualite_annonces (id_annonce, id_qualite) VALUES (11, 6); -- Organisé
+
+-- Expériences requises
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (11, 2, 3); -- 3 ans en Banque
+INSERT INTO experience_annonces (id_annonce, id_domaine, nombre_annee) VALUES (11, 4, 2); -- 2 ans en Administration
+
+-- Formation requise
+INSERT INTO niveau_filiere_annonces (id_annonce, id_niveau, id_filiere) VALUES (11, 4, 7); -- Licence Pro Gestion minimum
+INSERT INTO niveau_filiere_annonces (id_annonce, id_niveau, id_filiere) VALUES (11, 5, 7); -- Master Gestion préféré
+
+-- QCM pour l'annonce comptabilité
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES (11, 1); -- Question capitale
+INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES (11, 2); -- Question drapeau
+
+-- Candidature du bon candidat à cette nouvelle annonce aussi
+INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (8, 11, 'cv_miora_nouvelle_annonce.pdf');

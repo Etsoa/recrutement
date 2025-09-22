@@ -24,10 +24,51 @@ const RH_ENDPOINTS = {
 };
 
 export const rhService = {
+  // Gestion de session locale
+  getCurrentRh: () => {
+    try {
+      const rhData = sessionStorage.getItem('currentRh');
+      return rhData ? JSON.parse(rhData) : null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données RH:', error);
+      return null;
+    }
+  },
+
+  setCurrentRh: (rhData) => {
+    try {
+      sessionStorage.setItem('currentRh', JSON.stringify(rhData));
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde des données RH:', error);
+    }
+  },
+
+  isLoggedIn: () => {
+    return !!rhService.getCurrentRh();
+  },
+
+  logout: () => {
+    try {
+      sessionStorage.removeItem('currentRh');
+      sessionStorage.removeItem('rhToken');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
+  },
+
   // Connexion RH
   login: async (email, password) => {
     try {
       const response = await api.post(RH_ENDPOINTS.LOGIN, { email, password });
+      
+      // Si la connexion réussit, sauvegarder les données
+      if (response && response.success) {
+        rhService.setCurrentRh(response.data);
+        if (response.token) {
+          sessionStorage.setItem('rhToken', response.token);
+        }
+      }
+      
       return response;
     } catch (error) {
       console.error('Erreur lors de la connexion RH:', error);

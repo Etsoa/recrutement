@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Section } from '../../components/Layout';
+import { Container, Section } from '../../components/LayoutUnite';
 import Button from '../../components/Button';
 import { annoncesService } from '../../services';
 import '../../styles/ListeAnnonces.css';
@@ -30,7 +30,7 @@ const ListeAnnonces = () => {
   }, []);
 
   const handleVoirDossiers = (idAnnonce) => {
-    navigate(`/details-annonce/${idAnnonce}`);
+    navigate(`/back-office/details-annonce/${idAnnonce}`);
   };
 
   if (loading) {
@@ -122,7 +122,7 @@ const ListeAnnonces = () => {
                         onClick={() => handleVoirDossiers(annonce.id_annonce)}
                         fullWidth
                       >
-                        Voir les dossiers
+                        Voir les details de l'annonce
                       </Button>
                     </div>
                   </div>

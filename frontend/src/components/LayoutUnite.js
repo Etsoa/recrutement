@@ -1,10 +1,10 @@
 import React from 'react';
-import Header from './Header';
+import Header from './HeaderUnite';
 import Footer from './Footer';
 import '../styles/Layout.css';
 
 // Layout principal avec Header et Footer
-const Layout = ({ children, withSidebar = false, sidebar = null }) => {
+const LayoutUnite = ({ children, withSidebar = false, sidebar = null }) => {
   return (
     <div className="layout">
       <Header />
@@ -134,4 +134,4 @@ export const Flex = ({
   );
 };
 
-export default Layout;
+export default LayoutUnite;

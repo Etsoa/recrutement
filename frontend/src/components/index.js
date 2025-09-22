@@ -1,5 +1,5 @@
 // Composants de base
-export { default as Header } from './Header';
+export { default as Header } from './HeaderUnite';
 export { default as Footer } from './Footer';
 export { default as Button } from './Button';
 
@@ -7,7 +7,7 @@ export { default as Button } from './Button';
 export { default as Input, Textarea, Select, SearchInput } from './Input';
 
 // Composants de mise en page
-export { default as Layout, Container, Section, Grid, Flex } from './Layout';
+export { default as Layout, Container, Section, Grid, Flex } from './LayoutUnite';
 
 // Composants spécialisés
 export { default as UserList } from './UserList';

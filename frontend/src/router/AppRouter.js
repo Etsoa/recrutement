@@ -4,7 +4,8 @@ import '../styles/globals.css';
 import '../styles/variables.css';
 
 // Importation du Layout
-import Layout from '../components/Layout';
+import LayoutUnite from '../components/LayoutUnite';
+import LayoutRh from '../components/LayoutRh';
 
 // Importation des pages
 import { 
@@ -18,6 +19,11 @@ import {
   Parametres,
   CreateAnnonce,
   QCM,
+  // Nouvelles pages Unité
+  UniteCalendrier,
+  UniteSuggestions,
+  UniteRhSuggestions,
+  // Pages RH
   RhLoginRh,
   RhCalendrier,
   RhSuggestions,
@@ -27,15 +33,8 @@ import {
 
 import { ROUTES, ROUTE_METADATA } from './routes';
 
-// Composant de layout conditionnel
-const ConditionalLayout = ({ children, path }) => {
-  const shouldUseLayout = ROUTE_METADATA[path]?.layout !== false;
-  return shouldUseLayout ? <Layout>{children}</Layout> : children;
-};
-
 // Composant 404
 const NotFound = () => (
-  <Layout>
     <div style={{
       display: 'flex',
       flexDirection: 'column',
@@ -64,7 +63,6 @@ const NotFound = () => (
         Retourner
       </button>
     </div>
-  </Layout>
 );
 
 // Configuration des routes
@@ -79,22 +77,26 @@ const AppRouter = () => {
         <Route path={ROUTES.LOGIN_UNITES} element={<LoginUnites />} />
         
         {/* Routes Back-Office Unite */}
-        <Route path={ROUTES.LISTE_ANNONCES} element={<Layout><ListeAnnonces /></Layout>} />
-        <Route path={ROUTES.DETAILS_ANNONCE} element={<Layout><DetailsAnnonce /></Layout>} />
-        <Route path={ROUTES.FICHE_CANDIDAT} element={<Layout><FicheCandidat /></Layout>} />
-        <Route path={ROUTES.PARAMETRES} element={<Layout><Parametres /></Layout>} />
-        <Route path={ROUTES.CREATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
-        <Route path={ROUTES.UPDATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
-        <Route path={ROUTES.CREATE_QCM} element={<Layout><QCM /></Layout>} />
-        <Route path={ROUTES.DETAIL_QCM} element={<Layout><DetailQCM /></Layout>} />
-        <Route path={ROUTES.HISTORIQUE} element={<Layout><Historiques /></Layout>} />
+        <Route path={ROUTES.LISTE_ANNONCES} element={<LayoutUnite><ListeAnnonces /></LayoutUnite>} />
+        <Route path={ROUTES.DETAILS_ANNONCE} element={<LayoutUnite><DetailsAnnonce /></LayoutUnite>} />
+        <Route path={ROUTES.FICHE_CANDIDAT} element={<LayoutUnite><FicheCandidat /></LayoutUnite>} />
+        <Route path={ROUTES.PARAMETRES} element={<LayoutUnite><Parametres /></LayoutUnite>} />
+        <Route path={ROUTES.CREATE_ANNONCE} element={<LayoutUnite><CreateAnnonce /></LayoutUnite>} />
+        <Route path={ROUTES.UPDATE_ANNONCE} element={<LayoutUnite><CreateAnnonce /></LayoutUnite>} />
+        <Route path={ROUTES.CREATE_QCM} element={<LayoutUnite><QCM /></LayoutUnite>} />
+        <Route path={ROUTES.DETAIL_QCM} element={<LayoutUnite><DetailQCM /></LayoutUnite>} />
+        <Route path={ROUTES.HISTORIQUE} element={<LayoutUnite><Historiques /></LayoutUnite>} />
+        {/* Nouvelles routes Unité */}
+        <Route path={ROUTES.UNITE_CALENDRIER} element={<LayoutUnite><UniteCalendrier /></LayoutUnite>} />
+        <Route path={ROUTES.UNITE_SUGGESTIONS} element={<LayoutUnite><UniteSuggestions /></LayoutUnite>} />
+        <Route path={ROUTES.UNITE_RH_SUGGESTIONS} element={<LayoutUnite><UniteRhSuggestions /></LayoutUnite>} />
         
         {/* Routes RH (sans layout pour login, avec layout pour les autres) */}
         <Route path={ROUTES.RH_LOGIN} element={<RhLoginRh />} />
-        <Route path={ROUTES.RH_CALENDRIER} element={<Layout><RhCalendrier /></Layout>} />
-        <Route path={ROUTES.RH_SUGGESTIONS} element={<Layout><RhSuggestions /></Layout>} />
-        <Route path={ROUTES.RH_CEO_SUGGESTIONS} element={<Layout><RhCeoSuggestions /></Layout>} />
-        <Route path={ROUTES.RH_FORM_ANNONCE} element={<Layout><RhFormAnnonce /></Layout>} />
+        <Route path={ROUTES.RH_CALENDRIER} element={<LayoutRh><RhCalendrier /></LayoutRh>} />
+        <Route path={ROUTES.RH_SUGGESTIONS} element={<LayoutRh><RhSuggestions /></LayoutRh>} />
+        <Route path={ROUTES.RH_CEO_SUGGESTIONS} element={<LayoutRh><RhCeoSuggestions /></LayoutRh>} />
+        <Route path={ROUTES.RH_FORM_ANNONCE} element={<LayoutRh><RhFormAnnonce /></LayoutRh>} />
 
         {/* Route 404 */}
         <Route path="*" element={<NotFound />} />

@@ -77,17 +77,17 @@ exports.getAnnonceById = async (id) => {
     // 2️⃣ Détails liés à l'annonce
     const langues = await LangueAnnonce.findAll({
       where: { id_annonce: id },
-      include: [{ model: Langue, attributes: ['valeur'] }]
+      include: [{ model: Langue, as: 'Langue', attributes: ['valeur'] }]
     });
 
     const qualites = await QualiteAnnonce.findAll({
       where: { id_annonce: id },
-      include: [{ model: Qualite, attributes: ['valeur'] }]
+      include: [{ model: Qualite, as: 'Qualite', attributes: ['valeur'] }]
     });
 
     const experiences = await ExperienceAnnonce.findAll({
       where: { id_annonce: id },
-      include: [{ model: Domaine, attributes: ['valeur'] }]
+      include: [{ model: Domaine, as: 'Domaine', attributes: ['valeur'] }]
     });
 
     const niveauxFiliere = await NiveauFiliereAnnonce.findAll({

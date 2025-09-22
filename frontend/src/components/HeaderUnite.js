@@ -4,7 +4,7 @@ import { ROUTES } from '../router/routes';
 import { unitesService } from '../services';
 import '../styles/Header.css';
 
-const Header = () => {
+const HeaderUnite = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -16,8 +16,8 @@ const Header = () => {
   const handleLogout = () => {
     // Détruire la session
     unitesService.logout();
-    // Rediriger vers la page de connexion
-    navigate(ROUTES.LOGIN);
+    // Rediriger vers la page d'accueil
+    navigate(ROUTES.HOME);
   };
 
   return (
@@ -27,16 +27,28 @@ const Header = () => {
         
         <nav className="header__nav">
           <Link 
-            to={ROUTES.HOME} 
-            className={`header__nav-item ${location.pathname === ROUTES.HOME ? 'header__nav-item--active' : ''}`}
-          >
-            Accueil
-          </Link>
-          <Link 
             to={ROUTES.LISTE_ANNONCES} 
             className={`header__nav-item ${location.pathname === ROUTES.LISTE_ANNONCES ? 'header__nav-item--active' : ''}`}
           >
             Annonces
+          </Link>
+          <Link 
+            to={ROUTES.UNITE_CALENDRIER} 
+            className={`header__nav-item ${location.pathname === ROUTES.UNITE_CALENDRIER ? 'header__nav-item--active' : ''}`}
+          >
+            Calendrier
+          </Link>
+          <Link 
+            to={ROUTES.UNITE_SUGGESTIONS} 
+            className={`header__nav-item ${location.pathname === ROUTES.UNITE_SUGGESTIONS ? 'header__nav-item--active' : ''}`}
+          >
+            Suggestions
+          </Link>
+          <Link 
+            to={ROUTES.UNITE_RH_SUGGESTIONS} 
+            className={`header__nav-item ${location.pathname === ROUTES.UNITE_RH_SUGGESTIONS ? 'header__nav-item--active' : ''}`}
+          >
+            Suivi RH
           </Link>
           <Link 
             to={ROUTES.PARAMETRES} 
@@ -50,7 +62,6 @@ const Header = () => {
           >
             Créer une annonce
           </Link>
-          
         </nav>
         
         <div className="header__actions">
@@ -74,4 +85,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderUnite;

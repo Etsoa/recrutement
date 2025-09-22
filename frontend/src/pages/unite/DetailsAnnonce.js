@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Layout, { Container, Section } from '../../components/Layout';
+import Layout, { Container, Section } from '../../components/LayoutUnite';
 import Button from '../../components/Button';
 import { annoncesService, ficheCandidatService, parametresService } from '../../services';
 import '../../styles/DetailsAnnonce.css';
@@ -344,7 +344,7 @@ const DetailsAnnonce = () => {
   };
 
   const handleVoirDossierComplet = (candidatId) => {
-    navigate(`/fiche-candidat/${candidatId}`);
+    navigate(`/back-office/fiche-candidat/${candidatId}`);
   };
 
   if (loading) {
@@ -367,7 +367,7 @@ const DetailsAnnonce = () => {
             <div className="error-container">
               <h2>Erreur</h2>
               <p>{error || 'Annonce introuvable'}</p>
-              <Button onClick={() => navigate('/liste-annonces')}>
+              <Button onClick={() => navigate('/back-office/liste-annonces')}>
                 Retour à la liste
               </Button>
             </div>
@@ -407,7 +407,7 @@ const DetailsAnnonce = () => {
           <div className="details-annonce">
             {/* Header avec bouton retour */}
             <div className="details-annonce__header">
-              <Button variant="ghost" onClick={() => navigate('/liste-annonces')}>
+              <Button variant="ghost" onClick={() => navigate('/back-office/liste-annonces')}>
                 ← Retour à la liste
               </Button>
               <h1>Détails de l'annonce #{annonce.id_annonce}</h1>

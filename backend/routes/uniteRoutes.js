@@ -75,11 +75,22 @@ router.post('/create/unite_entretien', uniteController.createUniteEntretien);
 // liste d entretiens par jour
 router.get('/unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);
 
+// liste d entretiens par mois
+router.get('/entretiens_mois', uniteController.getEntretiensParMois);
+
+// ajouter dans status_unite_entretien (termine id=2/en attente de validation id=3)
+router.post('/update/status/unite_entretien', uniteController.updateStatusUniteEntretien);
+
+// ajouter score dans score_unite_entretien
+router.post('/create/score/unite_entretien', uniteController.createScoreUniteEntretien);
+
+// récupérer candidats éligibles pour suggestion RH
+router.get('/candidats/eligibles', uniteController.getCandidatsEligiblesPourRh);
+
 // suggestion a la RH 
 router.post('/suggest/rh', uniteController.suggestToRh);
 
 // liste des suggestions envoyées à la RH
 router.get('/suggest', uniteController.getAllRhSuggestions);
 
-module.exports = router;
 module.exports = router;

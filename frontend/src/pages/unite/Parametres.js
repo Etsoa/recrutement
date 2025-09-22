@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Header from "../../components/Header";
+import Header from "../../components/HeaderUnite";
 import '../../styles/Parametrage.css';
 import Postes from "./parametres/Postes";
 import Genres from "./parametres/Genres";

@@ -45,6 +45,9 @@ const vueQuestionReponsesService = require('../services/unite/vueQuestionReponse
 const nodemailer = require('nodemailer');
 const uniteEntretiensService = require('../services/uniteEntretiensService');
 
+// Service principal pour les nouvelles fonctionnalités
+const uniteMainService = require('../services/unitesService');
+
 
 // ===== CONTROLLERS =====
 
@@ -69,6 +72,16 @@ exports.getAllAnnoncesUnite = async (req, res) => {
 exports.getAnnonceByIdUnite = async (req, res) => {
   try {
     const id = req.query.id; // ID depuis l'URL
+    
+    // Vérifier que l'ID est fourni
+    if (!id) {
+      return res.status(400).json({
+        message: 'L\'ID de l\'annonce est requis',
+        data: null,
+        success: false
+      });
+    }
+    
     const data = await traitementAnnonceService.getAnnonceById(id);
     if (!data) {
       return res.status(404).json({
@@ -83,7 +96,7 @@ exports.getAnnonceByIdUnite = async (req, res) => {
       success: true
     });
   } catch (err) {
-    console.error(err);
+    console.error('Erreur dans getAnnonceByIdUnite:', err);
     res.status(500).json({
       message: 'Erreur lors de la récupération de l\'annonce',
       data: null,
@@ -686,3 +699,150 @@ exports.suggestToRh = async (req, res) => {
 //     });
 //   }
 // };
+
+// ===== NOUVELLES MÉTHODES POUR ENTRETIENS UNITÉ =====
+
+// Récupérer les entretiens par mois pour le calendrier
+exports.getEntretiensParMois = async (req, res) => {
+  try {
+    const { start, end } = req.query;
+    const id_unite = req.user?.id_unite || req.query.id_unite;
+    
+    const entretiens = await uniteMainService.getEntretiensParMois(start, end, id_unite);
+    res.json({
+      message: 'Entretiens récupérés avec succès',
+      data: entretiens,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur dans getEntretiensParMois:", err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des entretiens',
+      data: null,
+      success: false
+    });
+  }
+};
+
+// Récupérer les candidats éligibles pour suggestion RH
+exports.getCandidatsEligiblesPourRh = async (req, res) => {
+  try {
+    const id_unite = req.user?.id_unite || req.query.id_unite;
+    const candidats = await uniteMainService.getCandidatsEligiblesPourRh(id_unite);
+    res.json({
+      message: 'Candidats éligibles récupérés avec succès',
+      data: candidats,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur dans getCandidatsEligiblesPourRh:", err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des candidats éligibles',
+      data: null,
+      success: false
+    });
+  }
+};
+
+// Mettre à jour le statut d'un entretien unité
+exports.updateStatusUniteEntretien = async (req, res) => {
+  try {
+    const { id_unite_entretien } = req.params;
+    const { id_type_status_entretien } = req.body;
+
+    const status = await uniteMainService.updateStatusUniteEntretien(id_unite_entretien, id_type_status_entretien);
+    
+    if (!status) {
+      return res.status(404).json({
+        message: 'Entretien non trouvé',
+        success: false
+      });
+    }
+
+    res.json({
+      message: 'Statut mis à jour avec succès',
+      data: status,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur updateStatusUniteEntretien:", err);
+    res.status(500).json({
+      message: 'Erreur lors de la mise à jour du statut',
+      data: null,
+      success: false
+    });
+  }
+};
+
+// Créer un score pour un entretien unité
+exports.createScoreUniteEntretien = async (req, res) => {
+  try {
+    const { id_unite_entretien } = req.params;
+    const { score } = req.body;
+
+    const scoreData = await uniteMainService.createScoreUniteEntretien({
+      id_unite_entretien,
+      score,
+      date_score: new Date()
+    });
+
+    res.json({
+      message: 'Score créé avec succès',
+      data: scoreData,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur createScoreUniteEntretien:", err);
+    res.status(500).json({
+      message: 'Erreur lors de la création du score',
+      data: null,
+      success: false
+    });
+  }
+};
+
+// Suggérer un candidat au RH
+exports.suggestToRh = async (req, res) => {
+  try {
+    const { id_unite_entretien, id_candidat } = req.body;
+
+    const suggestion = await uniteMainService.suggestToRh({
+      id_unite_entretien,
+      id_candidat
+    });
+
+    res.json({
+      message: 'Candidat suggéré au RH avec succès',
+      data: suggestion,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur suggestToRh:", err);
+    res.status(500).json({
+      message: err.message || 'Erreur lors de la suggestion au RH',
+      data: null,
+      success: false
+    });
+  }
+};
+
+// Obtenir toutes les suggestions faites au RH
+exports.getAllRhSuggestions = async (req, res) => {
+  try {
+    const id_unite = req.user?.id_unite || req.query.id_unite;
+    const suggestions = await uniteMainService.getAllRhSuggestions(id_unite);
+
+    res.json({
+      message: 'Suggestions RH récupérées avec succès',
+      data: suggestions,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur getAllRhSuggestions:", err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des suggestions',
+      data: null,
+      success: false
+    });
+  }
+};
