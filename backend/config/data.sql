@@ -112,7 +112,7 @@ INSERT INTO delai_qcm (valeur) VALUES (2);
 
 INSERT INTO score_minimum_qcm (valeur) VALUES (15);
 
-INSERT INTO pourcentage_minimum_cv (valeur) VALUES (75);
+INSERT INTO pourcentage_minimum_cv (valeur) VALUES (10);
 
 -- ANNONCES ET LEURS RELATIONS
 

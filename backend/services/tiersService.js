@@ -54,10 +54,12 @@ async function createTiersComplete(tiersData, relations) {
 
     if (relations.experiences && relations.experiences.length > 0) {
       for (const experience of relations.experiences) {
-  await ExperienceTiers.create({
+        await ExperienceTiers.create({
           id_tiers,
           id_domaine: experience.id_domaine,
-          duree: experience.duree
+          date_debut: experience.date_debut,
+          date_fin: experience.date_fin,
+          duree: experience.duree || 0 // duree optionnelle, calculée si nécessaire
         });
       }
     }

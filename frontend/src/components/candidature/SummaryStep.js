@@ -1,57 +1,127 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import CV from '../CV';
+import parametresService from '../../services/parametresService';
 import '../../styles/CandidatureStep.css';
 
 const SummaryStep = ({ formData, annonceData, errors = {} }) => {
+  const [parametres, setParametres] = useState(null);
+
+  // Charger les paramètres pour résoudre les domaines, langues et qualités
+  useEffect(() => {
+    const loadParametres = async () => {
+      try {
+        const response = await parametresService.getAllParametres();
+        if (response.success && response.data) {
+          setParametres(response.data);
+          console.log('Paramètres chargés pour récapitulatif:', response.data);
+        }
+      } catch (error) {
+        console.error('Erreur chargement paramètres pour récapitulatif:', error);
+      }
+    };
+
+    loadParametres();
+  }, []);
   // Fonction utilitaire pour formater les formations pour le CV
   const formatFormationsForCV = () => {
     let formations = [];
     
-    // Formations universitaires (priorité)
-    if (formData.formationsUniversitaires && formData.formationsUniversitaires.length > 0) {
-      const formation = formData.formationsUniversitaires[0]; // Prendre la première
-      const niveauxTexte = formation.niveaux ? formation.niveaux.join(', ') : '';
-      formations.push({
-        niveau: niveauxTexte,
-        filiere: formation.filiere,
-        etablissement: formation.etablissement || '',
-        annee: formation.annee || ''
-      });
-    } 
-    // Si pas de formation universitaire, utiliser les formations pré-universitaires
-    else if (formData.formationsPreUniversitaires) {
+    // D'ABORD : Regrouper toutes les formations pré-universitaires en une seule entrée
+    if (formData.formationsPreUniversitaires) {
+      let formationsPreUniv = [];
+      
+      // Ajouter tous les BACs
       if (formData.formationsPreUniversitaires.bacs && formData.formationsPreUniversitaires.bacs.length > 0) {
-        const bac = formData.formationsPreUniversitaires.bacs[0];
-        formations.push({
-          niveau: 'BAC',
-          filiere: `Série ${bac.serie}`,
-          etablissement: bac.etablissement || '',
-          annee: bac.annee || ''
+        formData.formationsPreUniversitaires.bacs.forEach(bac => {
+          formationsPreUniv.push(`BAC ${bac.serie}${bac.annee ? ` (${bac.annee})` : ''}${bac.etablissement ? ` - ${bac.etablissement}` : ''}`);
         });
-      } else if (formData.formationsPreUniversitaires.bepc) {
+      }
+      
+      // Ajouter BEPC si présent
+      if (formData.formationsPreUniversitaires.bepc) {
+        formationsPreUniv.push('BEPC');
+      }
+      
+      // Si on a des formations pré-universitaires, les regrouper EN PREMIER
+      if (formationsPreUniv.length > 0) {
         formations.push({
-          niveau: 'BEPC',
-          filiere: '',
+          niveau: 'Formation pré-universitaire',
+          filiere: formationsPreUniv.join(' • '),
           etablissement: '',
-          annee: ''
+          annee: '',
+          type: 'preuniversitaire'
         });
       }
     }
     
-    return formations[0] || { niveau: '', filiere: '', etablissement: '', annee: '' };
+    // ENSUITE : Ajouter toutes les formations universitaires
+    if (formData.formationsUniversitaires && formData.formationsUniversitaires.length > 0) {
+      formData.formationsUniversitaires.forEach(formation => {
+        // Résoudre les niveaux (IDs vers noms)
+        let niveauxTexte = '';
+        if (formation.niveaux && parametres && parametres.niveaux) {
+          const niveauxNoms = formation.niveaux.map(niveauId => {
+            const niveau = parametres.niveaux.find(n => n.id_niveau === parseInt(niveauId));
+            return niveau ? niveau.valeur : `Niveau ${niveauId}`;
+          });
+          niveauxTexte = niveauxNoms.join(', ');
+        } else if (formation.niveaux) {
+          niveauxTexte = formation.niveaux.join(', ');
+        }
+        
+        // Résoudre la filière (ID vers nom)
+        let filiereNom = '';
+        if (formation.filiere && parametres && parametres.filieres) {
+          const filiere = parametres.filieres.find(f => f.id_filiere === parseInt(formation.filiere));
+          filiereNom = filiere ? filiere.valeur : `Filière ${formation.filiere}`;
+        } else {
+          filiereNom = formation.filiere || '';
+        }
+        
+        formations.push({
+          niveau: niveauxTexte,
+          filiere: filiereNom,
+          etablissement: formation.etablissement || '',
+          annee: formation.annee || '',
+          type: 'universitaire'
+        });
+      });
+    }
+    
+    // Retourner toutes les formations ET les infos pour compatibilité avec l'ancien CV
+    const premiereFformation = formations[0] || { niveau: '', filiere: '', etablissement: '', annee: '' };
+    
+    return {
+      // Pour la compatibilité avec l'ancien affichage (première formation)
+      niveau: premiereFformation.niveau,
+      filiere: premiereFformation.filiere,
+      etablissement: premiereFformation.etablissement,
+      annee: premiereFformation.annee,
+      // Nouveau : toutes les formations
+      formations: formations
+    };
   };
 
   // Fonction utilitaire pour formater les expériences pour le CV
   const formatExperiencesForCV = () => {
     if (!formData.experiences || formData.experiences.length === 0) return [];
     
-    return formData.experiences.map(exp => ({
-      poste: exp.intitule_poste || '', // Mapper intitule_poste vers poste
-      entreprise: exp.nom_entreprise || '', // Mapper nom_entreprise vers entreprise
-      dateDebut: exp.date_debut ? new Date(exp.date_debut).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '',
-      dateFin: exp.date_fin ? new Date(exp.date_fin).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : 'En cours',
-      description: exp.description_taches || '' // Mapper description_taches vers description
-    }));
+    return formData.experiences.map(exp => {
+      // Résoudre le nom du domaine à partir de l'ID
+      let nomDomaine = '';
+      if (exp.id_domaine && parametres && parametres.domaines) {
+        const domaine = parametres.domaines.find(d => d.id_domaine === parseInt(exp.id_domaine));
+        nomDomaine = domaine ? domaine.valeur : `Domaine ${exp.id_domaine}`;
+      }
+      
+      return {
+        poste: nomDomaine, // Utiliser le nom du domaine comme "poste"
+        entreprise: '', // Plus de nom d'entreprise dans le nouveau format
+        dateDebut: exp.date_debut ? new Date(exp.date_debut).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '',
+        dateFin: exp.date_fin ? new Date(exp.date_fin).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : 'En cours',
+        description: exp.description_taches || '' // Garder la description
+      };
+    });
   };
 
   // Fonction utilitaire pour formater les langues pour le CV
@@ -59,9 +129,15 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
     if (!formData.langues || formData.langues.length === 0) return [];
     
     return formData.langues.map(langueItem => {
-      // Si c'est un objet avec une propriété 'langue', extraire la valeur
+      // Si c'est un objet avec une propriété 'langue' qui contient un ID
       if (typeof langueItem === 'object' && langueItem.langue) {
-        return langueItem.langue;
+        const langueId = langueItem.langue;
+        // Résoudre l'ID en nom si on a les paramètres
+        if (parametres && parametres.langues) {
+          const langue = parametres.langues.find(l => l.id_langue === parseInt(langueId));
+          return langue ? langue.valeur : `Langue ${langueId}`;
+        }
+        return `Langue ${langueId}`;
       }
       // Si c'est déjà une string, la retourner telle quelle
       return langueItem;
@@ -73,9 +149,15 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
     if (!formData.qualites || formData.qualites.length === 0) return [];
     
     return formData.qualites.map(qualiteItem => {
-      // Si c'est un objet avec une propriété 'qualite', extraire la valeur
+      // Si c'est un objet avec une propriété 'qualite' qui contient un ID
       if (typeof qualiteItem === 'object' && qualiteItem.qualite) {
-        return qualiteItem.qualite;
+        const qualiteId = qualiteItem.qualite;
+        // Résoudre l'ID en nom si on a les paramètres
+        if (parametres && parametres.qualites) {
+          const qualite = parametres.qualites.find(q => q.id_qualite === parseInt(qualiteId));
+          return qualite ? qualite.valeur : `Qualité ${qualiteId}`;
+        }
+        return `Qualité ${qualiteId}`;
       }
       // Si c'est déjà une string, la retourner telle quelle
       return qualiteItem;
@@ -185,7 +267,13 @@ const SummaryStep = ({ formData, annonceData, errors = {} }) => {
       </div>
       
       <div className="summary-cv">
-        <CV {...cvProps} />
+        {parametres ? (
+          <CV {...cvProps} />
+        ) : (
+          <div className="loading-message">
+            <p>Chargement du récapitulatif...</p>
+          </div>
+        )}
       </div>
     </div>
   );

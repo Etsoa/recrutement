@@ -24,18 +24,14 @@ const transporter = nodemailer.createTransport({
 async function createEnvoiQcm(id_candidat) {
   try {
     // Récupérer les informations du candidat et de l'annonce
-  const candidat = await Candidat.findOne({
+    const candidat = await Candidat.findOne({
       where: { id_candidat },
       include: [
         {
-          model: models.Tiers,
-          attributes: ['nom', 'prenom', 'email']
-        },
-        {
-          model: models.Annonce,
+          model: Annonce,
           include: [
             {
-              model: models.Poste,
+              model: Poste,
               attributes: ['valeur']
             }
           ]
@@ -45,6 +41,27 @@ async function createEnvoiQcm(id_candidat) {
 
     if (!candidat) {
       throw new Error('Candidat introuvable');
+    }
+
+    // Récupérer les informations du tiers séparément
+    const tiers = await Tiers.findByPk(candidat.id_tiers, {
+      attributes: ['nom', 'prenom', 'email']
+    });
+
+    if (!tiers) {
+      throw new Error('Tiers introuvable');
+    }
+
+    console.log('=== DEBUG CANDIDAT ===');
+    console.log('candidat:', candidat ? 'trouvé' : 'null');
+    console.log('tiers:', tiers ? 'trouvé' : 'null/undefined');
+    console.log('candidat.Annonce:', candidat.Annonce ? 'trouvé' : 'null/undefined');
+    if (tiers) {
+      console.log('Tiers nom:', tiers.nom);
+      console.log('Tiers email:', tiers.email);
+    }
+    if (candidat.Annonce && candidat.Annonce.Poste) {
+      console.log('Poste:', candidat.Annonce.Poste.valeur);
     }
 
     // Générer un token JWT unique et sécurisé
@@ -75,9 +92,9 @@ async function createEnvoiQcm(id_candidat) {
 
     // Préparer les données pour l'email
     const emailData = {
-      nom: candidat.Tiers.nom,
-      prenom: candidat.Tiers.prenom,
-      email: candidat.Tiers.email,
+      nom: tiers.nom,
+      prenom: tiers.prenom,
+      email: tiers.email,
       poste: candidat.Annonce.Poste.valeur,
       token: token,
       lienQcm: lienQcm
@@ -188,21 +205,21 @@ async function verifyTokenQcm(token) {
     }
 
     // Récupérer les informations du candidat
-  const candidat = await Candidat.findOne({
+    const candidat = await Candidat.findOne({
       where: { 
         id_candidat: decoded.id_candidat,
         id_annonce: decoded.id_annonce 
       },
       include: [
         {
-          model: models.Tiers,
+          model: Tiers,
           attributes: ['nom', 'prenom']
         },
         {
-          model: models.Annonce,
+          model: Annonce,
           include: [
             {
-              model: models.Poste,
+              model: Poste,
               attributes: ['valeur']
             }
           ]

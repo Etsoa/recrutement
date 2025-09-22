@@ -135,6 +135,27 @@
   animation: captchaShake 0.5s ease-in-out;
 }
 
+/* Indicateur de chargement reCAPTCHA */
+.recaptcha-loading {
+  padding: var(--spacing-lg);
+  text-align: center;
+  background: var(--color-surface-variant);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-md);
+}
+
+.recaptcha-loading p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  animation: loadingPulse 1.5s infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
 @keyframes captchaShake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-5px); }

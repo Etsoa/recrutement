@@ -4,7 +4,7 @@ import parametresService from '../../../services/parametresService';
 
 const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
   const [parametres, setParametres] = useState({
-    postes: []
+    domaines: []
   });
   const [loading, setLoading] = useState(true);
 
@@ -17,18 +17,18 @@ const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
         
         if (response.success && response.data) {
           setParametres({
-            postes: parametresService.formatForDropdown(response.data.postes || [])
+            domaines: parametresService.formatForDropdown(response.data.domaines || [])
           });
         } else {
           console.error('Erreur lors du chargement des paramètres:', response.message);
           setParametres({
-            postes: []
+            domaines: []
           });
         }
       } catch (error) {
         console.error('Erreur lors du chargement des paramètres:', error);
         setParametres({
-          postes: []
+          domaines: []
         });
       } finally {
         setLoading(false);
@@ -48,8 +48,7 @@ const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
   const addExperience = () => {
     const experiences = [...(formData.experiences || [])];
     experiences.push({
-      intitule_poste: '',
-      nom_entreprise: '',
+      id_domaine: '',
       date_debut: '',
       date_fin: '',
       description_taches: ''
@@ -95,25 +94,15 @@ const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
               <div className="formation-content">
                 <div className="form-grid two-columns">
                   <Dropdown
-                    label="Intitulé du poste"
-                    name={`experience.intitule_poste`}
-                    value={experience.intitule_poste || ''}
+                    label="Domaine d'expérience"
+                    name={`experience.id_domaine`}
+                    value={experience.id_domaine || ''}
                     onChange={(value, fieldName) => handleExperienceChange(value, fieldName, index)}
-                    options={parametres.postes || []}
-                    placeholder={loading ? "Chargement..." : (parametres.postes || []).length === 0 ? "Aucun poste disponible" : "Choisir un poste"}
-                    disabled={loading || (parametres.postes || []).length === 0}
+                    options={parametres.domaines || []}
+                    placeholder={loading ? "Chargement..." : (parametres.domaines || []).length === 0 ? "Aucun domaine disponible" : "Choisir un domaine"}
+                    disabled={loading || (parametres.domaines || []).length === 0}
                     required={true}
-                    error={errors[`experience_${index}_intitule_poste`]}
-                  />
-
-                  <Input
-                    label="Nom de l'entreprise"
-                    name={`experience.nom_entreprise`}
-                    value={experience.nom_entreprise || ''}
-                    onChange={(value, fieldName) => handleExperienceChange(value, fieldName, index)}
-                    required={true}
-                    placeholder="Ex: TechCorp"
-                    error={errors[`experience_${index}_nom_entreprise`]}
+                    error={errors[`experience_${index}_id_domaine`]}
                   />
 
                   <Input
@@ -137,13 +126,13 @@ const ExperienceManager = ({ formData, updateFormData, errors = {} }) => {
                   />
 
                   <TextareaComponent
-                    label="Raisons du départ / Réalisations"
+                    label="Description de l'expérience"
                     name={`experience.description_taches`}
                     value={experience.description_taches || ''}
                     onChange={(value, fieldName) => handleExperienceChange(value, fieldName, index)}
-                    placeholder="Décrivez vos principales réalisations ou les raisons de votre départ..."
+                    placeholder="Décrivez brièvement votre expérience dans ce domaine..."
                     rows={3}
-                    helperText="Optionnel - Ajoutez des détails sur vos accomplissements ou motivations"
+                    helperText="Optionnel - Ajoutez des détails sur votre expérience"
                   />
                 </div>
               </div>

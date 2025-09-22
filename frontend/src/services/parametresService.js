@@ -31,7 +31,9 @@ export const parametresService = {
     return items
       .filter(item => item && item.valeur) // Filtrer les items valides
       .map(item => ({
-        value: item.valeur,
+        value: item.id_genre || item.id_ville || item.id_filiere || item.id_niveau || 
+               item.id_langue || item.id_qualite || item.id_domaine || item.id_poste || 
+               item.id_situation,
         label: item.valeur,
         id: item.id_genre || item.id_ville || item.id_filiere || item.id_niveau || 
             item.id_langue || item.id_qualite || item.id_domaine || item.id_poste || 

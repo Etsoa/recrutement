@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { annoncesService } from '../services/annoncesService';
+import candidatsService from '../services/candidatsService';
 import Button from '../components/Button';
 import Captcha from '../components/Captcha';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -75,6 +76,7 @@ const CandidaturePage = () => {
 
   // État pour le captcha
   const [showCaptcha, setShowCaptcha] = useState(false);
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
 
   // Charger les données de l'annonce
   useEffect(() => {
@@ -177,17 +179,14 @@ const CandidaturePage = () => {
         break;
         
       case 2: // Informations professionnelles
-        // Au moins une expérience avec poste et entreprise
+        // Au moins une expérience avec domaine
         if (!formData.experiences || formData.experiences.length === 0) {
           newErrors.experiences = 'Au moins une expérience professionnelle est requise';
         } else {
           // Vérifier que chaque expérience a les champs requis
           formData.experiences.forEach((exp, index) => {
-            if (!exp.intitule_poste) {
-              newErrors[`experience_${index}_intitule_poste`] = `Le poste de l'expérience ${index + 1} est requis`;
-            }
-            if (!exp.nom_entreprise?.trim()) {
-              newErrors[`experience_${index}_nom_entreprise`] = `L'entreprise de l'expérience ${index + 1} est requise`;
+            if (!exp.id_domaine) {
+              newErrors[`experience_${index}_id_domaine`] = `Le domaine de l'expérience ${index + 1} est requis`;
             }
             if (!exp.date_debut) {
               newErrors[`experience_${index}_date_debut`] = `La date de début de l'expérience ${index + 1} est requise`;
@@ -248,46 +247,45 @@ const CandidaturePage = () => {
   };
 
   // Fonction pour envoyer la candidature après validation du captcha
-  const handleCaptchaVerified = async () => {
+  const handleCaptchaVerified = async (token) => {
     setShowCaptcha(false);
     setIsSubmitting(true);
     setSubmissionError('');
+    setRecaptchaToken(token);
     
     try {
-      // Préparer les données pour l'envoi
-      const submissionData = new FormData();
+      // Préparer les données complètes pour l'API
+      const candidatureData = {
+        ...formData,
+        annonce_id: annonceId
+      };
       
-      // Ajouter toutes les données du formulaire
-      Object.keys(formData).forEach(key => {
-        if (key === 'formations' || key === 'experiences' || key === 'langues' || key === 'qualites') {
-          submissionData.append(key, JSON.stringify(formData[key]));
-        } else if (formData[key] !== null && formData[key] !== '') {
-          submissionData.append(key, formData[key]);
-        }
-      });
+      // Appeler l'API pour créer la candidature
+      const response = await candidatsService.createCandidat(candidatureData, token);
       
-      submissionData.append('annonce_id', annonceId);
-
-      // Simulation de l'envoi (à remplacer par un appel API)
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // Simuler une réussite la plupart du temps
-          if (Math.random() > 0.2) {
-            resolve();
-          } else {
-            reject(new Error('Erreur de connexion au serveur'));
-          }
-        }, 2000);
-      });
-      
-      // Succès
+      // Succès - stocker les informations de réponse si nécessaire
+      console.log('Candidature créée avec succès:', response);
       setSubmissionStatus('success');
       
     } catch (err) {
-      setSubmissionError(err.message || 'Une erreur inattendue s\'est produite');
+      console.error('Erreur lors de la soumission:', err);
+      
+      // Gestion spécifique des erreurs de timeout
+      let errorMessage = err.message || 'Une erreur inattendue s\'est produite';
+      
+      if (err.message.includes('timeout') || err.message.includes('temps')) {
+        errorMessage = 'La soumission a pris trop de temps. Votre candidature pourrait avoir été enregistrée. Veuillez vérifier ou réessayer.';
+      } else if (err.message.includes('connexion') || err.message.includes('réseau')) {
+        errorMessage = 'Problème de connexion réseau. Veuillez vérifier votre connexion internet et réessayer.';
+      } else if (err.message.includes('serveur')) {
+        errorMessage = 'Problème temporaire du serveur. Veuillez réessayer dans quelques instants.';
+      }
+      
+      setSubmissionError(errorMessage);
       setSubmissionStatus('error');
     } finally {
       setIsSubmitting(false);
+      setRecaptchaToken(null);
     }
   };
 

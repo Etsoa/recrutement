@@ -21,8 +21,9 @@ const CV = ({
   langues = [],
   qualites = [],
   experiences = [],
-  filiere = '',
-  niveau = '',
+  formations = [], // Nouveau : support de plusieurs formations
+  filiere = '', // Garde pour compatibilité
+  niveau = '', // Garde pour compatibilité
   posteAnnonce = '', // Nouveau prop pour le poste de l'annonce
   
   // Scores et évaluations
@@ -203,18 +204,50 @@ const CV = ({
           )}
 
           {/* Formation */}
-          {(filiere || niveau) && (
+          {(formations.length > 0 || filiere || niveau) && (
             <section className="cv-section">
               <h2 className="cv-section-title">
                 <svg className="cv-section-icon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
                 </svg>
-                Formation
+                Formation{formations.length > 1 ? 's' : ''}
               </h2>
               
-              <div className="cv-education">
-                <div className="cv-education-level">{niveau}</div>
-                <div className="cv-education-field">{filiere}</div>
+              <div className="cv-formation-container">
+                {/* Afficher toutes les formations dans l'ordre : pré-universitaires puis universitaires */}
+                {formations.length > 0 ? (
+                  formations.map((formation, index) => (
+                    <div key={index} className={`cv-formation-item ${formation.type === 'preuniversitaire' ? 'cv-formation-preuniv' : 'cv-formation-univ'}`}>
+                      {formation.type === 'preuniversitaire' ? (
+                        // Style compact pour formations pré-universitaires
+                        <div className="cv-info-grid">
+                          <div className="cv-info-item cv-info-item-full">
+                            <span className="cv-info-label">{formation.niveau}</span>
+                            <span className="cv-info-value">{formation.filiere}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        // Style détaillé pour formations universitaires
+                        <>
+                          <div className="cv-education-level">{formation.niveau}</div>
+                          <div className="cv-education-field">{formation.filiere}</div>
+                          {formation.etablissement && (
+                            <div className="cv-education-school">{formation.etablissement}</div>
+                          )}
+                          {formation.annee && (
+                            <div className="cv-education-year">{formation.annee}</div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  // Fallback vers l'ancien affichage
+                  <div className="cv-formation-item cv-formation-univ">
+                    <div className="cv-education-level">{niveau}</div>
+                    <div className="cv-education-field">{filiere}</div>
+                  </div>
+                )}
               </div>
             </section>
           )}
