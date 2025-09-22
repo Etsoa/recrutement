@@ -45,7 +45,7 @@ function Niveau() {
   };
 
   return (
-    <div style={{width: '50%'}}>
+    <div className="postes-container">
       {/* Formulaire d'ajout */}
       <div className="form-container">
         <h3>➕ Ajouter un nouveau niveau</h3>

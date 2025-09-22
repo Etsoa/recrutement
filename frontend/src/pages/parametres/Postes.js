@@ -64,10 +64,12 @@ function Postes() {
   };
 
   return (
-    <div style={{ width: '50%' }}>
+    <div className="postes-container">
       {/* Formulaire d'ajout */}
       <div className="form-container">
-        <h3>{editId ? "✏️ Modifier le poste" : "➕ Ajouter un nouveau poste"}</h3>
+        <h3 className="form-title">
+          {editId ? "✏️ Modifier le poste" : "➕ Ajouter un nouveau poste"}
+        </h3>
         <Input
           label="Nom du poste"
           type="text"
@@ -76,23 +78,28 @@ function Postes() {
           placeholder="Ex: Développeur Senior, Chef de projet..."
         />
 
-        <Button onClick={handlePostes} variant="primary">
-          {editId ? "Mettre à jour" : "Ajouter le poste"}
-        </Button>
-        {editId && (
-          <Button onClick={() => { setEditId(null); setPosteNom(""); }} variant="secondary">
-            Annuler
+        <div className="form-actions">
+          <Button onClick={handlePostes} variant="primary">
+            {editId ? "Mettre à jour" : "Ajouter le poste"}
           </Button>
-        )}
+          {editId && (
+            <Button onClick={() => { setEditId(null); setPosteNom(""); }} variant="secondary">
+              Annuler
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Section liste des postes */}
       <div className="list-container">
         <div className="list-header">
-          <h3>Liste des postes ({postes.data?.length || 0})</h3>
+          <h3 className="list-title">
+            Liste des postes ({postes.data?.length || 0})
+          </h3>
           <Button
             onClick={() => setShowListePostes(prev => !prev)}
             variant="secondary"
+            className="toggle-button"
           >
             {showListePostes ? 'Masquer' : 'Afficher'}
           </Button>
@@ -102,21 +109,30 @@ function Postes() {
           <div className="list-body">
             {postes.data?.length === 0 ? (
               <div className="empty">
-                🏢 Aucun poste configuré
-                <p>Ajoutez votre premier poste ci-dessus</p>
+                <div className="empty-icon">🏢</div>
+                <div className="empty-text">Aucun poste configuré</div>
+                <p className="empty-description">Ajoutez votre premier poste ci-dessus</p>
               </div>
             ) : (
-              postes.data?.map((poste) => (
-                <div key={poste.id_poste} className="list-item">
-                  <div>
-                    <h4>{poste.valeur}</h4>
-                    <p>🏢 {unite.nom}</p>
+              <div className="postes-grid">
+                {postes.data?.map((poste) => (
+                  <div key={poste.id_poste} className="list-item">
+                    <div className="item-content">
+                      <h4 className="item-title">{poste.valeur}</h4>
+                      <p className="item-subtitle">🏢 {unite.nom}</p>
+                    </div>
+                    <div className="actions">
+                      <button 
+                        className="btn-icon" 
+                        onClick={() => handleEdit(poste)}
+                        aria-label="Modifier le poste"
+                      >
+                        ✏️
+                      </button>
+                    </div>
                   </div>
-                  <div className="actions">
-                    <button className="btn-icon" onClick={() => handleEdit(poste)}>✏️</button>
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}

@@ -45,7 +45,7 @@ function Langues() {
   };
 
   return (
-    <div style={{width: '50%'}}>
+    <div className="postes-container">
       {/* Formulaire d'ajout */}
       <div className="form-container">
         <h3>➕ Ajouter une nouvelle langue</h3>

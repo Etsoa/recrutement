@@ -44,10 +44,11 @@ function Domaines() {
   };
 
   return (
-    <div style={{width: '50%'}}>
+    <div className="postes-container">
       {/* Formulaire d'ajout */}
       <div className="form-container">
-        <h3>➕ Ajouter un nouveau domaine</h3>
+        <h3 className="form-title">
+          ➕ Ajouter un nouveau domaine</h3>
         <Input
           label="Nom du domaine"
           type="text"
