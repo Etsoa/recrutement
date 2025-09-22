@@ -1,0 +1,11 @@
+- unite  : 
+test ajout annonce 
+css fiche candidat + export pdf
+photos
+pourcentage
+
+integrer code rh version unite
+
+test rh et unite
+
+test global

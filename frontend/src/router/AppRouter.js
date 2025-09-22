@@ -1,37 +1,41 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import '../styles/globals.css';
+import '../styles/variables.css';
+
+// Importation du Layout
+import Layout from '../components/Layout';
 
 // Importation des pages
 import { 
-  Home, 
+  Home,
+  LoginUnites,
   ListeAnnonces, 
   DetailsAnnonce, 
   FicheCandidat,
   DetailQCM,
   Historiques,
-  LoginUnites,
   Parametres,
   CreateAnnonce,
-  QCM
+  QCM,
+  RhLoginRh,
+  RhCalendrier,
+  RhSuggestions,
+  RhCeoSuggestions,
+  RhFormAnnonce
 } from '../pages';
-import { ROUTES } from './routes';
-import Home from '../pages/Home';
-import CVtest from '../pages/CVtest';
-import CVList from '../pages/CVList';
 
-// Composant de layout principal
-import Layout from '../components/Layout';
+import { ROUTES, ROUTE_METADATA } from './routes';
 
-// Routes protégées (peut être étendu avec l'authentification)
-const ProtectedRoute = ({ children }) => {
-  // Pour l'instant, toutes les routes sont accessibles
-  // Vous pouvez ajouter ici la logique d'authentification
-  return children;
+// Composant de layout conditionnel
+const ConditionalLayout = ({ children, path }) => {
+  const shouldUseLayout = ROUTE_METADATA[path]?.layout !== false;
+  return shouldUseLayout ? <Layout>{children}</Layout> : children;
 };
 
 // Composant 404
-const NotFound = () => {
-  return (
+const NotFound = () => (
+  <Layout>
     <div style={{
       display: 'flex',
       flexDirection: 'column',
@@ -39,114 +43,65 @@ const NotFound = () => {
       justifyContent: 'center',
       minHeight: '60vh',
       textAlign: 'center',
-      padding: 'var(--spacing-xl)',
+      padding: '2rem',
     }}>
-      <h1 style={{ 
-        fontSize: 'var(--font-size-4xl)', 
-        color: 'var(--color-primary)',
-        marginBottom: 'var(--spacing-lg)'
-      }}>
-        404
-      </h1>
-      <h2 style={{ 
-        fontSize: 'var(--font-size-xl)', 
-        color: 'var(--color-text)',
-        marginBottom: 'var(--spacing-md)'
-      }}>
-        Page non trouvée
-      </h2>
-      <p style={{ 
-        color: 'var(--color-text-secondary)',
-        marginBottom: 'var(--spacing-xl)'
-      }}>
+      <h1 style={{ fontSize: '4rem', color: '#e74c3c', marginBottom: '1rem' }}>404</h1>
+      <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Page non trouvée</h2>
+      <p style={{ marginBottom: '2rem', color: '#666' }}>
         La page que vous recherchez n'existe pas ou a été déplacée.
       </p>
       <button 
         onClick={() => window.history.back()}
         style={{
-          padding: 'var(--spacing-sm) var(--spacing-lg)',
-          backgroundColor: 'var(--color-accent)',
+          padding: '0.75rem 1.5rem',
+          backgroundColor: '#3498db',
           color: 'white',
           border: 'none',
-          borderRadius: 'var(--border-radius)',
-          cursor: 'pointer',
-          fontSize: 'var(--font-size-base)'
+          borderRadius: '4px',
+          cursor: 'pointer'
         }}
       >
         Retourner
       </button>
     </div>
-  );
-};
+  </Layout>
+);
 
-// Configuration des routes principales
+// Configuration des routes
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        {/* Routes publiques avec Layout */}
-        {/* <Route path={ROUTES.HOME} element={<Layout><Home /></Layout>} /> */}
+        {/* Redirection racine vers login */}
+        <Route path="/" element={<Navigate to={ROUTES.LOGIN} replace />} />
         
-        {/* Routes unite */}
+        {/* Page de connexion (sans layout) */}
         <Route path={ROUTES.LOGIN} element={<LoginUnites />} />
-
+        
+        {/* Page d'accueil */}
+        <Route path={ROUTES.HOME} element={<Layout><Home /></Layout>} />
+        
+        {/* Routes Back-Office Unite */}
         <Route path={ROUTES.LISTE_ANNONCES} element={<Layout><ListeAnnonces /></Layout>} />
         <Route path={ROUTES.DETAILS_ANNONCE} element={<Layout><DetailsAnnonce /></Layout>} />
         <Route path={ROUTES.FICHE_CANDIDAT} element={<Layout><FicheCandidat /></Layout>} />
-
         <Route path={ROUTES.PARAMETRES} element={<Layout><Parametres /></Layout>} />
-
         <Route path={ROUTES.CREATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
         <Route path={ROUTES.UPDATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
         <Route path={ROUTES.CREATE_QCM} element={<Layout><QCM /></Layout>} />
         <Route path={ROUTES.DETAIL_QCM} element={<Layout><DetailQCM /></Layout>} />
         <Route path={ROUTES.HISTORIQUE} element={<Layout><Historiques /></Layout>} />
+        
+        {/* Routes RH (sans layout pour login, avec layout pour les autres) */}
+        <Route path={ROUTES.RH_LOGIN} element={<RhLoginRh />} />
+        <Route path={ROUTES.RH_CALENDRIER} element={<Layout><RhCalendrier /></Layout>} />
+        <Route path={ROUTES.RH_SUGGESTIONS} element={<Layout><RhSuggestions /></Layout>} />
+        <Route path={ROUTES.RH_CEO_SUGGESTIONS} element={<Layout><RhCeoSuggestions /></Layout>} />
+        <Route path={ROUTES.RH_FORM_ANNONCE} element={<Layout><RhFormAnnonce /></Layout>} />
+        
+        {/* Route 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
-      <Layout>
-        <Routes>
-          {/* Route d'accueil */}
-          <Route 
-            path="/" 
-            element={<Navigate to="/home" replace />} 
-          />
-          
-          {/* Page d'accueil */}
-          <Route 
-            path="/home" 
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Page CV */}
-          <Route 
-            path="/cv" 
-            element={
-              <ProtectedRoute>
-                <CVtest />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Page Liste des CVs */}
-          <Route 
-            path="/cv-list" 
-            element={
-              <ProtectedRoute>
-                <CVList />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Route 404 - Page non trouvée */}
-          <Route 
-            path="*" 
-            element={<NotFound />} 
-          />
-        </Routes>
-      </Layout>
     </Router>
   );
 };

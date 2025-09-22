@@ -1,62 +1,59 @@
-// routes.js - Définition des chemins de routes (version simplifiée)
+// routes.js - Constantes des chemins de routes
 export const ROUTES = {
-  // Routes publiques
-  
-  // HOME: '/',
-  
-  // Routes unite
+  // Page de connexion
   LOGIN: '/',
-
-  LISTE_ANNONCES: '/liste-annonces',
-  DETAILS_ANNONCE: '/details-annonce/:idAnnonce',
-  FICHE_CANDIDAT: '/fiche-candidat/:idCandidat',
-
-  PARAMETRES: '/back-office/parametres',
-
-  CREATE_ANNONCE: '/back-office/createAnnonce',
-  UPDATE_ANNONCE: '/back-office/updateAnnonce',
-  CREATE_QCM: '/back-office/createQCM/:id',
-  DETAIL_QCM: '/back-office/detailQCM/:id',
-  HISTORIQUE: '/back-office/historique',
-  // Routes principales
+  
+  // Routes publiques
   HOME: '/home',
-  CV: '/cv',
-  CV_LIST: '/cv-list',
+  
+  // Routes Back-Office Unite
+  LISTE_ANNONCES: '/back-office/liste-annonces',
+  DETAILS_ANNONCE: '/back-office/details-annonce/:idAnnonce',
+  FICHE_CANDIDAT: '/back-office/fiche-candidat/:idCandidat',
+  PARAMETRES: '/back-office/parametres',
+  CREATE_ANNONCE: '/back-office/create-annonce',
+  UPDATE_ANNONCE: '/back-office/update-annonce',
+  CREATE_QCM: '/back-office/create-qcm/:id',
+  DETAIL_QCM: '/back-office/detail-qcm/:id',
+  HISTORIQUE: '/back-office/historique',
+  
+  // Routes RH
+  RH_LOGIN: '/rh/login',
+  RH_CALENDRIER: '/rh/calendrier',
+  RH_SUGGESTIONS: '/rh/suggestions',
+  RH_CEO_SUGGESTIONS: '/rh/ceo-suggestions',
+  RH_FORM_ANNONCE: '/rh/form-annonce',
+  
+  // Routes publiques candidats
+  CV_PUBLIC: '/public/cv',
+  CV_LIST_PUBLIC: '/public/cv-list',
 };
 
 // Métadonnées des routes pour la navigation
 export const ROUTE_METADATA = {
   [ROUTES.HOME]: {
     title: 'Accueil',
-    icon: 'home',
-    showInNav: true,
-    requiresAuth: false
+    requiresAuth: false,
+    layout: true
   },
-  [ROUTES.CV]: {
-    title: 'CV Détail',
-    icon: 'assignment',
-    showInNav: true,
-    requiresAuth: false
+  [ROUTES.LISTE_ANNONCES]: {
+    title: 'Liste des annonces',
+    requiresAuth: true,
+    layout: true
   },
-  [ROUTES.CV_LIST]: {
-    title: 'Liste des CVs',
-    icon: 'list',
-    showInNav: true,
-    requiresAuth: false
+  [ROUTES.DETAILS_ANNONCE]: {
+    title: 'Détails de l\'annonce',
+    requiresAuth: true,
+    layout: true
+  },
+  [ROUTES.PARAMETRES]: {
+    title: 'Paramètres',
+    requiresAuth: true,
+    layout: true
+  },
+  [ROUTES.LOGIN]: {
+    title: 'Connexion',
+    requiresAuth: false,
+    layout: false
   }
-};
-
-// Helper pour obtenir le titre d'une route
-export const getRouteTitle = (path) => {
-  return ROUTE_METADATA[path]?.title || 'Page inconnue';
-};
-
-// Helper pour vérifier si une route doit être affichée dans la navigation
-export const shouldShowInNav = (path) => {
-  return ROUTE_METADATA[path]?.showInNav || false;
-};
-
-// Helper pour vérifier si une route nécessite une authentification
-export const requiresAuth = (path) => {
-  return ROUTE_METADATA[path]?.requiresAuth || false;
 };

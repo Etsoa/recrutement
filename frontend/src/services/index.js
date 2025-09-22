@@ -5,4 +5,5 @@ export { default as ficheCandidatService } from './ficheCandidatService';
 export { default as parametresService } from './parametresService';
 export { default as annoncesBackOfficeService } from './annoncesBackOfficeService';
 export { default as unitesService } from './unitesService';
+export { default as rhService } from './rhService';
 

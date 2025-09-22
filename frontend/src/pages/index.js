@@ -1,3 +1,4 @@
+// Pages publiques
 export { default as Home } from './Home';
 
 // Pages Unite (dans le sous-dossier unite/)
@@ -10,4 +11,11 @@ export { default as Historiques } from './unite/Historiques';
 export { default as Parametres } from './unite/Parametres';
 export { default as CreateAnnonce } from './unite/CreateAnnonce';
 export { default as QCM } from './unite/QCM';
+
+// Pages RH
+export { default as RhLoginRh } from './RhLoginRh';
+export { default as RhCalendrier } from './RhCalendrier';
+export { default as RhSuggestions } from './RhSuggestions';
+export { default as RhCeoSuggestions } from './RhCeoSuggestions';
+export { default as RhFormAnnonce } from './RhFormAnnonce';
 
