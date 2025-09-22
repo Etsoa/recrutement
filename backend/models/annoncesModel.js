@@ -56,16 +56,6 @@ const Annonce = db.define('Annonce', {
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
-  },
-  id_unite: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Unite,
-      key: 'id_unite'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
   }
 }, {
   tableName: 'annonces',

@@ -206,11 +206,6 @@ const RhSuggestions = () => {
           <h1 className="rh-suggestions__title">Suggestions des unités</h1>
           <p className="rh-suggestions__subtitle">Gérez les demandes d'entretien des unités</p>
         </div>
-        <form onSubmit={handleLogout}>
-          <Button type="submit">
-            Se Deconnecter
-          </Button>
-        </form>
 
         <div className="rh-suggestions__list">
           {suggestions.map((suggestion) => (

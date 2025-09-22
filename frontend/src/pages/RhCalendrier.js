@@ -298,12 +298,6 @@ const RhCalendar = () => {
           </div>
         </div>
 
-        <form onSubmit={handleLogout}>
-          <Button type="submit">
-            Se Deconnecter
-          </Button>
-        </form>
-
         {/* Calendrier principal */}
         <div className="calendar-main">
           {/* En-têtes des jours */}

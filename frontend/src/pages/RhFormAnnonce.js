@@ -117,11 +117,6 @@ const FormAnnonce = () => {
       <div className="form-annonce__container">
         <div className="form-annonce__header">
           <h1 className="form-annonce__title">Gestion des annonces</h1>
-          <div className="form-annonce__header-actions">
-            <Button onClick={handleLogout} type="button">
-              Se Déconnecter
-            </Button>
-          </div>
         </div>
 
         <div className="form-annonce__layout">

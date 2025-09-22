@@ -112,12 +112,6 @@ const SuggestionsPage = () => {
           <h1>Suggestions au CEO</h1>
           <p className="subtitle">Gestion des candidatures soumises au comite de direction</p>
         </div>
-        
-        <form onSubmit={handleLogout}>
-          <Button type="submit">
-            Se Deconnecter
-          </Button>
-        </form>
 
       </div>
 
