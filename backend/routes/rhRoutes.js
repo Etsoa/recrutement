@@ -50,4 +50,7 @@ router.post('/suggest/ceo', rhController.suggestToCeo);
 // liste suggestions
 router.get('/suggest/', rhController.getAllCeoSuggestions);
 
+// Ajouter le status d'une suggestion
+router.post('/suggestion/status', rhController.updateStatusSuggestion);
+
 module.exports = router;

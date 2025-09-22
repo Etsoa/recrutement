@@ -105,22 +105,35 @@ const RhSuggestions = () => {
     }
 
     try {
-      const resp = await rhService.createRhEntretien({
-        id_rh_suggestion: selectedSuggestion.id_rh_suggestion,
-        id_candidat: selectedSuggestion.candidat.id_candidat,
-        date_entretien: `${selectedDate} ${selectedTime}`,
-        duree: 60
-      });
+      let response;
+      // Si la suggestion a déjà un entretien planifié ou un statut
+      if (selectedSuggestion.entretien?.date_entretien || selectedSuggestion.status?.length > 0) {
+        response = await rhService.updateStatusSuggestion({
+          id_rh_suggestion: selectedSuggestion.id_rh_suggestion,
+          id_type_status_suggestion: 1, // Status "Validé"
+          date_entretien: `${selectedDate} ${selectedTime}`
+        });
+        alert("Entretien mis à jour avec succès!");
+      } else {
+        // Sinon créer un nouvel entretien
+        response = await rhService.createRhEntretien({
+          id_rh_suggestion: selectedSuggestion.id_rh_suggestion,
+          id_candidat: selectedSuggestion.candidat.id_candidat,
+          date_entretien: `${selectedDate} ${selectedTime}`,
+          duree: 60
+        });
+        alert("Nouvel entretien créé avec succès!");
+      }
 
-      if (resp.success) {
-        setMessage('Entretien planifié avec succès');
+      if (response.success) {
+        setMessage(response.message);
         setMessageType('success');
         setSelectedSuggestion(null);
         setDisponibilites([]);
         setSelectedTime('');
         fetchSuggestions();
       } else {
-        setMessage(resp.message || 'Erreur lors de la planification');
+        setMessage(response.message || 'Erreur lors de la planification');
         setMessageType('error');
       }
     } catch (err) {
@@ -269,15 +282,18 @@ const RhSuggestions = () => {
 
               <div className="rh-suggestions__item-actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                 <Button variant="success" onClick={() => handleDisponibilites(suggestion)}>
-                  Confirmer
+                  Valider
                 </Button>
                 <Button variant="danger" onClick={async () => {
                   await rhService.updateStatusSuggestion({
                     id_rh_suggestion: suggestion.id_rh_suggestion,
                     id_type_status_suggestion: 2 // Invalide
                   });
+                  alert("Suggestion refusée!");
+                  setMessage('Suggestion refusée');
+                  setMessageType('success');
                   fetchSuggestions();
-                }}>Annuler</Button>
+                }}>Ne pas valider</Button>
               </div>
             </div>
           ))}
@@ -309,10 +325,19 @@ const RhSuggestions = () => {
                 </select>
               </div>
               <div className="rh-suggestions__modal-actions">
-                <Button variant="success" onClick={handleConfirmEntretien}>
+                <Button variant="success" onClick={() => {
+                  handleConfirmEntretien();
+                  setMessage('Entretien validé et planifié avec succès');
+                  setMessageType('success');
+                }}>
                   Confirmer
                 </Button>
-                <Button variant="secondary" onClick={() => setSelectedSuggestion(null)}>
+                <Button variant="secondary" onClick={() => {
+                  setSelectedSuggestion(null);
+                  setMessage('Planification annulée');
+                  setMessageType('info');
+                  alert("Planification annulée!");
+                }}>
                   Annuler
                 </Button>
               </div>

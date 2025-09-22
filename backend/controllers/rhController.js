@@ -390,3 +390,31 @@ exports.getFormAnnonceData = async (req, res) => {
     });
   }
 };
+
+exports.updateStatusSuggestion = async (req, res) => {
+  try {
+    const { id_rh_suggestion, id_type_status_suggestion } = req.body;
+    
+    if (!id_rh_suggestion || !id_type_status_suggestion) {
+      return res.status(400).json({ 
+        message: 'id_rh_suggestion et id_type_status_suggestion sont requis', 
+        success: false 
+      });
+    }
+
+    const status = await rhService.createStatusSuggestion({
+      id_rh_suggestion,
+      id_type_status_suggestion,
+      date_changement: new Date()
+    });
+
+    res.json({
+      message: 'Statut de la suggestion mis à jour avec succès',
+      data: status,
+      success: true
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur: ' + err.message, success: false });
+  }
+};
