@@ -1,10 +1,10 @@
 // routes.js - Constantes des chemins de routes
 export const ROUTES = {
   // Page de connexion
-  LOGIN: '/',
+  LOGIN_UNITES: '/login-unites',
   
   // Routes publiques
-  HOME: '/home',
+  HOME: '/',
   
   // Routes Back-Office Unite
   LISTE_ANNONCES: '/back-office/liste-annonces',
