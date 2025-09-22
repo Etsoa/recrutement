@@ -45,8 +45,16 @@ function CreateAnnonce() {
 
   const handleAnnonce = async () => {
     try {
-      if (!genre || postes === 0 || villes === 0) {
+      if (!genre) {
         alert("Veuillez sélectionner un genre.");
+        return;
+      }
+      if (postes === 0) {
+        alert("Veuillez sélectionner un poste.");
+        return;
+      }
+      if (villes === 0) {
+        alert("Veuillez sélectionner une ville.");
         return;
       }
       const data = {
