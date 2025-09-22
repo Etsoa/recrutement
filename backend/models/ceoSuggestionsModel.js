@@ -36,7 +36,7 @@ const CeoSuggestion = db.define('CeoSuggestion', {
     allowNull: false,
     references: {
       model: TypeStatusSuggestion,
-      key: 'id'
+      key: 'id_type_status_suggestion'
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
@@ -53,6 +53,6 @@ const CeoSuggestion = db.define('CeoSuggestion', {
 // Associations
 CeoSuggestion.belongsTo(RhEntretien, { foreignKey: 'id_rh_entretien' });
 CeoSuggestion.belongsTo(Candidat, { foreignKey: 'id_candidat' });
-CeoSuggestion.belongsTo(TypeStatusSuggestion, { foreignKey: 'id_type_status_suggestion' });
+CeoSuggestion.belongsTo(TypeStatusSuggestion , { foreignKey: 'id_type_status_suggestion' });
 
 module.exports = CeoSuggestion;
