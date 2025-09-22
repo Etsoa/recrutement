@@ -99,6 +99,43 @@ function CreateAnnonce() {
           <h2>Nombre candidats dans la tranche demandée</h2>
           <p>{parametrages.byAgeRange}</p>
         </div>
+
+        <div>
+          <h1>Nombre de candidats:</h1>
+          <h2>Par niveau</h2>
+          <ul>
+            {parametrages.byNiveau &&
+              parametrages.byNiveau.map((item, index) => (
+                <li key={index}>
+                  {item.niveau} : {item.nbr_candidats}
+                </li>
+              ))
+            }
+          </ul>
+
+          <h2>Par tranche d'expérience</h2>
+          <ul>
+            {parametrages.byExperience &&
+              parametrages.byExperience.map((item, index) => (
+                <li key={index}>
+                  {item.tranche_experience} : {item.nbr_candidats}
+                </li>
+              ))
+            }
+          </ul>
+
+          <h2>Par nombre de langues</h2>
+          <ul>
+            {parametrages.byLangue &&
+              Object.entries(parametrages.byLangue).map(([key, value], index) => (
+                <li key={index}>
+                  {key} : {value}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
       </main>
 
     </div>

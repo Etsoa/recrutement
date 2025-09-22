@@ -1,5 +1,6 @@
 // ===== SERVICES IMPORTS =====
 const viewCandidatsService = require('../services/unite/viewCandidatsService');
+const viewCandidatsDetailsService = require('../services/unite/candidatsDetailsService');
 
 // ===== CONTROLLERS =====
 exports.getAllStats = async (req, res) => {
@@ -14,7 +15,9 @@ exports.getAllStats = async (req, res) => {
     const byVilles = await viewCandidatsService.countByVille();
     const byGenre = await viewCandidatsService.countByGenre();
     const byAgeRange = await viewCandidatsService.countByAgeTranche(age1, age2);
-    // const byLangues = await viewCandidatsService.countByLangues(langue);
+     const byLangues = await viewCandidatsDetailsService.countByLangues();
+    const byN = await viewCandidatsDetailsService.countByNiveau();
+    const byE = await viewCandidatsDetailsService.countByExperience();
     age_min = age_min ?? 0;
     age_max = age_max ?? 0;
     age_moyen = age_moyen ?? 0;
@@ -24,8 +27,9 @@ exports.getAllStats = async (req, res) => {
       age_moyen,
       byVilles: byVilles || [],
       byGenre: byGenre || [],
-      byAgeRange: byAgeRange ?? 0
-      // byLangues: byLangues || []
+      byLangue: byLangues || [],
+      byNiveau: byN || [],
+      byExperience: byE || []
     };
     res.json({
       message: 'Statistique récupérée avec succès',
@@ -52,7 +56,9 @@ exports.getAllStats2 = async (req, res) => {
     let age_moyen = await viewCandidatsService.getAgeMoyen();
     const byVilles = await viewCandidatsService.countByVille();
     const byGenre = await viewCandidatsService.countByGenre();
-    const byLangue = await viewCandidatsService.countByLangues();
+    const byLangues = await viewCandidatsDetailsService.countByLangues();
+    const byN = await viewCandidatsDetailsService.countByNiveau();
+    const byE = await viewCandidatsDetailsService.countByExperience();
     age_min = age_min ?? 0;
     age_max = age_max ?? 0;
     age_moyen = age_moyen ?? 0;
@@ -62,7 +68,9 @@ exports.getAllStats2 = async (req, res) => {
       age_moyen,
       byVilles: byVilles || [],
       byGenre: byGenre || [],
-      byLangue: byLangue || []
+      byLangue: byLangues || [],
+      byNiveau: byN || [],
+      byExperience: byE || []
     };
     res.json({
       message: 'Statistique récupérée avec succès',

@@ -88,3 +88,52 @@ JOIN qcm_annonces qa ON qa.id_annonce = a.id_annonce
 JOIN question_qcms q ON q.id_question_qcm = qa.id_question_qcm
 LEFT JOIN reponse_qcms r ON r.id_question_qcm = q.id_question_qcm
 ORDER BY a.id_annonce, q.id_question_qcm, r.id_reponse_qcm;
+
+
+-- new 
+CREATE OR REPLACE VIEW view_candidats_details AS
+SELECT 
+    c.id_candidat,
+    c.id_annonce,
+    t.id_tiers,
+    t.nom,
+    t.prenom,
+    t.date_naissance,
+    EXTRACT(YEAR FROM AGE(NOW(), t.date_naissance)) AS age,
+    t.id_genre,
+    t.id_ville,
+    lt.id_langue,
+    et.id_domaine,
+    n.valeur AS niveau,
+    EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) AS experience_annees
+FROM candidats c
+LEFT JOIN tiers t ON c.id_tiers = t.id_tiers
+LEFT JOIN langue_tiers lt ON t.id_tiers = lt.id_tiers
+LEFT JOIN experience_tiers et ON t.id_tiers = et.id_tiers
+LEFT JOIN niveau_filiere_tiers nft ON t.id_tiers = nft.id_tiers
+LEFT JOIN niveaux n ON nft.id_niveau = n.id_niveau;
+
+
+CREATE OR REPLACE VIEW v_candidats AS
+SELECT
+    c.id_candidat,
+    t.id_tiers,
+    t.nom,
+    t.prenom,
+    t.date_naissance,
+    EXTRACT(YEAR FROM AGE(t.date_naissance)) AS age,
+    g.valeur AS genre,
+    sm.valeur AS situation_matrimoniale,
+    t.nombre_enfants,
+    t.contact,
+    t.email,
+    t.cin,
+    v.valeur AS ville,
+    t.photo,
+    c.cv,
+    c.id_annonce
+FROM candidats c
+JOIN tiers t ON c.id_tiers = t.id_tiers
+LEFT JOIN genres g ON t.id_genre = g.id_genre
+LEFT JOIN situation_matrimoniales sm ON t.id_situation_matrimoniale = sm.id_situation
+LEFT JOIN villes v ON t.id_ville = v.id_ville;
