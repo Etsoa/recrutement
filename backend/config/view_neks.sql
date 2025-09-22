@@ -19,7 +19,7 @@ JOIN unites u ON p.id_unite = u.id_unite
 WHERE 
 u.nom = 'Direction Generale';
 
-// Lava lesy ity vue iray ity
+-- Lava lesy ity vue iray ity
 CREATE OR REPLACE VIEW vue_ceo_employes AS
 SELECT 
        e.id_employe,

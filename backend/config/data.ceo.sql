@@ -37,5 +37,5 @@ RETURNING id_ceo_suggestion;
 
 -- WARNING !!!
 INSERT INTO status_ceo_suggestions (id_ceo_suggestion, id_type_status_suggestion, date_changement)
-VALUES (2, 1, '2025-09-20');
+VALUES (1, 3, '2025-09-20');
 -- Mety mipoaka ito iray ito arakarak'le data sy niseho tam'le id

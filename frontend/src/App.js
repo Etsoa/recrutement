@@ -15,9 +15,9 @@ function App() {
         <Route path="/historique" element={<Historiques />} />
         <Route path="/back-office" element={<Unites />} />
         
-        // Tsisy header sy footer et tout le tralala
+        {/* Tsisy header sy footer et tout le tralala */}
         <Route path="/login-ceo" element={<LoginCeo />} /> 
-        // Mbola mila asiana page manokana fa juste hoe component aloha eto fa maika
+         {/* Mbola mila asiana page manokana fa juste hoe component aloha eto fa maika */}
         <Route path="/ceo-emp-list" element={<EmployeCEOList />} /> 
         <Route path="/ceo-sugg-table" element={<SuggestionTable />} /> 
         <Route path="/emp-contrat-list" element={<EmpContratEssaiList />} />
