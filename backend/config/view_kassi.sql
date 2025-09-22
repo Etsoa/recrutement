@@ -15,6 +15,16 @@ LEFT JOIN postes p ON a.id_poste = p.id_poste
 LEFT JOIN unites u ON p.id_unite = u.id_unite;
 
 CREATE OR REPLACE VIEW vue_annonces_complete AS
+WITH sa_recent AS (
+    SELECT sa.*
+    FROM status_annonce sa
+    JOIN (
+        SELECT id_annonce, MAX(date_changement) AS max_date
+        FROM status_annonce
+        GROUP BY id_annonce
+    ) latest ON sa.id_annonce = latest.id_annonce 
+            AND sa.date_changement = latest.max_date
+)
 SELECT 
     a.id_annonce,
     p.valeur AS poste,
@@ -37,7 +47,7 @@ FROM annonces a
 LEFT JOIN postes p ON p.id_poste = a.id_poste
 LEFT JOIN villes v ON v.id_ville = a.id_ville
 LEFT JOIN genres g ON g.id_genre = a.id_genre
-LEFT JOIN status_annonce sa ON sa.id_annonce = a.id_annonce
+LEFT JOIN sa_recent sa ON sa.id_annonce = a.id_annonce
 LEFT JOIN type_status_annonces tsa ON tsa.id_type_status = sa.id_type_status_annonce
 LEFT JOIN unites u ON u.id_unite = sa.id_unite
 LEFT JOIN niveau_filiere_annonces nfa ON nfa.id_annonce = a.id_annonce
