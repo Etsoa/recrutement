@@ -1,6 +1,3 @@
--- DONNÉES INITIALES POUR GESTION ENTREPRISE
--- ===============================================
-
 -- Genres
 INSERT INTO genres (valeur) VALUES ('Homme');
 INSERT INTO genres (valeur) VALUES ('Femme');
@@ -327,7 +324,7 @@ INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (3, 1, 'cv_jean_rabe.pdf
 INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (3, 3, 'cv_jean_rabe_2.pdf');
 INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (4, 3, 'cv_paul_andry.pdf');
 
--- LANGUES POUR TOUS LES CANDIDATS (différentes des annonces)
+-- LANGUES POUR TOUS LES CANDIDATS
 INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (1, 1); -- Jean Rakoto - Malgache
 INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (1, 2); -- Jean Rakoto - Français
 INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (1, 4); -- Jean Rakoto - Espagnol (différent des annonces)
@@ -342,7 +339,7 @@ INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (4, 1); -- Paul Andry - Ma
 INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (4, 2); -- Paul Andry - Français
 INSERT INTO langue_tiers (id_tiers, id_langue) VALUES (4, 3); -- Paul Andry - Anglais
 
--- QUALITES POUR TOUS LES CANDIDATS (différentes des annonces)
+-- QUALITES POUR TOUS LES CANDIDATS
 INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (1, 5); -- Jean Rakoto - Créatif (différent des annonces)
 INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (1, 8); -- Jean Rakoto - Flexible
 INSERT INTO qualite_tiers (id_tiers, id_qualite) VALUES (1, 3); -- Jean Rakoto - Autonome
@@ -369,7 +366,7 @@ INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES
 INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (4, 9, '2010-01-01', '2018-01-01'); -- Paul Andry - Transport (différent)
 INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES (4, 1, '2018-06-01', '2023-12-31'); -- Paul Andry - Hôpital (différent)
 
--- NIVEAUX/FILIERES POUR TOUS LES CANDIDATS (différents des annonces)
+-- NIVEAUX/FILIERES POUR TOUS LES CANDIDATS
 INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (1, 2, 2); -- Jean Rakoto - BAC Série C (niveau plus bas)
 INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (1, 3, 12); -- Jean Rakoto - Licence Agronomie (filière différente)
 
@@ -440,6 +437,133 @@ INSERT INTO jours_feries (date_ferie, description) VALUES
 INSERT INTO horaires_ouvres (heure_debut, heure_fin) VALUES
 ('08:00', '12:00'),
 ('13:00', '16:00');
+
+WITH new_mail AS (
+  INSERT INTO mails (objet, signature)
+  VALUES (
+    'Envoi de QCM pour votre recrutement auprès de notre annonce',
+    'Axiom — Service Recrutement'
+  )
+  RETURNING id_mail
+)
+INSERT INTO corps_mails (id_mail, corps)
+SELECT id_mail, $$
+Madame, Monsieur,
+
+Au nom de l'entreprise Axiom, nous vous remercions pour l'intérêt porté à notre offre et pour votre candidature. Nous vous souhaitons la bienvenue dans la première étape de notre processus de recrutement.
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+Veuillez compléter le questionnaire (QCM) prévu dans le cadre du processus de recrutement. Le lien vers le QCM vous sera communiqué séparément par notre service ; merci de suivre attentivement les instructions et de remplir l'ensemble des sections demandées pour que votre dossier soit pris en compte.
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+Règles du QCM :
+- Entrez le token qui vous sera communiqué par notre équipe avant de démarrer le QCM.
+- Ne quittez pas la page durant la passation : toute déconnexion ou fermeture de la session entraînera l’attribution d’un score de 0 pour cette tentative.
+- Certaines questions acceptent plusieurs réponses : lisez attentivement les consignes de chaque question.
+- Si vous obtenez la note minimale requise, vous recevrez ensuite un courriel de confirmation contenant les informations pour un entretien technique.
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+Nous vous remercions pour votre participation et pour le temps consacré à ce test. Pour toute question, n'hésitez pas à contacter le service recrutement d'Axiom.
+
+Cordialement,
+Axiom — Service Recrutement
+$$ FROM new_mail;
+
+
+WITH new_mail AS (
+  INSERT INTO mails (objet, signature)
+  VALUES (
+    'Entretien avec unité au sein de l''entreprise Axiom',
+    'Axiom — Service Recrutement'
+  )
+  RETURNING id_mail
+)
+INSERT INTO corps_mails (id_mail, corps)
+SELECT id_mail, $$
+Félicitations !
+
+Vous êtes accédé(e) à l'étape suivante de notre processus de recrutement. Vous avez obtenu au QCM le score de : {{score}}.
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+Vous allez, dans le cadre de cette candidature, rencontrer l'unité en charge du poste pour un entretien technique qui se tiendra le {{date_entretien}} à {{heure}} dans les locaux de {{unite}}.
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+Veuillez ne pas être en retard, portez une tenue correcte et présentez-vous préparé(e) (CV à jour, pièces demandées, éventuellement supports pertinents).
+$$ FROM new_mail
+UNION ALL
+SELECT id_mail, $$
+En cas de nécessité de report, nous vous contacterons par e-mail pour proposer une nouvelle date. Merci de vérifier régulièrement votre boîte de réception (y compris le dossier spam).
+$$ FROM new_mail;
+-- 🔹 Tiers employé
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES ('Rakoto', 'Jean', '1990-01-01', 1, 1, 0, '0341234567', 'jean.rakoto@email.com', 'AA123456', 1, 'photo.jpg')
+RETURNING id_tiers;
+
+-- 🔹 Employé
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
+VALUES (1, 1, 4)
+RETURNING id_employe;
+
+-- 🔹 Tiers candidat
+INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo)
+VALUES ('Andrian', 'Hery', '1992-05-12', 1, 1, 0, '0349876543', 'hery.andrian@email.com', 'BB654321', 2, 'photo2.jpg')
+RETURNING id_tiers;
+
+-- 🔹 Annonce
+INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre)
+VALUES (1, 2, 20, 40, 1)
+RETURNING id_annonce;
+
+-- 🔹 Candidat
+INSERT INTO candidats (id_tiers, id_annonce, cv)
+VALUES (2, 1, 'cv_hery.pdf')
+RETURNING id_candidat;
+
+-- 🔹 Entretien unité RH avec heure précise
+INSERT INTO unite_entretiens (id_candidat, id_unite, date_entretien, duree)
+VALUES (1, 2, '2025-09-25 09:30:00', 60)
+RETURNING id_unite_entretien;
+
+-- 🔹 Suggestion RH avec timestamp
+INSERT INTO rh_suggestions (id_unite_entretien, id_candidat, date_suggestion)
+VALUES (1, 1, '2025-09-18 10:00:00')
+RETURNING id_rh_suggestion;
+
+-- 🔹 Entretien RH avec timestamp
+INSERT INTO rh_entretiens (id_rh_suggestion, id_candidat, date_entretien, duree)
+VALUES (1, 1, '2025-09-19 14:00:00', 60)
+RETURNING id_rh_entretien;
+
+-- 🔹 Statut suggestion RH avec timestamp
+INSERT INTO status_rh_suggestions (id_rh_suggestion, id_type_status_suggestion, date_changement)
+VALUES (1, 1, '2025-09-18 15:00:00');
+
+-- 🔹 Suggestion CEO avec timestamp
+INSERT INTO ceo_suggestions (id_rh_entretien, id_candidat, id_type_status_suggestion, date_suggestion)
+VALUES (1, 1, 1, '2025-09-19 16:00:00')
+RETURNING id_ceo_suggestion;
+
+-- 🔹 Statut suggestion CEO avec timestamp
+INSERT INTO status_ceo_suggestions (id_ceo_suggestion, id_type_status_suggestion, date_changement)
+VALUES (1, 1, '2025-09-19 17:00:00');
+
+INSERT INTO jours_feries (date_ferie, description) VALUES
+('2025-01-01', 'Nouvel An'),
+('2025-05-01', 'Fête du Travail'),
+('2025-12-25', 'Noël');
+
+INSERT INTO horaires_ouvres (heure_debut, heure_fin) VALUES
+('08:00', '12:00'),
+('13:00', '16:00');
+
+-- ===============================================
+-- DONNÉES LOGIQUES - 4 TIERS SPÉCIFIQUES
+-- ===============================================
 
 -- 🔹 1. TIERS RH - Responsable des Ressources Humaines
 INSERT INTO tiers (nom, prenom, date_naissance, id_genre, id_situation_matrimoniale, nombre_enfants, contact, email, cin, id_ville, photo) 
@@ -549,6 +673,10 @@ INSERT INTO experience_tiers (id_tiers, id_domaine, date_debut, date_fin) VALUES
 -- Candidature pour poste Comptabilité (annonce 7 - unité Comptabilité)
 INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (8, 7, 'cv_miora_comptable_excellent.pdf');
 
+-- ===============================================
+-- ANNONCE SUPPLÉMENTAIRE POUR COMPTABILITÉ
+-- ===============================================
+
 -- Nouvelle annonce pour poste Comptable (unité Comptabilité = 3)
 INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre, id_unite) VALUES (8, 1, 25, 40, 2, 3); -- Poste 8 = Comptable, Unité 3 = Comptabilité
 
@@ -579,27 +707,3 @@ INSERT INTO qcm_annonces (id_annonce, id_question_qcm) VALUES (11, 2); -- Questi
 
 -- Candidature du bon candidat à cette nouvelle annonce aussi
 INSERT INTO candidats (id_tiers, id_annonce, cv) VALUES (8, 11, 'cv_miora_nouvelle_annonce.pdf');
-
--- ===============================================
--- MAILS ET CORPS MAILS (EN DERNIER)
--- ===============================================
-
--- Mail pour QCM
-INSERT INTO mails (objet, signature) VALUES ('Envoi de QCM pour votre recrutement auprès de notre annonce', 'Axiom — Service Recrutement');
-
--- Corps du mail QCM (id_mail = 1)
-INSERT INTO corps_mails (id_mail, corps) VALUES 
-(1, 'Madame, Monsieur, Au nom de l''entreprise Axiom, nous vous remercions pour l''intérêt porté à notre offre et pour votre candidature. Nous vous souhaitons la bienvenue dans la première étape de notre processus de recrutement.'),
-(1, 'Veuillez compléter le questionnaire (QCM) prévu dans le cadre du processus de recrutement. Le lien vers le QCM vous sera communiqué séparément par notre service ; merci de suivre attentivement les instructions et de remplir l''ensemble des sections demandées pour que votre dossier soit pris en compte.'),
-(1, 'Règles du QCM : - Entrez le token qui vous sera communiqué par notre équipe avant de démarrer le QCM. - Ne quittez pas la page durant la passation : toute déconnexion ou fermeture de la session entraînera l''attribution d''un score de 0 pour cette tentative. - Certaines questions acceptent plusieurs réponses : lisez attentivement les consignes de chaque question. - Si vous obtenez la note minimale requise, vous recevrez ensuite un courriel de confirmation contenant les informations pour un entretien technique.'),
-(1, 'Nous vous remercions pour votre participation et pour le temps consacré à ce test. Pour toute question, n''hésitez pas à contacter le service recrutement d''Axiom. Cordialement, Axiom — Service Recrutement');
-
--- Mail pour entretien unité  
-INSERT INTO mails (objet, signature) VALUES ('Entretien avec unité au sein de l''entreprise Axiom', 'Axiom — Service Recrutement');
-
--- Corps du mail entretien (id_mail = 2)
-INSERT INTO corps_mails (id_mail, corps) VALUES 
-(2, 'Félicitations ! Vous êtes accédé(e) à l''étape suivante de notre processus de recrutement. Vous avez obtenu au QCM le score de : {{score}}.'),
-(2, 'Vous allez, dans le cadre de cette candidature, rencontrer l''unité en charge du poste pour un entretien technique qui se tiendra le {{date_entretien}} à {{heure}} dans les locaux de {{unite}}.'),
-(2, 'Veuillez ne pas être en retard, portez une tenue correcte et présentez-vous préparé(e) (CV à jour, pièces demandées, éventuellement supports pertinents).'),
-(2, 'En cas de nécessité de report, nous vous contacterons par e-mail pour proposer une nouvelle date. Merci de vérifier régulièrement votre boîte de réception (y compris le dossier spam).');
