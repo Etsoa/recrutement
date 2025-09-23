@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../router/routes';
-import '../styles/HeaderCeo.css';
+import '../styles/Header.css';
 
 const HeaderCeo = () => {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../router/routes';
+import { ROUTES } from '../../router/routes';
 
 const LoginCeo = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
