@@ -30,6 +30,7 @@ import {
   RhCeoSuggestions,
   RhFormAnnonce
 } from '../pages';
+import Home from '../pages/Home';
 
 import { ROUTES, ROUTE_METADATA } from './routes';
 
@@ -101,6 +102,32 @@ const AppRouter = () => {
         {/* Route 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Layout>
+        <Routes>
+          {/* Route d'accueil */}
+          <Route 
+            path="/" 
+            element={<Navigate to="/home" replace />} 
+          />
+          
+          {/* Page d'accueil */}
+          <Route 
+            path="/home" 
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } 
+          />
+          
+          
+          {/* Route 404 - Page non trouvée */}
+          <Route 
+            path="*" 
+            element={<NotFound />} 
+          />
+        </Routes>
+      </Layout>
     </Router>
   );
 };

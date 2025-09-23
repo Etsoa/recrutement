@@ -214,7 +214,6 @@ CREATE TABLE reponse_qcm_candidats (
     debut TIMESTAMP,
     fin TIMESTAMP,
     duree INTEGER,
-    reponse VARCHAR(255) NOT NULL,
     score INTEGER
 );
 

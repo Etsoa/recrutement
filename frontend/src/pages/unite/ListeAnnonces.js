@@ -14,13 +14,20 @@ const ListeAnnonces = () => {
   useEffect(() => {
     const fetchAnnonces = async () => {
       try {
+        console.log("Fetching annonces...");
         setLoading(true);
         const response = await annoncesService.getAllAnnonces();
-        // L'API retourne { message, data, success }
-        setAnnonces(response.data || []);
+        console.log("Response:", response);
+        
+        if (!response || !response.data) {
+          throw new Error('Données invalides reçues de l\'API');
+        }
+        
+        setAnnonces(response.data);
+        
       } catch (err) {
-        console.error('Erreur lors du chargement des annonces:', err);
-        setError('Erreur lors du chargement des annonces');
+        console.error('Erreur détaillée:', err);
+        setError(err.message || 'Erreur lors du chargement des annonces');
       } finally {
         setLoading(false);
       }
@@ -28,6 +35,9 @@ const ListeAnnonces = () => {
 
     fetchAnnonces();
   }, []);
+
+  // Pour debug
+  console.log("State:", { loading, error, annoncesCount: annonces.length });
 
   const handleVoirDossiers = (idAnnonce) => {
     navigate(`/back-office/details-annonce/${idAnnonce}`);

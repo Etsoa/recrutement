@@ -1,5 +1,6 @@
 // Pages publiques
 export { default as Home } from './Home';
+export { default as LoginCeo } from './LoginCeo';
 
 // Pages Unite (dans le sous-dossier unite/)
 export { default as LoginUnites } from './unite/loginUnites';

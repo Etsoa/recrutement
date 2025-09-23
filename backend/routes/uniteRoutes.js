@@ -67,7 +67,7 @@ router.post('/add/langues', uniteController.addLanguesAnnonce);
 router.post('/add/qualites', uniteController.addQualitesAnnonce);
 
 // table envoi qcm candidat(email)
-// router.post('/create/qcm_candidat', uniteController.createQcmCandidat);
+router.post('/create/qcm_candidat', uniteController.createQcmCandidat);
 
 // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
 router.post('/create/unite_entretien', uniteController.createUniteEntretien);
