@@ -134,4 +134,5 @@ export const shouldShowInNav = (path) => {
 };
 export const requiresAuth = (path) => {
   return ROUTE_METADATA[path]?.requiresAuth || false;
+  STATISTIQUES: '/back-office/statistiques',
 };

@@ -29,6 +29,7 @@ import {
   RhSuggestions,
   RhCeoSuggestions,
   RhFormAnnonce
+  Statistiques
 } from '../pages';
 import Home from '../pages/Home';
 
@@ -101,6 +102,18 @@ const AppRouter = () => {
 
         {/* Route 404 */}
         <Route path="*" element={<NotFound />} />
+        <Route path={ROUTES.LISTE_ANNONCES} element={<Layout><ListeAnnonces /></Layout>} />
+        <Route path={ROUTES.DETAILS_ANNONCE} element={<Layout><DetailsAnnonce /></Layout>} />
+        <Route path={ROUTES.FICHE_CANDIDAT} element={<Layout><FicheCandidat /></Layout>} />
+
+        <Route path={ROUTES.PARAMETRES} element={<Layout><Parametres /></Layout>} />
+
+        <Route path={ROUTES.CREATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
+        <Route path={ROUTES.UPDATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
+        <Route path={ROUTES.CREATE_QCM} element={<Layout><QCM /></Layout>} />
+        <Route path={ROUTES.DETAIL_QCM} element={<Layout><DetailQCM /></Layout>} />
+        <Route path={ROUTES.HISTORIQUE} element={<Layout><Historiques /></Layout>} />
+        <Route path={ROUTES.STATISTIQUES} element={<Layout><Statistiques /></Layout>} />
       </Routes>
       <Layout>
         <Routes>

@@ -9,6 +9,7 @@ const rhRoutes = require('./routes/rhRoutes');
 
 const ceoRoutes = require('./routes/ceoRoutes');
 
+const statRoutes = require('./routes/statRoutes ');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -21,6 +22,7 @@ app.use('/api/unite', uniteRoutes);
 app.use('/api/rh', rhRoutes);
 // app.use('/api/ceo', ceoRoutes);
 app.use('/api/ceo', ceoRoutes);
+app.use('/api/stat', statRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

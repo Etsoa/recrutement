@@ -32,6 +32,12 @@ const HeaderUnite = () => {
           >
             Annonces
           </Link>
+              <Link 
+            to={ROUTES.STATISTIQUES} 
+            className={`header__nav-item ${location.pathname === ROUTES.STATISTIQUES ? 'header__nav-item--active' : ''}`}
+          >
+            Statistique
+          </Link>
           <Link 
             to={ROUTES.UNITE_CALENDRIER} 
             className={`header__nav-item ${location.pathname === ROUTES.UNITE_CALENDRIER ? 'header__nav-item--active' : ''}`}

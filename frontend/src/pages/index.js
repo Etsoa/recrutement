@@ -23,4 +23,5 @@ export { default as RhCalendrier } from './RhCalendrier';
 export { default as RhSuggestions } from './RhSuggestions';
 export { default as RhCeoSuggestions } from './RhCeoSuggestions';
 export { default as RhFormAnnonce } from './RhFormAnnonce';
+export { default as Statistiques } from './unite/Statistiques';
 
