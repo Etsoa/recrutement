@@ -7,17 +7,29 @@ import '../styles/Home.css';
 function Home() {
   const navigate = useNavigate();
 
+  const handleVoirAnnonces = () => {
+    navigate('/annonces');
+  };
+
   return (
     <Container>
       <Section className="hero-section">
         <div className="hero-content">
           <h1 className="hero-title">
-            App de Recrutement
+            Bienvenue sur Axiom Recrutement
           </h1>
           <p className="hero-subtitle">
-            Connectons les talents aux opportunités. Notre plateforme moderne facilite 
-            la rencontre entre candidats qualifiés et entreprises d'exception.
+            Découvrez nos offres d'emploi et postulez en quelques clics.
           </p>
+          <div className="hero-actions">
+            <Button 
+              variant="primary"
+              size="lg"
+              onClick={handleVoirAnnonces}
+            >
+              Voir les offres d'emploi
+            </Button>
+          </div>
         </div>
       </Section>
     </Container>

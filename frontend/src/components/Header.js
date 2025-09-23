@@ -24,7 +24,7 @@ const Header = () => {
           >
             Offres d'emploi
           </Link>
-          <Link 
+          {/* <Link 
             to={ROUTES.CV_LIST} 
             className={`header__nav-item ${location.pathname === ROUTES.CV_LIST ? 'header__nav-item--active' : ''}`}
           >
@@ -41,14 +41,14 @@ const Header = () => {
             className={`header__nav-item ${location.pathname.startsWith('/qcm') ? 'header__nav-item--active' : ''}`}
           >
             QCM Test
-          </Link>
+          </Link> */}
         </nav>
         
-        <div className="header__actions">
+        {/* <div className="header__actions">
           <button className="btn btn--ghost">
             Profil
           </button>
-        </div>
+        </div> */}
       </div>
     </header>
   );

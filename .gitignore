@@ -72,3 +72,8 @@ frontend/package.json
 backend/package.json
 frontend/.env
 backend/.env
+
+# Upload files
+backend/uploads/photos/
+backend/uploads/cv/
+backend/uploads/

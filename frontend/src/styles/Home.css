@@ -60,6 +60,9 @@
   align-items: center;
   flex-wrap: wrap;
   margin-top: var(--spacing-xl);
+  animation: fadeInUp 0.8s ease-out;
+  animation-delay: 0.3s;
+  animation-fill-mode: both;
 }
 
 /* Responsive Design */
