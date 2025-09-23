@@ -125,13 +125,23 @@ export const unitesService = {
     }
   },
 
-  // Créer un score pour un entretien
-  createScoreUniteEntretien: async (idEntretien, score) => {
+  // Créer un score pour un entretien (méthode compatible avec RH)
+  createScoreUniteEntretien: async (data, score = null) => {
     try {
-      const response = await api.post(UNITES_ENDPOINTS.CREATE_SCORE_ENTRETIEN, {
-        id_unite_entretien: idEntretien,
-        score: score
-      });
+      // Accepte soit (id, score) soit un objet complet
+      let payload;
+      if (typeof data === 'object' && data.id_unite_entretien) {
+        payload = data;
+      } else {
+        // Pour compatibilité avec l'ancien format
+        payload = {
+          id_unite_entretien: data,
+          score: score,
+          date_score: new Date().toISOString()
+        };
+      }
+      
+      const response = await api.post(UNITES_ENDPOINTS.CREATE_SCORE_ENTRETIEN, payload);
       return response;
     } catch (error) {
       console.error('Erreur lors de la création du score:', error);
@@ -141,13 +151,21 @@ export const unitesService = {
 
   // ===== NOUVELLES MÉTHODES POUR SUGGESTIONS =====
 
-  // Suggérer un candidat à la RH
-  suggestToRh: async (idUniteEntretien, idCandidat) => {
+  // Suggérer un candidat à la RH (méthode compatible avec RH)
+  suggestToRh: async (data, idCandidat = null) => {
     try {
-      const response = await api.post(UNITES_ENDPOINTS.SUGGEST_TO_RH, {
-        id_unite_entretien: idUniteEntretien,
-        id_candidat: idCandidat
-      });
+      // Accepte soit un objet soit (id_unite_entretien, id_candidat)
+      let payload;
+      if (typeof data === 'object' && data.id_unite_entretien) {
+        payload = data;
+      } else {
+        payload = {
+          id_unite_entretien: data,
+          id_candidat: idCandidat
+        };
+      }
+      
+      const response = await api.post(UNITES_ENDPOINTS.SUGGEST_TO_RH, payload);
       return response;
     } catch (error) {
       console.error('Erreur lors de la suggestion à la RH:', error);

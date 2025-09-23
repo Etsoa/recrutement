@@ -8,6 +8,7 @@
 .fiche-candidat__header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-lg);
   margin-bottom: var(--spacing-2xl);
   flex-wrap: wrap;
@@ -20,6 +21,12 @@
   font-weight: var(--font-weight-bold);
   margin: 0;
   flex: 1;
+}
+
+.fiche-candidat__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
 }
 
 /* Profil candidat */

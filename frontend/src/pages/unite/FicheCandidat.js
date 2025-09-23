@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import Layout, { Container, Section, Grid } from '../../components/LayoutUnite';
 import Button from '../../components/Button';
 import { ficheCandidatService, annoncesService } from '../../services';
@@ -12,6 +14,64 @@ const FicheCandidat = () => {
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState({});
   const navigate = useNavigate();
+  const ficheRef = useRef(null);
+
+  // Fonction pour exporter en PDF
+  const exportToPDF = async () => {
+    try {
+      setActionLoading(prev => ({ ...prev, pdf: true }));
+      
+      if (ficheRef.current) {
+        // Créer un canvas à partir de l'élément
+        const canvas = await html2canvas(ficheRef.current, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          height: ficheRef.current.scrollHeight,
+          width: ficheRef.current.scrollWidth
+        });
+
+        // Créer le PDF
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+
+        const imgWidth = 210;
+        const pageHeight = 295;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+
+        let position = 0;
+
+        // Ajouter la première page
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        // Ajouter des pages supplémentaires si nécessaire
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        // Télécharger le PDF
+        const candidatName = candidatData?.candidat?.nom || 'candidat';
+        const candidatPrenom = candidatData?.candidat?.prenoms || '';
+        const fileName = `Fiche_${candidatName}_${candidatPrenom}_${new Date().getTime()}.pdf`;
+        
+        pdf.save(fileName);
+      }
+    } catch (err) {
+      console.error('Erreur lors de l\'export PDF:', err);
+      alert('Erreur lors de l\'export PDF');
+    } finally {
+      setActionLoading(prev => ({ ...prev, pdf: false }));
+    }
+  };
 
   useEffect(() => {
     const fetchCandidatDetails = async () => {
@@ -129,13 +189,27 @@ const FicheCandidat = () => {
   return (
       <Container>
         <Section>
-          <div className="fiche-candidat">
+          <div className="fiche-candidat" ref={ficheRef}>
             {/* Header */}
             <div className="fiche-candidat__header">
               <Button variant="ghost" onClick={() => navigate(-1)}>
                 ← Retour
               </Button>
               <h1>Dossier Candidat</h1>
+              <div className="fiche-candidat__header-actions">
+                <Button 
+                  variant="outline" 
+                  onClick={exportToPDF}
+                  disabled={actionLoading.pdf}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                >
+                  {actionLoading.pdf ? (
+                    <>📄 Export en cours...</>
+                  ) : (
+                    <>📄 Exporter PDF</>
+                  )}
+                </Button>
+              </div>
             </div>
 
             {/* Informations personnelles */}

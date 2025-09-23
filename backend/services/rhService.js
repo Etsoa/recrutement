@@ -96,7 +96,8 @@ const getAllSuggests = async () => {
 
 const getAllAnnonces = async () => {
   try {
-    const annonces = await Annonces.findAll({
+    // D'abord récupérer toutes les annonces
+    const allAnnonces = await Annonces.findAll({
       include: [
         { model: Postes, as: 'Poste', include: [{ model: Unites, as: 'Unite', attributes: ['id_unite', 'nom'] }] },
         { model: Villes, as: 'Ville', attributes: ['id_ville', 'valeur'] },
@@ -112,7 +113,26 @@ const getAllAnnonces = async () => {
       ]
     });
 
-    return annonces;
+    // Filtrer pour ne garder que celles avec status = 1 (soumises par les unités)
+    const filteredAnnonces = [];
+    
+    for (const annonce of allAnnonces) {
+      // Récupérer le dernier statut de cette annonce
+      const lastStatus = await StatusAnnonces.findOne({
+        where: { id_annonce: annonce.id_annonce },
+        order: [['date_changement', 'DESC']],
+        limit: 1
+      });
+      
+      // Ne garder que si le dernier statut est 1 (soumise par unité)
+      if (lastStatus && lastStatus.id_type_status_annonce === 1) {
+        // Ajouter le statut à l'objet annonce
+        annonce.dataValues.currentStatus = lastStatus;
+        filteredAnnonces.push(annonce);
+      }
+    }
+
+    return filteredAnnonces;
   } catch (err) {
     console.error('Erreur getAllAnnonces:', err);
     throw err;
@@ -135,6 +155,26 @@ const updateAnnonceStatus = async ({ id_annonce, id_type_status_annonce, id_unit
     return status;
   } catch (err) {
     console.error('Erreur lors de la mise à jour du statut de l\'annonce:', err);
+    throw err;
+  }
+};
+
+// Créer une annonce RH avec statut = 2 (validée par RH)
+const createAnnonceRh = async (annonceData) => {
+  try {
+    // Créer l'annonce
+    const newAnnonce = await Annonces.create(annonceData);
+    
+    // Créer automatiquement le statut = 2 (validée par RH)
+    await StatusAnnonces.create({
+      id_annonce: newAnnonce.id_annonce,
+      id_type_status_annonce: 2, // Validée par RH
+      date_changement: new Date()
+    });
+    
+    return newAnnonce;
+  } catch (err) {
+    console.error('Erreur lors de la création de l\'annonce RH:', err);
     throw err;
   }
 };
@@ -469,7 +509,8 @@ module.exports = {
   suggestToCeo,
   getAllCeoSuggestions,
   getAllAnnonces,
-  updateAnnonceStatus, 
+  updateAnnonceStatus,
+  createAnnonceRh, 
   getJoursFeries, 
   getHorairesOuvres
 };

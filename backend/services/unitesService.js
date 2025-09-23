@@ -400,21 +400,19 @@ const suggestToRh = async ({ id_unite_entretien, id_candidat }) => {
  */
 const getAllRhSuggestions = async (id_unite = null) => {
   try {
-    let whereCondition = {};
-    
     const suggestions = await RhSuggestionsModel.findAll({
       include: [
         {
           model: UniteEntretiens,
-          as: 'UniteEntretien',
+          as: 'entretien',
           where: id_unite ? { id_unite } : {},
           include: [
-            { model: Unites, as: 'Unite', attributes: ['nom'] }
+            { model: Unites, as: 'unite', attributes: ['nom'] }
           ]
         },
         {
           model: Candidats,
-          as: 'Candidat',
+          as: 'candidat',
           include: [
             {
               model: Tiers,

@@ -651,7 +651,8 @@ exports.getAllUniteEntretiensParJour = async (req, res) => {
       return res.status(400).json({ message: 'Jour manquant', data: null, success: false });
     }
 
-    const entretiens = await uniteEntretiensService.getEntretiensParJour(day);
+    const id_unite = req.user?.id_unite || req.query.id_unite;
+    const entretiens = await uniteMainService.getEntretiensParJour(day, id_unite);
     res.json({ message: 'Entretiens récupérés', data: entretiens, success: true });
   } catch (err) {
     console.error(err);

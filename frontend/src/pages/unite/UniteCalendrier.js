@@ -4,532 +4,475 @@ import '../../styles/RhCalendrier.css';
 import { Button } from '../../components';
 
 const UniteCalendrier = () => {
-  // ===== ÉTAT LOCAL =====
   const [currentDate, setCurrentDate] = useState(new Date());
   const [entretiens, setEntretiens] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [entretiensParJour, setEntretiensParJour] = useState([]);
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  // ===== CONSTANTES =====
   const monthNames = [
     'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
     'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
   ];
 
-  const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+  const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
-  // ===== EFFETS =====
   useEffect(() => {
-    fetchEntretiensMois();
+    fetchEntretiensMois(currentDate);
   }, [currentDate]);
 
-  // ===== FONCTIONS UTILITAIRES =====
-  const formatDateKey = (date) => {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  };
-
-  const formatDateTime = (dateString) => {
-    if (!dateString) return 'Non disponible';
-    const date = new Date(dateString);
-    return date.toLocaleString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const formatTime = (dateString) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('fr-FR', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const showMessage = (msg, type = 'info') => {
-    setMessage(msg);
-    setMessageType(type);
-    setTimeout(() => {
-      setMessage('');
-      setMessageType('');
-    }, 5000);
-  };
-
-  // ===== APPELS API =====
-  const fetchEntretiensMois = async () => {
-    setLoading(true);
+  // API calls
+  const fetchEntretiensMois = async (monthDate) => {
     try {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
       const start = new Date(year, month, 1).toISOString().split('T')[0];
       const end = new Date(year, month + 1, 0).toISOString().split('T')[0];
 
       const data = await unitesService.getEntretiensParMois(start, end);
       
-      if (data && data.success) {
-        setEntretiens(data.data || []);
+      if (data.success) {
+        setEntretiens(data.data);
       } else {
         setEntretiens([]);
-        showMessage('Aucun entretien trouvé pour ce mois', 'info');
+        setMessage('Pas d\'entretiens pour ce mois');
       }
     } catch (err) {
-      console.error('Erreur lors de la récupération des entretiens:', err);
-      setEntretiens([]);
-      showMessage('Erreur lors du chargement des entretiens', 'error');
-    } finally {
-      setLoading(false);
+      console.error(err);
+      setMessage('Erreur serveur');
     }
   };
 
-  const fetchEntretiensParJour = async (dateStr) => {
-    setLoading(true);
+  const handleSelectDate = async (day) => {
+    setSelectedDate(day);
+    const dayStr = `${day.getFullYear()}-${String(day.getMonth()+1).padStart(2,'0')}-${String(day.getDate()).padStart(2,'0')}`;
+
     try {
-      const data = await unitesService.getEntretiensParJour(dateStr);
-      if (data && data.success) {
-        setEntretiensParJour(data.data || []);
+      const resp = await unitesService.getEntretiensParJour(dayStr);
+      
+      if (resp.success && resp.data) {
+        const filtered = resp.data.filter(e => {
+          const d = new Date(e.date_entretien);
+          return d.getFullYear() === day.getFullYear() &&
+                 d.getMonth() === day.getMonth() &&
+                 d.getDate() === day.getDate();
+        });
+        setEntretiensParJour(filtered);
       } else {
         setEntretiensParJour([]);
-        showMessage('Aucun entretien pour cette date', 'info');
       }
     } catch (err) {
-      console.error('Erreur lors de la récupération des entretiens du jour:', err);
+      console.error(err);
       setEntretiensParJour([]);
-      showMessage('Erreur lors du chargement', 'error');
-    } finally {
-      setLoading(false);
     }
   };
 
-  // ===== ACTIONS ENTRETIENS =====
-  const updateStatusEntretien = async (idEntretien, newStatus) => {
-    try {
-      const data = await unitesService.updateStatusUniteEntretien(idEntretien, newStatus);
-      if (data && data.success) {
-        showMessage('Statut mis à jour avec succès', 'success');
-        // Rafraîchir les données
-        if (selectedDate) {
-          fetchEntretiensParJour(formatDateKey(selectedDate));
-        }
-        fetchEntretiensMois();
-      } else {
-        showMessage(data.message || 'Erreur lors de la mise à jour', 'error');
-      }
-    } catch (err) {
-      console.error('Erreur:', err);
-      showMessage('Erreur serveur', 'error');
-    }
-  };
-
-  const createScore = async (idEntretien, score) => {
-    if (!score || score < 0 || score > 20) {
-      showMessage('Score invalide (0-20)', 'error');
-      return;
-    }
-
-    try {
-      const data = await unitesService.createScoreUniteEntretien(idEntretien, parseInt(score));
-      if (data && data.success) {
-        showMessage('Score ajouté avec succès', 'success');
-        if (selectedDate) {
-          fetchEntretiensParJour(formatDateKey(selectedDate));
-        }
-        fetchEntretiensMois();
-      } else {
-        showMessage(data.message || 'Erreur lors de l\'ajout du score', 'error');
-      }
-    } catch (err) {
-      console.error('Erreur:', err);
-      showMessage('Erreur serveur', 'error');
-    }
-  };
-
-  const suggestToRh = async (idUniteEntretien, idCandidat) => {
-    try {
-      const data = await unitesService.suggestToRh(idUniteEntretien, idCandidat);
-      if (data && data.success) {
-        showMessage('Suggestion envoyée à la RH avec succès', 'success');
-        if (selectedDate) {
-          fetchEntretiensParJour(formatDateKey(selectedDate));
-        }
-      } else {
-        showMessage(data.message || 'Erreur lors de la suggestion', 'error');
-      }
-    } catch (err) {
-      console.error('Erreur:', err);
-      showMessage('Erreur serveur', 'error');
-    }
-  };
-
-  // ===== NAVIGATION CALENDRIER =====
+  // Navigation
   const goToPreviousMonth = () => {
-    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1);
-    setCurrentDate(newDate);
-    setSelectedDate(null);
-    setEntretiensParJour([]);
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   };
 
   const goToNextMonth = () => {
-    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-    setCurrentDate(newDate);
-    setSelectedDate(null);
-    setEntretiensParJour([]);
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
   const goToToday = () => {
     setCurrentDate(new Date());
-    setSelectedDate(null);
-    setEntretiensParJour([]);
   };
 
-  // ===== GESTION SÉLECTION DATE =====
-  const handleDateClick = (date) => {
-    setSelectedDate(date);
-    fetchEntretiensParJour(formatDateKey(date));
-  };
-
-  // ===== GÉNÉRATION CALENDRIER =====
+  // Génération du calendrier
   const generateCalendarDays = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
-    const firstDayWeek = firstDayOfMonth.getDay(); // 0 = Dimanche
     const daysInMonth = lastDayOfMonth.getDate();
+    
+    // Ajustement pour que lundi soit le premier jour
+    let firstDayWeekday = firstDayOfMonth.getDay();
+    firstDayWeekday = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
     
     const days = [];
     
-    // Jours du mois précédent pour remplir la première semaine
+    // Jours du mois précédent
     const prevMonth = new Date(year, month - 1, 0);
-    for (let i = firstDayWeek - 1; i >= 0; i--) {
-      const date = new Date(year, month - 1, prevMonth.getDate() - i);
+    for (let i = firstDayWeekday - 1; i >= 0; i--) {
       days.push({
-        date,
+        date: new Date(year, month - 1, prevMonth.getDate() - i),
         isCurrentMonth: false,
-        entretiens: getEntretiensForDate(date)
+        isPrevMonth: true
       });
     }
     
     // Jours du mois actuel
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
       days.push({
-        date,
+        date: new Date(year, month, day),
         isCurrentMonth: true,
-        entretiens: getEntretiensForDate(date)
+        isPrevMonth: false
       });
     }
     
     // Jours du mois suivant pour compléter la grille
-    const totalCells = Math.ceil(days.length / 7) * 7;
-    for (let day = 1; days.length < totalCells; day++) {
-      const date = new Date(year, month + 1, day);
+    const remainingCells = 42 - days.length;
+    for (let day = 1; day <= remainingCells; day++) {
       days.push({
-        date,
+        date: new Date(year, month + 1, day),
         isCurrentMonth: false,
-        entretiens: getEntretiensForDate(date)
+        isPrevMonth: false
       });
     }
     
     return days;
   };
 
-  const getEntretiensForDate = (date) => {
-    const dateKey = formatDateKey(date);
-    return entretiens.filter(entretien => {
-      if (!entretien.date_entretien) return false;
-      const entretienDate = new Date(entretien.date_entretien);
-      return formatDateKey(entretienDate) === dateKey;
+  const hasEntretienOnDate = (date) => {
+    return entretiens.some(e => {
+      const entretienDate = new Date(e.date_entretien);
+      return entretienDate.toDateString() === date.toDateString();
     });
+  };
+
+  const getEntretiensCount = (date) => {
+    return entretiens.filter(e => {
+      const entretienDate = new Date(e.date_entretien);
+      return entretienDate.toDateString() === date.toDateString();
+    }).length;
   };
 
   const isToday = (date) => {
     const today = new Date();
-    return formatDateKey(date) === formatDateKey(today);
+    return date.toDateString() === today.toDateString();
   };
 
-  const isSelected = (date) => {
-    return selectedDate && formatDateKey(date) === formatDateKey(selectedDate);
-  };
-
-  // ===== RENDU =====
   const calendarDays = generateCalendarDays();
+
+  // États pour gestion des scores et suggestions
+  const [scores, setScores] = useState({});
+  const [sending, setSending] = useState(false);
+
+  const handleScoreChange = (id, value) => {
+    setScores(prev => ({ ...prev, [id]: value }));
+  };
+
+  const submitScore = async (id) => {
+    if (!scores[id]) return alert("Veuillez saisir un score !");
+    setSending(true);
+    const now = new Date();
+    const dateScore = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ` +
+                      `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+    try {
+      const resp = await unitesService.createScoreUniteEntretien({
+        id_unite_entretien: id,
+        score: Number(scores[id]),
+        date_score: dateScore
+      });
+      if (resp.success) {
+        setSelectedDate(null);
+        alert("Score enregistré avec succès !");
+      } else {
+        alert(resp.message || "Erreur serveur");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const suggestToRh = async (id_unite_entretien, id_candidat) => {
+    setSending(true);
+    try {
+      const resp = await unitesService.suggestToRh({ id_unite_entretien, id_candidat });
+      if (resp.success) {
+        alert("Suggestion envoyée à la RH !");
+      } else {
+        alert(resp.message || "Erreur serveur");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur serveur");
+    } finally {
+      setSending(false);
+    }
+  };
 
   return (
     <div className="rh-calendar-container">
       <div className="rh-calendar">
-        
-        {/* En-tête principal */}
+        {/* Header */}
         <div className="calendar-header-main">
           <div className="header-content">
             <div className="header-left">
               <div className="calendar-icon">
-                📅
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
               </div>
               <div className="header-text">
-                <h1>Calendrier des Entretiens</h1>
-                <p>Gérez vos entretiens d'unité</p>
+                <h1>Calendrier Unité</h1>
+                <p>Gestion des entretiens unité</p>
               </div>
             </div>
-            
+            <div className="header-center">
+              {/* Navigation du calendrier */}
+              <div className="calendar-navigation">
+                <button onClick={goToPreviousMonth} className="nav-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                  </svg>
+                </button>
+
+                <h2 className="month-title">
+                  {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                </h2>
+
+                <button onClick={goToNextMonth} className="nav-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
             <div className="header-right">
-              <Button variant="secondary" onClick={goToToday} size="sm">
-                Aujourd'hui
-              </Button>
+              <div className="calendar-jump">
+                <div className="month-year-selector">
+                  {/* Mois */}
+                  <select
+                    value={currentDate.getMonth()}
+                    onChange={(e) => setCurrentDate(new Date(currentDate.getFullYear(), Number(e.target.value), 1))}
+                  >
+                    {monthNames.map((m, i) => (
+                      <option key={i} value={i}>{m}</option>
+                    ))}
+                  </select>
+
+                  {/* Année */}
+                  <select
+                    value={currentDate.getFullYear()}
+                    onChange={(e) => setCurrentDate(new Date(Number(e.target.value), currentDate.getMonth(), 1))}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => currentDate.getFullYear() - 5 + i).map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Messages */}
+        {/* Calendrier principal */}
+        <div className="calendar-main">
+          {/* En-têtes des jours */}
+          <div className="calendar-weekdays">
+            {dayNames.map((day) => (
+              <div key={day} className="weekday-header">
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Grille des jours */}
+          <div className="calendar-grid">
+            {calendarDays.map((dayObj, index) => {
+              const { date, isCurrentMonth } = dayObj;
+              const hasEntretien = hasEntretienOnDate(date);
+              const entretiensCount = getEntretiensCount(date);
+              const todayClass = isToday(date);
+
+              return (
+                <div
+                  key={index}
+                  onClick={() => handleSelectDate(date)}
+                  className={`calendar-day 
+                    ${!isCurrentMonth ? 'other-month' : ''}
+                    ${todayClass ? 'today' : ''}
+                    ${selectedDate && selectedDate.toDateString() === date.toDateString() ? 'selected' : ''}
+                    ${hasEntretien ? 'has-entretien' : ''}
+                  `}
+                >
+                  <span className="day-number">{date.getDate()}</span>
+                  
+                  {hasEntretien && (
+                    <div className="entretien-badge">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                      </svg>
+                      {entretiensCount}
+                    </div>
+                  )}
+
+                  {todayClass && <div className="today-indicator"></div>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Message */}
         {message && (
-          <div className={`message-banner ${messageType}`}>
+          <div className="calendar-message">
             {message}
           </div>
         )}
 
-        {/* Navigation du calendrier */}
-        <div className="calendar-navigation">
-          <div className="nav-controls">
-            <Button variant="ghost" onClick={goToPreviousMonth} size="sm">
-              ← Précédent
-            </Button>
-            
-            <div className="current-month">
-              <h2>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h2>
-            </div>
-            
-            <Button variant="ghost" onClick={goToNextMonth} size="sm">
-              Suivant →
-            </Button>
-          </div>
-        </div>
-
-        {/* Grille du calendrier */}
-        <div className="calendar-grid-container">
-          {loading && <div className="calendar-loading">Chargement...</div>}
-          
-          <div className="calendar-grid">
-            {/* En-têtes des jours */}
-            <div className="calendar-weekdays">
-              {dayNames.map(day => (
-                <div key={day} className="weekday-header">
-                  {day}
-                </div>
-              ))}
-            </div>
-
-            {/* Jours du calendrier */}
-            <div className="calendar-days">
-              {calendarDays.map((dayInfo, index) => (
-                <div
-                  key={index}
-                  className={`
-                    calendar-day 
-                    ${dayInfo.isCurrentMonth ? 'current-month' : 'other-month'}
-                    ${isToday(dayInfo.date) ? 'today' : ''}
-                    ${isSelected(dayInfo.date) ? 'selected' : ''}
-                    ${dayInfo.entretiens.length > 0 ? 'has-events' : ''}
-                  `}
-                  onClick={() => dayInfo.isCurrentMonth && handleDateClick(dayInfo.date)}
-                >
-                  <span className="day-number">{dayInfo.date.getDate()}</span>
-                  
-                  {dayInfo.entretiens.length > 0 && (
-                    <div className="entretiens-indicator">
-                      <span className="entretiens-count">
-                        {dayInfo.entretiens.length}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Détails du jour sélectionné */}
+        {/* Modal détails du jour */}
         {selectedDate && (
-          <div className="day-details-panel">
-            <div className="day-details-header">
-              <h3>
-                Entretiens du {selectedDate.getDate()} {monthNames[selectedDate.getMonth()]} {selectedDate.getFullYear()}
-              </h3>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => setSelectedDate(null)}
-              >
-                ✕
-              </Button>
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h3>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  Entretiens du {selectedDate.toLocaleDateString('fr-FR', { 
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </h3>
+              </div>
+
+              <div className="modal-body">
+                {entretiensParJour.length > 0 ? (
+                  <div className="entretiens-list">
+                    {entretiensParJour.map(entretien => (
+                      <div key={entretien.id_unite_entretien} className="entretien-card">
+                        <div className="entretien-header">
+                          <div className="candidate-info">
+                            <h4>{entretien.prenom_candidat} {entretien.nom_candidat}</h4>
+                            <div className="unit-info">
+                              RH Entretien ID: {entretien.id_rh_entretien} | Candidat ID: {entretien.id_candidat}
+                            </div>
+                          </div>
+                          <div className={`status-badge ${entretien.statut ? entretien.statut.toLowerCase().replace(' ', '-') : 'undefined'}`}>
+                            {entretien.statut || 'Non défini'}
+                          </div>
+                        </div>
+
+                        <div className="entretien-details">
+                          <div className="detail-group">
+                            <h5>📅 Informations Entretien</h5>
+                            <div className="detail-item">
+                              <span className="detail-label">Heure:</span>
+                              <span className="detail-value">
+                                {new Date(entretien.date_entretien).toLocaleTimeString('fr-FR', { 
+                                  hour: '2-digit', 
+                                  minute: '2-digit' 
+                                })}
+                              </span>
+                            </div>
+                            <div className="detail-item">
+                              <span className="detail-label">Durée:</span>
+                              <span className="detail-value">{entretien.duree} minutes</span>
+                            </div>
+                            {entretien.status_date && (
+                              <div className="detail-item">
+                                <span className="detail-label">MAJ Status:</span>
+                                <span className="detail-value">
+                                  {new Date(entretien.status_date).toLocaleDateString('fr-FR')}
+                                </span>
+                              </div>
+                            )}
+                            <div className="detail-item">
+                              <span className="detail-label">Date de la réception:</span>
+                              <span className="detail-value">
+                                {new Date(entretien.date_suggestion).toLocaleDateString('fr-FR')} à{' '}
+                                {new Date(entretien.date_suggestion).toLocaleTimeString('fr-FR', { 
+                                  hour: '2-digit', 
+                                  minute: '2-digit' 
+                                })}
+                              </span>
+                            </div>
+                            {/* Affichage du dernier score s'il existe */}
+                            {entretien.dernier_score !== null && entretien.dernier_score !== undefined && (
+                              <div className="detail-item">
+                                <span className="detail-label">Dernier score:</span>
+                                <span className="detail-value">
+                                  {entretien.dernier_score}/20 le{' '}
+                                  {new Date(entretien.date_dernier_score).toLocaleDateString('fr-FR')} à{' '}
+                                  {new Date(entretien.date_dernier_score).toLocaleTimeString('fr-FR', { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit' 
+                                  })}
+                                </span>
+                              </div>
+                            )}
+
+                            <div className="entretien-actions">
+                              {/* Input pour saisir un nouveau score */}
+                              <input
+                                type="number"
+                                min="0"
+                                max="20"
+                                placeholder="Score /20"
+                                value={scores[entretien.id_unite_entretien] || ''}
+                                onChange={(e) => handleScoreChange(entretien.id_unite_entretien, e.target.value)}
+                                disabled={sending}
+                              />
+
+                              {/* Bouton pour enregistrer le score */}
+                              <Button
+                                onClick={() => submitScore(entretien.id_unite_entretien)}
+                                disabled={sending || !scores[entretien.id_unite_entretien]}
+                              >
+                                Enregistrer Score
+                              </Button>
+
+                              {/* Bouton Suggérer à la RH : s'affiche si un score existe en DB */}
+                              {(entretien.dernier_score) && (
+                                <Button
+                                  onClick={() => suggestToRh(entretien.id_unite_entretien, entretien.id_candidat)}
+                                  disabled={sending}
+                                >
+                                  Suggérer à la RH
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-entretiens">
+                    <div className="no-entretiens-icon">
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </div>
+                    <p>Aucun entretien prévu ce jour</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="modal-footer">
+                <Button onClick={() => setSelectedDate(null)} variant="secondary">
+                  Fermer
+                </Button>
+              </div>
             </div>
-            
-            <div className="day-details-content">
-              {loading ? (
-                <div className="loading-state">Chargement des entretiens...</div>
-              ) : entretiensParJour.length > 0 ? (
-                <div className="entretiens-list">
-                  {entretiensParJour.map((entretien, index) => (
-                    <EntretienCard
-                      key={index}
-                      entretien={entretien}
-                      onUpdateStatus={updateStatusEntretien}
-                      onCreateScore={createScore}
-                      onSuggestToRh={suggestToRh}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="empty-state">
-                  <p>Aucun entretien prévu pour cette date</p>
-                </div>
-              )}
-            </div>
           </div>
         )}
       </div>
-    </div>
-  );
-};
-
-// ===== COMPOSANT CARTE ENTRETIEN =====
-const EntretienCard = ({ entretien, onUpdateStatus, onCreateScore, onSuggestToRh }) => {
-  const [scoreInput, setScoreInput] = useState('');
-
-  const handleScoreSubmit = () => {
-    if (scoreInput && !isNaN(scoreInput)) {
-      onCreateScore(entretien.id_unite_entretien, parseInt(scoreInput));
-      setScoreInput('');
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'terminé':
-      case 'termine':
-        return '#22c55e';
-      case 'a venir':
-      case 'à venir':
-        return '#f59e0b';
-      case 'en attente':
-        return '#64748b';
-      default:
-        return '#94a3b8';
-    }
-  };
-
-  return (
-    <div className="entretien-card">
-      <div className="entretien-header">
-        <div className="candidat-info">
-          <h4>{entretien.prenom_candidat} {entretien.nom_candidat}</h4>
-          <span className="poste-badge">{entretien.poste_nom}</span>
-        </div>
-        <div className="entretien-meta">
-          <span className="entretien-time">
-            {entretien.date_entretien ? new Date(entretien.date_entretien).toLocaleTimeString('fr-FR', {
-              hour: '2-digit',
-              minute: '2-digit'
-            }) : 'Heure non définie'}
-          </span>
-          <span className="entretien-duration">
-            ({entretien.duree || 60} min)
-          </span>
-        </div>
-      </div>
-
-      <div className="entretien-details">
-        <div className="details-grid">
-          <div className="detail-item">
-            <span className="detail-label">Email:</span>
-            <span className="detail-value">{entretien.email_candidat || 'Non renseigné'}</span>
-          </div>
-          <div className="detail-item">
-            <span className="detail-label">Contact:</span>
-            <span className="detail-value">{entretien.contact_candidat || 'Non renseigné'}</span>
-          </div>
-          <div className="detail-item">
-            <span className="detail-label">Statut:</span>
-            <span 
-              className="status-badge" 
-              style={{ backgroundColor: getStatusColor(entretien.status_entretien) }}
-            >
-              {entretien.status_entretien || 'A venir'}
-            </span>
-          </div>
-          {entretien.score && (
-            <div className="detail-item">
-              <span className="detail-label">Score:</span>
-              <span className="score-value">{entretien.score}/20</span>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="entretien-actions">
-        {entretien.status_entretien?.toLowerCase() === 'a venir' && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => onUpdateStatus(entretien.id_unite_entretien, 2)}
-          >
-            Marquer terminé
-          </Button>
-        )}
-
-        {entretien.status_entretien?.toLowerCase() === 'terminé' && !entretien.score && (
-          <div className="score-input-group">
-            <input
-              type="number"
-              min="0"
-              max="20"
-              placeholder="Score /20"
-              value={scoreInput}
-              onChange={(e) => setScoreInput(e.target.value)}
-              className="score-input"
-            />
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={handleScoreSubmit}
-              disabled={!scoreInput}
-            >
-              Valider
-            </Button>
-          </div>
-        )}
-
-        {entretien.score && parseInt(entretien.score) >= 10 && (
-          <Button
-            variant="success"
-            size="sm"
-            onClick={() => onSuggestToRh(entretien.id_unite_entretien, entretien.id_candidat)}
-          >
-            Suggérer à la RH
-          </Button>
-        )}
-
-        {entretien.cv && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => window.open(`/uploads/cv/${entretien.cv}`, '_blank')}
-          >
-            Voir CV
-          </Button>
-        )}
-      </div>
-
-      {entretien.score && parseInt(entretien.score) < 10 && (
-        <div className="warning-message">
-          ⚠️ Score insuffisant pour une suggestion RH (minimum 10/20)
-        </div>
-      )}
     </div>
   );
 };

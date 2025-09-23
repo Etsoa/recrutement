@@ -111,7 +111,7 @@ exports.createAnnonce = async (req, res) => {
     const genreValide = id_genre || null;
 
     // age_min et age_max ne sont pas obligatoires
-    const newAnnonce = await annonceService.createAnnonce({
+    const newAnnonce = await rhService.createAnnonceRh({
       id_poste,
       id_ville,
       age_min: age_min ? parseInt(age_min) : null,

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Unite Calendrier</title>
+</head>
+<body>
+    <h1>Test API Unite Calendrier</h1>
+    
+    <h2>Tests des endpoints</h2>
+    
+    <div id="results">
+        <!-- Les résultats des tests s'afficheront ici -->
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:3001/api/unite';
+        
+        async function testAPI(endpoint, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+                
+                const response = await fetch(`${BASE_URL}${endpoint}`, options);
+                const result = await response.json();
+                
+                return {
+                    success: response.ok,
+                    data: result,
+                    status: response.status
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        async function runTests() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>Démarrage des tests...</p>';
+            
+            // Test 1: Entretiens par mois
+            console.log('Test 1: Entretiens par mois');
+            const today = new Date();
+            const start = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
+            const end = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()}`;
+            
+            const monthlyResult = await testAPI(`/entretiens_mois?start=${start}&end=${end}`);
+            console.log('Résultat entretiens par mois:', monthlyResult);
+            
+            // Test 2: Entretiens par jour
+            console.log('Test 2: Entretiens par jour');
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            const dailyResult = await testAPI(`/unite_entretiens_jour?day=${todayStr}`);
+            console.log('Résultat entretiens par jour:', dailyResult);
+            
+            // Test 3: Suggestions RH
+            console.log('Test 3: Suggestions RH');
+            const suggestionsResult = await testAPI('/suggest');
+            console.log('Résultat suggestions:', suggestionsResult);
+            
+            // Afficher les résultats
+            resultsDiv.innerHTML = `
+                <div style="font-family: monospace;">
+                    <h3>Test 1: Entretiens par mois (${start} à ${end})</h3>
+                    <pre style="background: #f0f0f0; padding: 10px;">
+Status: ${monthlyResult.status || 'Error'}
+Success: ${monthlyResult.success}
+Data: ${JSON.stringify(monthlyResult.data || monthlyResult.error, null, 2)}
+                    </pre>
+                    
+                    <h3>Test 2: Entretiens par jour (${todayStr})</h3>
+                    <pre style="background: #f0f0f0; padding: 10px;">
+Status: ${dailyResult.status || 'Error'}
+Success: ${dailyResult.success}
+Data: ${JSON.stringify(dailyResult.data || dailyResult.error, null, 2)}
+                    </pre>
+                    
+                    <h3>Test 3: Suggestions RH</h3>
+                    <pre style="background: #f0f0f0; padding: 10px;">
+Status: ${suggestionsResult.status || 'Error'}
+Success: ${suggestionsResult.success}
+Data: ${JSON.stringify(suggestionsResult.data || suggestionsResult.error, null, 2)}
+                    </pre>
+                </div>
+            `;
+        }
+        
+        // Lancer les tests au chargement de la page
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>
