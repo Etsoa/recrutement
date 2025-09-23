@@ -51,6 +51,38 @@ const CV = ({
     return date.toLocaleDateString('fr-FR');
   };
 
+  // Fonction pour afficher les valeurs au lieu des IDs
+  const getDisplayValue = (value) => {
+    // Si c'est un objet avec une propriété 'valeur' ou 'nom', utiliser celle-ci
+    if (typeof value === 'object' && value !== null) {
+      return value.valeur || value.nom || value.libelle || value.label || value.value || value.toString();
+    }
+    // Sinon, retourner la valeur directement
+    return value || '';
+  };
+
+  // Fonction pour résoudre n'importe quelle valeur (ID ou objet)
+  const resolveValue = (value, fallbackPrefix = '') => {
+    if (!value) return '';
+    
+    // Si c'est déjà un objet avec valeur
+    if (typeof value === 'object') {
+      return getDisplayValue(value);
+    }
+    
+    // Si c'est déjà une string, la retourner directement
+    if (typeof value === 'string') {
+      return value;
+    }
+    
+    // Si c'est un ID numérique sans contexte, afficher avec préfixe seulement si nécessaire
+    if (typeof value === 'number' || !isNaN(value)) {
+      return fallbackPrefix ? `${fallbackPrefix} ${value}` : value.toString();
+    }
+    
+    return value.toString();
+  };
+
   return (
     <>
       {/* Bouton de téléchargement - en dehors du CV */}
@@ -113,7 +145,7 @@ const CV = ({
                 <svg className="cv-contact-icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                 </svg>
-                <span>{ville}</span>
+                <span>{resolveValue(ville)}</span>
               </div>
             )}
           </div>
@@ -146,12 +178,12 @@ const CV = ({
               
               <div className="cv-info-item">
                 <span className="cv-info-label">Genre</span>
-                <span className="cv-info-value">{genre}</span>
+                <span className="cv-info-value">{resolveValue(genre)}</span>
               </div>
               
               <div className="cv-info-item">
                 <span className="cv-info-label">Situation</span>
-                <span className="cv-info-value">{situationMatrimoniale}</span>
+                <span className="cv-info-value">{resolveValue(situationMatrimoniale)}</span>
               </div>
               
               {nombreEnfants > 0 && (
@@ -176,7 +208,7 @@ const CV = ({
               <div className="cv-tags">
                 {langues.map((langue, index) => (
                   <span key={index} className="cv-tag">
-                    {langue}
+                    {resolveValue(langue)}
                   </span>
                 ))}
               </div>
@@ -196,7 +228,7 @@ const CV = ({
               <div className="cv-tags">
                 {qualites.map((qualite, index) => (
                   <span key={index} className="cv-tag">
-                    {qualite}
+                    {resolveValue(qualite)}
                   </span>
                 ))}
               </div>
@@ -222,17 +254,17 @@ const CV = ({
                         // Style compact pour formations pré-universitaires
                         <div className="cv-info-grid">
                           <div className="cv-info-item cv-info-item-full">
-                            <span className="cv-info-label">{formation.niveau}</span>
-                            <span className="cv-info-value">{formation.filiere}</span>
+                            <span className="cv-info-label">{resolveValue(formation.niveau)}</span>
+                            <span className="cv-info-value">{resolveValue(formation.filiere)}</span>
                           </div>
                         </div>
                       ) : (
                         // Style détaillé pour formations universitaires
                         <>
-                          <div className="cv-education-level">{formation.niveau}</div>
-                          <div className="cv-education-field">{formation.filiere}</div>
+                          <div className="cv-education-level">{resolveValue(formation.niveau)}</div>
+                          <div className="cv-education-field">{resolveValue(formation.filiere)}</div>
                           {formation.etablissement && (
-                            <div className="cv-education-school">{formation.etablissement}</div>
+                            <div className="cv-education-school">{resolveValue(formation.etablissement)}</div>
                           )}
                           {formation.annee && (
                             <div className="cv-education-year">{formation.annee}</div>
