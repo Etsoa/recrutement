@@ -7,4 +7,5 @@ export { default as annoncesBackOfficeService } from './annoncesBackOfficeServic
 export { default as unitesService } from './unitesService';
 export { default as rhService } from './rhService';
 export { default as statService } from './statService';
+export { default as ceoService } from './ceoService';
 

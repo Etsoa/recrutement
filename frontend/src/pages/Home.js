@@ -116,6 +116,14 @@ function Home() {
           >
             Accès RH
           </button>
+          <button
+            style={rhButtonStyle}
+            onClick={() => navigate(ROUTES.LOGIN_CEO)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            Accès CEO
+          </button>
         </div>
       </div>
     </div>

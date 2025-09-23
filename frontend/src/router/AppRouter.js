@@ -6,6 +6,7 @@ import '../styles/variables.css';
 // Importation du Layout
 import LayoutUnite from '../components/LayoutUnite';
 import LayoutRh from '../components/LayoutRh';
+import LayoutCeo from '../components/LayoutCeo';
 
 // Importation des pages
 import { 
@@ -28,10 +29,14 @@ import {
   RhCalendrier,
   RhSuggestions,
   RhCeoSuggestions,
-  RhFormAnnonce
-  Statistiques
+  RhFormAnnonce,
+  Statistiques,
+  // Pages CEO
+  LoginCeo,
+  CeoEmpList,
+  CeoSuggTable,
+  CeoContratList
 } from '../pages';
-import Home from '../pages/Home';
 
 import { ROUTES, ROUTE_METADATA } from './routes';
 
@@ -99,48 +104,17 @@ const AppRouter = () => {
         <Route path={ROUTES.RH_SUGGESTIONS} element={<LayoutRh><RhSuggestions /></LayoutRh>} />
         <Route path={ROUTES.RH_CEO_SUGGESTIONS} element={<LayoutRh><RhCeoSuggestions /></LayoutRh>} />
         <Route path={ROUTES.RH_FORM_ANNONCE} element={<LayoutRh><RhFormAnnonce /></LayoutRh>} />
+        <Route path={ROUTES.STATISTIQUES} element={<LayoutRh><Statistiques /></LayoutRh>} />
+        
+        {/* Routes CEO */}
+        <Route path={ROUTES.LOGIN_CEO} element={<LoginCeo />} />
+        <Route path={ROUTES.CEO_EMP_LIST} element={<LayoutCeo><CeoEmpList /></LayoutCeo>} />
+        <Route path={ROUTES.CEO_SUGG_TABLE} element={<LayoutCeo><CeoSuggTable /></LayoutCeo>} />
+        <Route path={ROUTES.CEO_CONTRAT_LIST} element={<LayoutCeo><CeoContratList /></LayoutCeo>} />
 
         {/* Route 404 */}
         <Route path="*" element={<NotFound />} />
-        <Route path={ROUTES.LISTE_ANNONCES} element={<Layout><ListeAnnonces /></Layout>} />
-        <Route path={ROUTES.DETAILS_ANNONCE} element={<Layout><DetailsAnnonce /></Layout>} />
-        <Route path={ROUTES.FICHE_CANDIDAT} element={<Layout><FicheCandidat /></Layout>} />
-
-        <Route path={ROUTES.PARAMETRES} element={<Layout><Parametres /></Layout>} />
-
-        <Route path={ROUTES.CREATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
-        <Route path={ROUTES.UPDATE_ANNONCE} element={<Layout><CreateAnnonce /></Layout>} />
-        <Route path={ROUTES.CREATE_QCM} element={<Layout><QCM /></Layout>} />
-        <Route path={ROUTES.DETAIL_QCM} element={<Layout><DetailQCM /></Layout>} />
-        <Route path={ROUTES.HISTORIQUE} element={<Layout><Historiques /></Layout>} />
-        <Route path={ROUTES.STATISTIQUES} element={<Layout><Statistiques /></Layout>} />
-      </Routes>
-      <Layout>
-        <Routes>
-          {/* Route d'accueil */}
-          <Route 
-            path="/" 
-            element={<Navigate to="/home" replace />} 
-          />
-          
-          {/* Page d'accueil */}
-          <Route 
-            path="/home" 
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            } 
-          />
-          
-          
-          {/* Route 404 - Page non trouvée */}
-          <Route 
-            path="*" 
-            element={<NotFound />} 
-          />
         </Routes>
-      </Layout>
     </Router>
   );
 };

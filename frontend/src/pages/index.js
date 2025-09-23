@@ -1,6 +1,11 @@
 // Pages publiques
 export { default as Home } from './Home';
-export { default as LoginCeo } from './LoginCeo';
+
+// Pages CEO
+export { default as LoginCeo } from './ceo/LoginCeo';
+export { default as CeoEmpList } from './ceo/CeoEmpList';
+export { default as CeoSuggTable } from './ceo/CeoSuggTable';
+export { default as CeoContratList } from './ceo/CeoContratList';
 
 // Pages Unite (dans le sous-dossier unite/)
 export { default as LoginUnites } from './unite/loginUnites';
@@ -23,5 +28,5 @@ export { default as RhCalendrier } from './RhCalendrier';
 export { default as RhSuggestions } from './RhSuggestions';
 export { default as RhCeoSuggestions } from './RhCeoSuggestions';
 export { default as RhFormAnnonce } from './RhFormAnnonce';
-export { default as Statistiques } from './unite/Statistiques';
+export { default as Statistiques } from './rh/Statistiques';
 
