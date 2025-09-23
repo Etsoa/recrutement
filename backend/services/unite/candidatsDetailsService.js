@@ -36,10 +36,27 @@ const countByLangues = async () => {
 };
 
 // --- Nombre de candidats par niveau ---
+// const countByNiveau = async () => {
+//     try {
+//         const result = await ViewCandidatsDetails.findAll({
+//             attributes: ['niveau', [fn('COUNT', col('id_candidat')), 'nbr_candidats']],
+//             where: { niveau: { [Op.ne]: null } },
+//             group: ['niveau'],
+//             raw: true
+//         });
+//         return result;
+//     } catch (error) {
+//         console.error('Erreur countByNiveau:', error);
+//         return [];
+//     }
+// };
 const countByNiveau = async () => {
     try {
         const result = await ViewCandidatsDetails.findAll({
-            attributes: ['niveau', [fn('COUNT', col('id_candidat')), 'nbr_candidats']],
+            attributes: [
+                'niveau',
+                [fn('COUNT', fn('DISTINCT', col('id_candidat'))), 'nbr_candidats']
+            ],
             where: { niveau: { [Op.ne]: null } },
             group: ['niveau'],
             raw: true
@@ -50,25 +67,52 @@ const countByNiveau = async () => {
         return [];
     }
 };
+// const countByExperience = async () => {
+//     try {
+//         const result = await ViewCandidatsDetails.findAll({
+//             attributes: [
+//                 [literal(`CASE
+//           WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
+//           WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
+//           WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
+//           ELSE '+10 ans'
+//         END`), 'tranche_experience'],
+//                 [fn('COUNT', col('id_candidat')), 'nbr_candidats']
+//             ],
+//             where: { experience_annees: { [Op.ne]: null } },
+//             group: [literal(`CASE
+//           WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
+//           WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
+//           WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
+//           ELSE '+10 ans'
+//         END`)],
+//             raw: true
+//         });
+//         return result;
+//     } catch (error) {
+//         console.error('Erreur countByExperience:', error);
+//         return [];
+//     }
+// };
 const countByExperience = async () => {
     try {
         const result = await ViewCandidatsDetails.findAll({
             attributes: [
                 [literal(`CASE
-          WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
-          WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
-          WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
-          ELSE '+10 ans'
-        END`), 'tranche_experience'],
-                [fn('COUNT', col('id_candidat')), 'nbr_candidats']
+                    WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
+                    WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
+                    WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
+                    ELSE '+10 ans'
+                END`), 'tranche_experience'],
+                [fn('COUNT', fn('DISTINCT', col('id_candidat'))), 'nbr_candidats']
             ],
             where: { experience_annees: { [Op.ne]: null } },
             group: [literal(`CASE
-          WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
-          WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
-          WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
-          ELSE '+10 ans'
-        END`)],
+                WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
+                WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
+                WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
+                ELSE '+10 ans'
+            END`)],
             raw: true
         });
         return result;
@@ -77,6 +121,7 @@ const countByExperience = async () => {
         return [];
     }
 };
+
 module.exports = {
     getAllCandidatsDetails,
     countByLangues,
