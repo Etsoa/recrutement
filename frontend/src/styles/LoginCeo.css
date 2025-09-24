@@ -1,4 +1,8 @@
-.login-ceo-container {
+/* Style unifié pour les écrans de connexion */
+.login-container,
+.login-ceo-container,
+.login-rh,
+.login-unite-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,25 +11,44 @@
   padding: var(--spacing-md);
 }
 
-.login-ceo-form {
+.login-form,
+.login-ceo-form,
+.login-rh__container,
+.login-unite-form {
   background: var(--color-surface);
   padding: var(--spacing-2xl);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-md);
   width: 100%;
   max-width: 400px;
-  animation: fadeIn var(--transition);
+  border: 1px solid var(--color-border);
+  animation: fadeInUp 0.5s ease-out;
 }
 
-.login-title {
+.login-header,
+.login-rh__header {
   text-align: center;
-  font-family: var(--font-heading);
-  color: var(--color-primary);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
 }
 
-.form-group {
-  margin-bottom: var(--spacing-md);
+.login-title,
+.login-rh__title {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-sm);
+}
+
+.login-subtitle,
+.login-rh__subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+}
+
+.form-group,
+.login-rh__form-group {
+  margin-bottom: var(--spacing-lg);
   display: flex;
   flex-direction: column;
 }
@@ -37,22 +60,34 @@
   color: var(--color-text-secondary);
 }
 
-.form-group input {
-  padding: var(--spacing-sm);
-  border: 1px solid var(--color-border-light);
+.form-group input,
+.login-rh__input {
+  width: 100%;
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-border);
   border-radius: var(--border-radius);
   font-size: var(--font-size-base);
-  transition: border-color var(--transition-fast);
+  transition: var(--transition);
+  background-color: var(--color-surface);
+  color: var(--color-text);
 }
 
-.form-group input:focus {
-  border-color: var(--color-border-focus);
+.form-group input:focus,
+.login-rh__input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
   outline: none;
 }
 
-.btn-submit {
+.login-actions,
+.login-rh__actions {
+  margin-top: var(--spacing-lg);
+}
+
+.btn-submit,
+.login-rh__submit {
   width: 100%;
-  padding: var(--spacing-sm);
+  padding: var(--spacing-md);
   background-color: var(--color-accent);
   color: var(--color-text-light);
   font-size: var(--font-size-base);
@@ -63,18 +98,91 @@
   transition: background-color var(--transition);
 }
 
-.btn-submit:hover:not(:disabled) {
+.btn-submit:hover:not(:disabled),
+.login-rh__submit:hover:not(:disabled) {
   background-color: var(--color-accent-hover);
 }
 
-.btn-submit:disabled {
+.btn-submit:disabled,
+.login-rh__submit:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
 
-.login-message {
-  margin-top: var(--spacing-md);
+.login-message,
+.login-rh__message {
+  margin-top: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
   text-align: center;
-  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  animation: fadeIn 0.3s ease;
+}
+
+.login-message--success,
+.login-rh__message--success {
+  background-color: rgba(39, 174, 96, 0.1);
+  color: var(--color-success);
+  border: 1px solid var(--color-success);
+}
+
+.login-message--error,
+.login-rh__message--error {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+}
+
+.password-wrapper,
+.login-rh__password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.toggle-password,
+.login-rh__toggle-password {
+  position: absolute;
+  right: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
   color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  transition: var(--transition);
+}
+
+.toggle-password:hover,
+.login-rh__toggle-password:hover {
+  color: var(--color-accent);
+}
+
+.brand-logo {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.brand-logo h1 {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-3xl);
+  color: var(--color-accent);
+  margin-bottom: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

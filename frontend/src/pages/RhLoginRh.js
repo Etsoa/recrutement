@@ -1,79 +1,77 @@
 import React, { useState } from 'react';
-import Button from '../components/Button';
-import '../styles/LoginRh.css';  // Il faudra créer ce fichier
-import rhService from '../services/rhService';
+import { useNavigate } from 'react-router-dom';
+import '../styles/LoginRh.css';
+import { ROUTES } from '../router/routes';
+import { rhService } from '../services/rhService';
 
 const LoginRh = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-
-        
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const data = await rhService.login(email, password);
+    e.preventDefault();
+    setMessage('');
+    setLoading(true);
+    
+    try {
+      const data = await rhService.login(email, password);
 
-    if (data.success) {
-      setMessage('Connexion réussie');
-
-      // ⚡ Stockage de la session RH
-      sessionStorage.setItem('rhLoggedIn', 'true');   // pour vérifier la connexion
-      sessionStorage.setItem('rhId', data.data.id);   // optionnel : ID de l'utilisateur
-      sessionStorage.setItem('rhName', data.data.nom); // optionnel : nom pour affichage
-
-      // Redirection vers la page principale RH
-      window.location.href = '/rh/suggestions';
-    } else {
-      setMessage(data.message);
+      if (data.success) {
+        setMessage('Connexion réussie');
+        navigate(ROUTES.RH_SUGGESTIONS);
+      } else {
+        setMessage(data.message || 'Identifiants incorrects');
+      }
+    } catch (err) {
+      setMessage('Erreur de connexion au serveur');
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setMessage('Erreur serveur');
-  }
-};
-const handleLogout = () => {
-  sessionStorage.removeItem('rhLoggedIn');
-  sessionStorage.removeItem('rhData');
-  window.location.href = '/rh/login';
-  alert("Vous avez été déconnecté");
-};
-
+  };
 
   return (
-    <div className="login-rh">
-      <div className="login-rh__container">
-        <div className="login-rh__header">
-          <h1 className="login-rh__title">Espace RH</h1>
-          <p className="login-rh__subtitle">Connectez-vous pour accéder à votre espace</p>
+    <div className="login-container">
+      <div className="login-form">
+        <div className="brand-logo">
+          <h1>Axiom</h1>
+        </div>
+        
+        <div className="login-header">
+          <h2 className="login-title">Espace RH</h2>
+          <p className="login-subtitle">Connectez-vous pour accéder à votre espace</p>
         </div>
 
-        <form className="login-rh__form" onSubmit={handleSubmit}>
-          <div className="login-rh__form-group">
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
             <input
-              className="login-rh__input"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="Email"
               type="email"
+              id="email"
+              placeholder="Entrez votre email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          <div className="login-rh__form-group">
-            <div className="login-rh__password-wrapper">
+          <div className="form-group">
+            <label htmlFor="password">Mot de passe</label>
+            <div className="password-wrapper">
               <input
-                className="login-rh__input"
                 type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Entrez votre mot de passe"
                 value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="Mot de passe"
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
               <button
                 type="button"
-                className="login-rh__toggle-password"
+                className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? "Masquer" : "Voir"}
@@ -81,16 +79,19 @@ const handleLogout = () => {
             </div>
           </div>
 
-          <div className="login-rh__actions">
-            <Button 
+          <div className="login-actions">
+            <button
               type="submit"
+              className="btn-submit"
+              disabled={loading}
             >
-              Se connecter
-            </Button>
+              {loading ? "Connexion..." : "Se connecter"}
+            </button>
           </div>
         </form>
+
         {message && (
-          <div className={`login-rh__message ${message.includes('réussie') ? 'success' : 'error'}`}>
+          <div className={`login-message ${message.includes("réussie") ? "login-message--success" : "login-message--error"}`}>
             {message}
           </div>
         )}

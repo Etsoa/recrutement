@@ -1,4 +1,5 @@
 // services/api.js - Configuration de base pour les appels API
+// URL de base pour l'API (utilise la variable d'environnement ou la valeur par défaut)
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
 
 // Configuration par défaut pour les requêtes
@@ -10,7 +11,25 @@ const defaultConfig = {
 
 // Intercepteur pour ajouter le token d'authentification
 const addAuthToken = (config) => {
-  const token = localStorage.getItem('authToken');
+  // Vérifier d'abord le token générique
+  let token = localStorage.getItem('authToken');
+  
+  // Si pas de token générique, chercher les tokens spécifiques
+  if (!token) {
+    // Vérifier le token CEO
+    token = localStorage.getItem('ceoToken');
+    
+    // Vérifier le token RH
+    if (!token) {
+      token = sessionStorage.getItem('rhToken');
+    }
+    
+    // Vérifier le token unité
+    if (!token) {
+      token = localStorage.getItem('token'); // Token utilisé pour les unités
+    }
+  }
+  
   if (token) {
     return {
       ...config,

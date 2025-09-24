@@ -1,38 +1,46 @@
-/* Header.css - Composant Header avec thème Axiom */
-.header {
+/* Header.css - Composant Header avec thème Axiom - Épuré, élégant et professionnel */
+.header,
+.header-ceo,
+.header-rh,
+.header-unite {
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
-  padding: var(--spacing-lg) var(--spacing-xl);
+  padding: var(--spacing-md) var(--spacing-xl);
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.header__container {
+.header__container,
+.header-container {
   max-width: var(--container-xl);
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-lg);
 }
 
-.header__logo {
+.header__logo,
+.header-left h1 {
   font-family: var(--font-heading);
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+  color: var(--color-accent);
   margin: 0;
   letter-spacing: -0.025em;
 }
 
-.header__nav {
+.header__nav,
+.header-nav {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
-.header__nav-item {
+.header__nav-item,
+.header-nav button {
   color: var(--color-text-secondary);
   text-decoration: none;
   font-family: var(--font-body);
@@ -41,15 +49,20 @@
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius);
   transition: var(--transition);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .header__nav-item:hover,
-.header__nav-item--active {
-  color: var(--color-primary);
-  background-color: var(--color-background);
+.header__nav-item--active,
+.header-nav button:hover {
+  color: var(--color-accent);
+  background-color: rgba(22, 160, 133, 0.08);
 }
 
-.header__actions {
+.header__actions,
+.header-right {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
@@ -68,32 +81,53 @@
   font-size: var(--font-size-sm);
 }
 
-.header__logout-btn {
+.header__logout-btn,
+.header-right button {
   font-size: var(--font-size-sm);
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
   color: var(--color-text-secondary);
   border: 1px solid var(--color-border);
+  background-color: transparent;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-.header__logout-btn:hover {
-  color: var(--color-error);
-  border-color: var(--color-error);
-  background-color: var(--color-error-light);
+.header__logout-btn:hover,
+.header-right button:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background-color: rgba(22, 160, 133, 0.08);
+}
+
+@media (max-width: 1024px) {
+  .header__nav,
+  .header-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
-  .header {
-    padding: var(--spacing-md) var(--spacing-lg);
+  .header,
+  .header-ceo,
+  .header-rh,
+  .header-unite {
+    padding: var(--spacing-md) var(--spacing-md);
   }
   
-  .header__container {
+  .header__container,
+  .header-container {
     flex-direction: column;
     gap: var(--spacing-md);
   }
   
-  .header__nav {
+  .header__nav,
+  .header-nav {
     order: 3;
     width: 100%;
     justify-content: center;
+    overflow-x: auto;
+    padding-bottom: var(--spacing-sm);
   }
 }

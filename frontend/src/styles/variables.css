@@ -1,27 +1,32 @@
-/* variables.css: Thème Axiom - Variables globales pour un design sobre et élégant */
+/* variables.css: Thème Axiom - Variables globales pour un design épuré, élégant et professionnel */
 :root {
   /* === PALETTE DE COULEURS AXIOM === */
   
   /* Couleurs principales */
-  --color-primary: #2c3e50;           /* Bleu Ardoise foncé - Confiance et stabilité */
+  --color-primary: #2c3e50;           /* Bleu ardoise foncé - Confiance et stabilité */
   --color-primary-light: #34495e;     /* Variante plus claire */
-  --color-secondary: #7f8c8d;         /* Gris Moyen - Hiérarchie subtile */
+  --color-secondary: #7f8c8d;         /* Gris moyen - Hiérarchie subtile */
   --color-secondary-light: #95a5a6;   /* Gris plus clair */
   
   /* Couleur d'accent */
-  --color-accent: #16a085;            /* Vert Sage discret - Actions importantes */
-  --color-accent-hover: #27ae60;      /* Hover state */
+  --color-accent: #16a085;            /* Vert sage - Accent principal */
+  --color-accent-hover: #27ae60;      /* État de survol */
   
   /* États et messages */
   --color-success: #27ae60;           /* Vert sage - Succès */
-  --color-danger: #e74c3c;            /* Rouge discret - Erreurs */
+  --color-error: #e74c3c;             /* Rouge discret - Erreurs */
+  --color-danger: #e74c3c;            /* Rouge discret - Erreurs (alias) */
   --color-warning: #f39c12;           /* Orange tamisé - Alertes */
   --color-info: #3498db;              /* Bleu information */
   
   /* Arrière-plans */
-  --color-background: #f8f9fa;        /* Blanc cassé - Arrière-plan principal */
+  --color-background: #f9fafb;        /* Blanc cassé - Arrière-plan principal */
   --color-background-alt: #ecf0f1;    /* Gris très clair - Sections alternées */
   --color-surface: #ffffff;           /* Blanc pur - Cartes et surfaces */
+  
+  /* Couleurs étendues pour l'UI */
+  --color-success-light: rgba(39, 174, 96, 0.1);  /* Fond pour messages de succès */
+  --color-error-light: rgba(231, 76, 60, 0.1);    /* Fond pour messages d'erreur */
   
   /* Textes */
   --color-text: #2c3e50;              /* Texte principal - Noir très foncé */
