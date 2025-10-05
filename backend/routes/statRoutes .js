@@ -3,12 +3,11 @@ const router = express.Router();
 const statController = require('../controllers/statController');
 const uniteController = require('../controllers/uniteController');
 
-// // pour se connecter et recuperer les infos de l'unite
+// Routes pour les statistiques
 router.post('/getStatistique', statController.getAllStats);
 router.get('/getStatistique', statController.getAllStats2);
+router.post('/getStatsByUnite', statController.getStatsByUnite);
+router.post('/getRhStats', statController.getRhStats);
 router.get('/param', uniteController.getAllParametres);
-// // verification et retour de id
-// router.post('/login', uniteController.loginUnite);
-// router.get('/id/:id', uniteController.getUniteById);
 
 module.exports = router;  

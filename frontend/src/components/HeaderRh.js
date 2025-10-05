@@ -30,6 +30,12 @@ const HeaderRh = () => {
         
         <nav className="header__nav">
           <Link 
+            to={ROUTES.STATISTIQUES} 
+            className={`header__nav-item ${location.pathname === ROUTES.STATISTIQUES ? 'header__nav-item--active' : ''}`}
+          >
+            Statistiques
+          </Link>
+          <Link 
             to={ROUTES.RH_CALENDRIER} 
             className={`header__nav-item ${location.pathname === ROUTES.RH_CALENDRIER ? 'header__nav-item--active' : ''}`}
           >
@@ -45,7 +51,7 @@ const HeaderRh = () => {
             to={ROUTES.RH_CEO_SUGGESTIONS} 
             className={`header__nav-item ${location.pathname === ROUTES.RH_CEO_SUGGESTIONS ? 'header__nav-item--active' : ''}`}
           >
-            Suggestions CEO
+            Suivi CEO
           </Link>
           <Link 
             to={ROUTES.RH_FORM_ANNONCE} 
@@ -56,18 +62,20 @@ const HeaderRh = () => {
         </nav>
         
         <div className="header__actions">
-          <div className="header__user-info">
-            <span className="header__user-name">
-              {currentRh?.nom || 'RH connecté'}
-            </span>
-            <button 
-              className="btn btn--ghost header__logout-btn" 
-              onClick={handleLogout}
-              title="Se déconnecter"
-            >
-              Déconnexion
-            </button>
-          </div>
+          {isLoggedIn && (
+            <div className="header__user-info">
+              <span className="header__user-name">
+                {currentRh?.nom || 'RH connecté'}
+              </span>
+              <button 
+                className="btn btn--ghost header__logout-btn" 
+                onClick={handleLogout}
+                title="Se déconnecter"
+              >
+                Déconnexion
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

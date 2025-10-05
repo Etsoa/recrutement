@@ -24,6 +24,7 @@ import {
   UniteCalendrier,
   UniteSuggestions,
   UniteRhSuggestions,
+  StatistiquesUnite,
   // Pages RH
   RhLoginRh,
   RhCalendrier,
@@ -97,9 +98,12 @@ const AppRouter = () => {
         <Route exact path={ROUTES.UNITE_CALENDRIER} render={() => <LayoutUnite><UniteCalendrier /></LayoutUnite>} />
         <Route exact path={ROUTES.UNITE_SUGGESTIONS} render={() => <LayoutUnite><UniteSuggestions /></LayoutUnite>} />
         <Route exact path={ROUTES.UNITE_RH_SUGGESTIONS} render={() => <LayoutUnite><UniteRhSuggestions /></LayoutUnite>} />
+        <Route exact path={ROUTES.UNITE_STATISTIQUES} render={() => <LayoutUnite><StatistiquesUnite /></LayoutUnite>} />
         
         {/* Routes RH (sans layout pour login, avec layout pour les autres) */}
         <Route exact path={ROUTES.RH_LOGIN} component={RhLoginRh} />
+        {/* Route d'accueil RH - redirige vers Statistiques */}
+        <Route exact path={ROUTES.RH_HOME} render={() => <Redirect to={ROUTES.STATISTIQUES} />} />
         <Route exact path={ROUTES.RH_CALENDRIER} render={() => <LayoutRh><RhCalendrier /></LayoutRh>} />
         <Route exact path={ROUTES.RH_SUGGESTIONS} render={() => <LayoutRh><RhSuggestions /></LayoutRh>} />
         <Route exact path={ROUTES.RH_CEO_SUGGESTIONS} render={() => <LayoutRh><RhCeoSuggestions /></LayoutRh>} />

@@ -1,20 +1,45 @@
-// services/parametresService.js - Service pour la gestion des paramètres
+// services/statService.js - Service pour la gestion des statistiques
 import { api } from './api';
 
-const PARAMETRES_ENDPOINTS = {
+const STAT_ENDPOINTS = {
   STATISTIQUES: '/stat/getStatistique',
+  STATISTIQUES_BY_UNITE: '/stat/getStatsByUnite',
+  STATISTIQUES_RH: '/stat/getRhStats',
 };
 
-export const parametresService = {
+export const statService = {
   getAllStats: async (data) => {
     try {
-      const response = await api.post(PARAMETRES_ENDPOINTS.STATISTIQUES, data);
+      const response = await api.post(STAT_ENDPOINTS.STATISTIQUES, data);
       return response;
     } catch (error) {
-      console.error('Erreur lors de la création du poste:', error);
+      console.error('Erreur lors de la récupération des statistiques:', error);
+      throw error;
+    }
+  },
+
+  getStatsByUnite: async (id_unite, ageRange = {}) => {
+    try {
+      const response = await api.post(STAT_ENDPOINTS.STATISTIQUES_BY_UNITE, {
+        id_unite,
+        ...ageRange
+      });
+      return response;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques par unité:', error);
+      throw error;
+    }
+  },
+
+  getRhStats: async (ageRange = {}) => {
+    try {
+      const response = await api.post(STAT_ENDPOINTS.STATISTIQUES_RH, ageRange);
+      return response;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques RH:', error);
       throw error;
     }
   }
 };
   
-export default parametresService;
+export default statService;

@@ -1,4 +1,5 @@
 const ViewCandidatsDetails = require('../../models/viewCandidatsDetailsModel');
+const pool = require('../../config/db');
 const { fn, col, literal, Op } = require('sequelize'); // <--- ajoute Op
 
 // Récupérer tous les détails
@@ -50,6 +51,7 @@ const countByNiveau = async () => {
         return [];
     }
 };
+
 const countByExperience = async () => {
     try {
         const result = await ViewCandidatsDetails.findAll({
@@ -77,9 +79,128 @@ const countByExperience = async () => {
         return [];
     }
 };
+
+// ===== NOUVELLES FONCTIONS POUR STATISTIQUES PAR UNITE =====
+
+// Nombre de candidats par langues pour une unité
+const countByLanguesByUnite = async (id_unite) => {
+    try {
+        const query = `
+            SELECT 
+                CASE
+                    WHEN langue_count = 2 THEN '2 langues'
+                    WHEN langue_count = 3 THEN '3 langues'
+                    WHEN langue_count >= 4 THEN '4+ langues'
+                    ELSE '1 langue'
+                END as category,
+                COUNT(*)::int as total
+            FROM (
+                SELECT c.id_candidat,
+                       COUNT(lt.id_langue) as langue_count
+                FROM candidats c
+                JOIN annonces a ON c.id_annonce = a.id_annonce
+                LEFT JOIN langue_tiers lt ON c.id_tiers = lt.id_tiers
+                WHERE a.id_unite = $1
+                GROUP BY c.id_candidat
+            ) as sub
+            GROUP BY 
+                CASE
+                    WHEN langue_count = 2 THEN '2 langues'
+                    WHEN langue_count = 3 THEN '3 langues'
+                    WHEN langue_count >= 4 THEN '4+ langues'
+                    ELSE '1 langue'
+                END
+            ORDER BY total DESC;
+        `;
+        
+        const result = await pool.query(query, [id_unite]);
+        
+        // Convertir en objet pour compatibilité
+        const languesObj = {};
+        result.rows.forEach(row => {
+            languesObj[row.category] = row.total;
+        });
+        
+        return languesObj;
+    } catch (error) {
+        console.error('Erreur countByLanguesByUnite:', error);
+        return {};
+    }
+};
+
+// Nombre de candidats par niveau pour une unité
+const countByNiveauByUnite = async (id_unite) => {
+    try {
+        const query = `
+            SELECT n.libelle_niveau as niveau, 
+                   COUNT(*)::int as nbr_candidats
+            FROM candidats c
+            JOIN annonces a ON c.id_annonce = a.id_annonce
+            JOIN niveau_filiere_tiers nft ON c.id_tiers = nft.id_tiers
+            JOIN niveaux n ON nft.id_niveau = n.id_niveau
+            WHERE a.id_unite = $1
+            GROUP BY n.libelle_niveau, n.id_niveau
+            ORDER BY n.id_niveau;
+        `;
+        
+        const result = await pool.query(query, [id_unite]);
+        return result.rows;
+    } catch (error) {
+        console.error('Erreur countByNiveauByUnite:', error);
+        return [];
+    }
+};
+
+// Nombre de candidats par expérience pour une unité
+const countByExperienceByUnite = async (id_unite) => {
+    try {
+        const query = `
+            SELECT 
+                CASE
+                    WHEN et.experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
+                    WHEN et.experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
+                    WHEN et.experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
+                    WHEN et.experience_annees >= 10 THEN '+10 ans'
+                    ELSE '0 ans'
+                END as tranche_experience,
+                COUNT(*)::int as nbr_candidats
+            FROM candidats c
+            JOIN annonces a ON c.id_annonce = a.id_annonce
+            JOIN experience_tiers et ON c.id_tiers = et.id_tiers
+            WHERE a.id_unite = $1
+            GROUP BY 
+                CASE
+                    WHEN et.experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
+                    WHEN et.experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
+                    WHEN et.experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
+                    WHEN et.experience_annees >= 10 THEN '+10 ans'
+                    ELSE '0 ans'
+                END
+            ORDER BY 
+                CASE
+                    WHEN et.experience_annees BETWEEN 1 AND 3 THEN 1
+                    WHEN et.experience_annees BETWEEN 4 AND 6 THEN 2
+                    WHEN et.experience_annees BETWEEN 7 AND 9 THEN 3
+                    WHEN et.experience_annees >= 10 THEN 4
+                    ELSE 0
+                END;
+        `;
+        
+        const result = await pool.query(query, [id_unite]);
+        return result.rows;
+    } catch (error) {
+        console.error('Erreur countByExperienceByUnite:', error);
+        return [];
+    }
+};
+
 module.exports = {
     getAllCandidatsDetails,
     countByLangues,
     countByNiveau,
-    countByExperience
+    countByExperience,
+    // Nouvelles fonctions par unité
+    countByLanguesByUnite,
+    countByNiveauByUnite,
+    countByExperienceByUnite
 };

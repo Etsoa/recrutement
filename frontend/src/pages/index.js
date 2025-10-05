@@ -21,6 +21,7 @@ export { default as QCM } from './unite/QCM';
 export { default as UniteCalendrier } from './unite/UniteCalendrier';
 export { default as UniteSuggestions } from './unite/UniteSuggestions';
 export { default as UniteRhSuggestions } from './unite/UniteRhSuggestions';
+export { default as StatistiquesUnite } from './unite/StatistiquesUnite';
 
 // Pages RH
 export { default as RhLoginRh } from './RhLoginRh';

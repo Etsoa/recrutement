@@ -18,9 +18,11 @@ export const ROUTES = {
   UNITE_CALENDRIER: '/back-office/calendrier',
   UNITE_SUGGESTIONS: '/back-office/suggestions',
   UNITE_RH_SUGGESTIONS: '/back-office/rh-suggestions',
+  UNITE_STATISTIQUES: '/back-office/statistiques',
   
   // Routes RH
   RH_LOGIN: '/rh/login',
+  RH_HOME: '/rh',
   RH_CALENDRIER: '/rh/calendrier',
   RH_SUGGESTIONS: '/rh/suggestions',
   RH_CEO_SUGGESTIONS: '/rh/ceo-suggestions',
@@ -72,6 +74,11 @@ export const ROUTE_METADATA = {
   },
   [ROUTES.UNITE_RH_SUGGESTIONS]: {
     title: 'Suggestions Envoyées',
+    requiresAuth: true,
+    layout: true
+  },
+  [ROUTES.UNITE_STATISTIQUES]: {
+    title: 'Statistiques Unité',
     requiresAuth: true,
     layout: true
   },
