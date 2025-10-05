@@ -61,6 +61,7 @@
 }
 
 .form-group input,
+.form-group select,
 .login-rh__input {
   width: 100%;
   padding: var(--spacing-md);
@@ -73,6 +74,7 @@
 }
 
 .form-group input:focus,
+.form-group select:focus,
 .login-rh__input:focus {
   border-color: var(--color-accent);
   box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);

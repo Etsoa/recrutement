@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '../../router/useNavigateHelper';
 import { unitesService } from "../../services";
-import Header from "../../components/HeaderUnite";
-import Input, { Select } from "../../components/Input";
-import { Button } from "../../components";
-import "../../styles/axiom-style.css";
+import "../../styles/LoginCeo.css";
 
 function LoginUnites() {
   const navigate = useNavigate();
@@ -12,6 +9,8 @@ function LoginUnites() {
   const [selected, setSelected] = useState(''); // id ou value du select
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,9 +25,14 @@ function LoginUnites() {
     fetchData();
   }, []);
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage('');
+    setLoading(true);
+
     if (!selected || !password) {
       setMessage("Veuillez sélectionner une unité et entrer le mot de passe.");
+      setLoading(false);
       return;
     }
 
@@ -44,51 +48,84 @@ function LoginUnites() {
         
         navigate(`/back-office/liste-annonces`);
       } else {
-        setMessage("Verifiez l'unité selectionné et mot de passe.");
+        setMessage("Vérifiez l'unité sélectionnée et le mot de passe.");
       }
     } catch (err) {
       console.error(err);
-      setMessage("Erreur serveur");
+      setMessage("Erreur de connexion au serveur");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="app-container">
-      {/* <Header /> */}
-      <main className="login-main">
-        <div className="login-container">
-          <h1 className="login-title">Se connecter en tant qu'unité</h1>
+    <div className="login-container">
+      <div className="login-form">
+        <div className="brand-logo">
+          <h1>Axiom</h1>
+        </div>
+        
+        <div className="login-header">
+          <h2 className="login-title">Espace Unité</h2>
+          <p className="login-subtitle">Connectez-vous pour accéder à votre espace</p>
+        </div>
 
-          <Select
-            label="Sélectionner une unité"
-            options={unites.map((unite) => ({
-              value: unite.nom,
-              label: unite.nom
-            }))}
-            value={selected}
-            onChange={(e) => setSelected(e.target.value)}
-            name="user"
-          />
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="unite">Unité</label>
+            <select
+              id="unite"
+              value={selected}
+              onChange={(e) => setSelected(e.target.value)}
+              required
+            >
+              <option value="">Sélectionner une unité</option>
+              {unites.map((unite) => (
+                <option key={unite.id_unite} value={unite.nom}>
+                  {unite.nom}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <Input
-            label="Mot de passe"
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            placeholder="Entrez votre mot de passe"
-          />
+          <div className="form-group">
+            <label htmlFor="password">Mot de passe</label>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Entrez votre mot de passe"
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "Masquer" : "Afficher"}
+              </button>
+            </div>
+          </div>
 
-          <Button onClick={handleLogin}>
-            Se connecter
-          </Button>
+          <div className="login-actions">
+            <button 
+              type="submit" 
+              className="btn-submit"
+              disabled={loading}
+            >
+              {loading ? "Connexion..." : "Se connecter"}
+            </button>
+          </div>
 
           {message && (
-            <div className={`message ${message.includes('Veuillez') ? 'error' : 'success'}`}>
+            <div className={`login-message ${message.includes('Erreur') || message.includes('Veuillez') || message.includes('Vérifiez') ? 'login-message--error' : 'login-message--success'}`}>
               {message}
             </div>
           )}
-        </div>
-      </main>
+        </form>
+      </div>
     </div>
   );
 };

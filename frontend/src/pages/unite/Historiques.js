@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { annoncesBackOfficeService } from '../../services';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from '../../router/useNavigateHelper';
 import Header from "../../components/HeaderUnite";
 import Historique from "../../components/Historique";
 import Button from '../../components/Button';

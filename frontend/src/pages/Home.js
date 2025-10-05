@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../components/HeaderUnite";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '../router/useNavigateHelper';
 import { ROUTES } from "../router/routes";
 
 function Home() {

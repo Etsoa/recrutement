@@ -1,6 +1,6 @@
 // EmpContratEssaiList.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../router/useNavigateHelper';
 import { ROUTES } from '../router/routes';
 import { ceoService } from '../services/ceoService';
 import CeoHeader from './CeoHeader';

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
+import { useNavigate } from '../../router/useNavigateHelper';
 import { parametresService, annoncesBackOfficeService } from "../../services";
 import { Button } from "../../components";
 import "../../styles/Parametrage.css";

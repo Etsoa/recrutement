@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useNavigate } from '../router/useNavigateHelper';
 import { ROUTES } from '../router/routes';
 import { rhService } from '../services';
 import '../styles/Header.css';

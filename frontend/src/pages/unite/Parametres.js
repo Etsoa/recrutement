@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '../../router/useNavigateHelper';
 import Header from "../../components/HeaderUnite";
 import '../../styles/ParametrageUnite.css';
 import Postes from "./parametres/Postes";

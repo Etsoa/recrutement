@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from '../../../router/useNavigateHelper';
 import { getAllParametres, createFiliere } from "../../../api/parametreApi";
 import Input from "../../../components/Input";
 import { Button } from "../../../components";

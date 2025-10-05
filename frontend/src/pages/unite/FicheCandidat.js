@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useNavigate } from '../../router/useNavigateHelper';
 import Layout, { Container, Section, Grid } from '../../components/LayoutUnite';
 import Button from '../../components/Button';
 import { ficheCandidatService, annoncesService } from '../../services';

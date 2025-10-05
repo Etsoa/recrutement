@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { annoncesBackOfficeService } from '../../services';
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from 'react-router-dom';
+import { useNavigate } from '../../router/useNavigateHelper';
 import Header from "../../components/HeaderUnite";
 import QCM from "../../components/QCM";
 import Button from '../../components/Button'
