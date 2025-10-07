@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { statService } from '../../services';
 import '../../styles/StatistiquesRh.css';
+import '../../styles/StatistiquesEmpty.css';
 
 const StatistiquesRh = () => {
   const [stats, setStats] = useState({});
@@ -22,30 +23,82 @@ const StatistiquesRh = () => {
         age2: customAgeRange.age2 || ageRange.age2 || 100
       };
       
+      // Validation des paramètres
+      if (params.age1 < 0 || params.age2 < 0 || params.age1 > params.age2) {
+        setError('Paramètres d\'âge invalides. Vérifiez vos critères de filtrage.');
+        return;
+      }
+      
       const response = await statService.getRhStats(params);
       
       if (response && response.success && response.data) {
-        setStats(response.data);
+        // Contrôle supplémentaire des données côté frontend
+        const data = response.data;
+        
+        // Vérification si les données sont vides
+        if (!data.hasData) {
+          setStats({
+            ...data,
+            isEmpty: true,
+            message: 'Aucune donnée de candidature disponible dans le système'
+          });
+        } else {
+          setStats({
+            ...data,
+            isEmpty: false
+          });
+        }
       } else {
-        throw new Error('Données invalides reçues du serveur');
+        throw new Error(response?.message || 'Données invalides reçues du serveur');
       }
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques RH:', error);
-      setError('Erreur lors du chargement des statistiques');
+      setError(error.message || 'Erreur lors du chargement des statistiques');
+      // Définir des données par défaut en cas d'erreur
+      setStats({
+        totalCandidatures: 0,
+        ageMin: 0,
+        ageMax: 0,
+        ageMoyen: 0,
+        tranchesAge: [],
+        villes: [],
+        genres: [],
+        langues: [],
+        education: [],
+        experience: [],
+        isEmpty: true,
+        hasData: false
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleAgeFilter = () => {
+    // Validation des entrées
     if (ageRange.age1 && ageRange.age2) {
-      if (parseInt(ageRange.age1) <= parseInt(ageRange.age2)) {
-        fetchStatistics(ageRange);
-      } else {
-        alert('L\'âge minimum doit être inférieur à l\'âge maximum');
+      const age1 = parseInt(ageRange.age1);
+      const age2 = parseInt(ageRange.age2);
+      
+      if (age1 < 0 || age2 < 0) {
+        setError('Les âges ne peuvent pas être négatifs');
+        return;
       }
+      
+      if (age1 > age2) {
+        setError('L\'âge minimum doit être inférieur ou égal à l\'âge maximum');
+        return;
+      }
+      
+      if (age2 > 150) {
+        setError('L\'âge maximum ne peut pas dépasser 150 ans');
+        return;
+      }
+      
+      setError(null);
+      fetchStatistics({ age1, age2 });
     } else {
-      fetchStatistics();
+      setError('Veuillez saisir des âges valides');
     }
   };
 
@@ -86,6 +139,29 @@ const StatistiquesRh = () => {
       </div>
 
       <div className="stats-rh-content">
+        {/* Message d'état vide */}
+        {stats?.isEmpty && (
+          <div className="stats-rh-empty-state">
+            <div className="stats-rh-empty-icon">📊</div>
+            <h3 className="stats-rh-empty-title">Aucune donnée disponible</h3>
+            <p className="stats-rh-empty-message">
+              {stats.message || 'Aucune candidature n\'a encore été soumise dans le système.'}
+            </p>
+            <div className="stats-rh-empty-suggestions">
+              <p><strong>Suggestions :</strong></p>
+              <ul>
+                <li>Vérifiez que les unités ont publié des annonces</li>
+                <li>Attendez que des candidats postulent aux annonces</li>
+                <li>Modifiez les critères de filtrage par âge</li>
+                <li>Contactez les responsables d'unités pour promouvoir les offres</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Contenu des statistiques si données disponibles */}
+        {!stats?.isEmpty && (
+          <>
         <div className="stats-rh-grid">
           <div className="stats-rh-card stats-rh-summary">
             <div className="stats-rh-card-header">
@@ -292,6 +368,8 @@ const StatistiquesRh = () => {
             </ul>
           </div>
         </div>
+        </>
+        )}
       </div>
     </div>
   );

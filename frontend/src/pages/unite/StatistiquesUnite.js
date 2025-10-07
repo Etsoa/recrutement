@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from '../../router/useNavigateHelper';
 import { statService } from "../../services/statService";
 import '../../styles/StatistiquesUnite.css';
+import '../../styles/StatistiquesEmpty.css';
 
 function StatistiquesUnite() {
   const navigate = useNavigate();
@@ -22,27 +23,66 @@ function StatistiquesUnite() {
       
       const id_unite = localStorage.getItem('id_unite');
       if (!id_unite) {
-        setError('ID de l\'unité non trouvé');
+        setError('ID de l\'unité non trouvé. Veuillez vous reconnecter.');
         return;
       }
 
       const ageRange = customAgeRange || { age1: ageMin, age2: ageMax };
+      
+      // Validation des paramètres d'âge
+      if (ageRange.age1 < 0 || ageRange.age2 < 0 || ageRange.age1 > ageRange.age2) {
+        setError('Paramètres d\'âge invalides. L\'âge minimum doit être inférieur à l\'âge maximum.');
+        return;
+      }
+      
       const response = await statService.getStatsByUnite(id_unite, ageRange);
       
-      if (response.success) {
-        setStatistics(response.data);
+      if (response && response.success) {
+        // Contrôle supplémentaire des données côté frontend
+        const data = response.data || {};
+        
+        // Vérification de la cohérence des données
+        if (!data.hasData) {
+          setStatistics({
+            ...data,
+            isEmpty: true,
+            message: 'Aucune donnée de candidature disponible pour cette unité'
+          });
+        } else {
+          setStatistics({
+            ...data,
+            isEmpty: false
+          });
+        }
       } else {
-        setError(response.message || 'Erreur lors de la récupération des statistiques');
+        setError(response?.message || 'Erreur lors de la récupération des statistiques');
       }
     } catch (err) {
       console.error('Erreur lors du chargement des statistiques:', err);
-      setError('Erreur lors de la récupération des statistiques');
+      setError('Erreur de connexion. Veuillez vérifier votre connexion internet.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleAgeFilter = () => {
+    // Validation des paramètres avant l'envoi
+    if (ageMin < 0 || ageMax < 0) {
+      setError('Les âges ne peuvent pas être négatifs');
+      return;
+    }
+    
+    if (ageMin > ageMax) {
+      setError('L\'âge minimum doit être inférieur ou égal à l\'âge maximum');
+      return;
+    }
+    
+    if (ageMax > 150) {
+      setError('L\'âge maximum ne peut pas dépasser 150 ans');
+      return;
+    }
+    
+    setError(null);
     fetchStatistics({ age1: ageMin, age2: ageMax });
   };
 
@@ -77,6 +117,28 @@ function StatistiquesUnite() {
       </div>
 
       <div className="stats-content">
+        {/* Message d'état vide */}
+        {statistics?.isEmpty && (
+          <div className="stats-empty-state">
+            <div className="stats-empty-icon">📊</div>
+            <h3 className="stats-empty-title">Aucune donnée disponible</h3>
+            <p className="stats-empty-message">
+              {statistics.message || 'Aucune candidature n\'a encore été soumise pour cette unité.'}
+            </p>
+            <div className="stats-empty-suggestions">
+              <p>Suggestions :</p>
+              <ul>
+                <li>Vérifiez que des annonces ont été publiées</li>
+                <li>Attendez que des candidats postulent</li>
+                <li>Modifiez les critères de filtrage</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Contenu des statistiques si données disponibles */}
+        {!statistics?.isEmpty && (
+          <>
         {/* Résumé général */}
         <div className="stats-grid">
           <div className="stats-card stats-summary">
@@ -238,6 +300,8 @@ function StatistiquesUnite() {
             </ul>
           </div>
         </div>
+        </>
+        )}
       </div>
     </div>
   );

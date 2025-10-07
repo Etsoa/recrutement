@@ -192,12 +192,13 @@ const countByAgeRanges = async (id_unite) => {
 const countByVilleByUnite = async (id_unite) => {
   try {
     const query = `
-      SELECT t.ville, COUNT(*)::int as total
+      SELECT v.valeur as ville, COUNT(*)::int as total
       FROM candidats c
       JOIN annonces a ON c.id_annonce = a.id_annonce
       JOIN tiers t ON c.id_tiers = t.id_tiers
+      JOIN villes v ON t.id_ville = v.id_ville
       WHERE a.id_unite = $1
-      GROUP BY t.ville
+      GROUP BY v.valeur
       ORDER BY total DESC;
     `;
     
@@ -213,13 +214,13 @@ const countByVilleByUnite = async (id_unite) => {
 const countByGenreByUnite = async (id_unite) => {
   try {
     const query = `
-      SELECT g.libelle_genre as genre, COUNT(*)::int as total
+      SELECT g.valeur as genre, COUNT(*)::int as total
       FROM candidats c
       JOIN annonces a ON c.id_annonce = a.id_annonce
       JOIN tiers t ON c.id_tiers = t.id_tiers
       JOIN genres g ON t.id_genre = g.id_genre
       WHERE a.id_unite = $1
-      GROUP BY g.libelle_genre
+      GROUP BY g.valeur
       ORDER BY total DESC;
     `;
     

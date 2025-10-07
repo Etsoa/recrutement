@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from '../../../router/useNavigateHelper';
 import { getAllParametres, createQualite } from "../../../api/parametreApi";
-import Input from "../../../components/Input";
-import { Button } from "../../../components";
-import '../../../styles/Parametrage.css';
 
 function Qualites() {
   const navigate = useNavigate();
   const [parametrages, setparametrages] = useState([]);
   const [qualite, setQualite] = useState('');
-  const [showListeQualites, setShowListeQualites] = useState(false);
+  const [showListeQualites, setShowListeQualites] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +23,13 @@ function Qualites() {
   }, []);
 
   const handleQualite = async () => {
+    if (!qualite.trim()) {
+      alert("Veuillez saisir une qualité");
+      return;
+    }
+
     try {
+      setLoading(true);
       const data = {
         valeur: qualite
       };
@@ -38,63 +42,106 @@ function Qualites() {
         alert("Erreur lors de la création de la qualité");
       }
     } catch (error) {
+      const msg = error.response?.data?.message || error.message || "Erreur serveur";
+      alert("Erreur serveur : " + msg);
       console.error(error);
-      alert("Erreur serveur");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const toggleList = () => {
+    setShowListeQualites(prev => !prev);
+  };
+
   return (
-    <div style={{width: '50%'}}>
-      {/* Formulaire d'ajout */}
-      <div className="form-container">
-        <h3>➕ Ajouter une nouvelle qualité</h3>
-        <Input
-          label="Nom de la qualité"
-          type="text"
-          onChange={(e) => setQualite(e.target.value)}
-          value={qualite}
-          placeholder="Ex: Sérieux, Dynamique, Rigoureux..."
-        />
-        <Button onClick={handleQualite} variant="primary">
-          Ajouter une qualité
-        </Button>
+    <>
+      <div className="parametrage-unite__section-header">
+        <h3 className="parametrage-unite__section-title">Qualités</h3>
+        <button 
+          className="parametrage-unite__toggle-btn"
+          onClick={toggleList}
+        >
+          {showListeQualites ? 'Masquer' : 'Afficher'}
+        </button>
       </div>
 
-      {/* Section liste des qualités */}
-      <div className="list-container">
-        <div className="list-header">
-          <h3>Liste des qualités ({parametrages.qualites?.length || 0})</h3>
-          <Button
-            onClick={() => setShowListeQualites(prev => !prev)}
-            variant="secondary"
-          >
-            {showListeQualites ? 'Masquer' : 'Afficher'}
-          </Button>
-        </div>
+      {showListeQualites && (
+        <div className="parametrage-unite__section-content">
+          {/* Colonne gauche - Formulaire d'ajout */}
+          <div className="parametrage-unite__form-column">
+            <h4 className="parametrage-unite__form-title">
+              Ajouter une qualité
+            </h4>
+            
+            <div className="parametrage-unite__form-group">
+              <label className="parametrage-unite__label parametrage-unite__label--required">
+                Nom de la qualité
+              </label>
+              <input
+                type="text"
+                className="parametrage-unite__input"
+                value={qualite}
+                onChange={(e) => setQualite(e.target.value)}
+                placeholder="Ex: Sérieux, Dynamique, Rigoureux..."
+              />
+            </div>
 
-        {showListeQualites && (
-          <div className="list-body">
-            {parametrages.qualites?.length === 0 ? (
-              <div className="empty">
-                🏢 Aucune qualité configurée
-                <p>Ajoutez votre première qualité ci-dessus</p>
-              </div>
-            ) : (
-              parametrages.qualites?.map((qualite) => (
-                <div key={qualite.id_qualite} className="list-item">
-                  <div>
-                    <h4>{qualite.valeur}</h4>
-                  </div>
-                  <div className="actions">
-                    <button className="btn-icon">✏️</button>
-                  </div>
-                </div>
-              ))
-            )}
+            <button 
+              className="parametrage-unite__btn parametrage-unite__btn--primary"
+              onClick={handleQualite}
+              disabled={loading || !qualite.trim()}
+            >
+              {loading ? (
+                <>
+                  <span className="parametrage-unite__spinner"></span>
+                  Traitement...
+                </>
+              ) : "Ajouter"}
+            </button>
           </div>
-        )}
-      </div>
-    </div>
+
+          {/* Colonne droite - Liste */}
+          <div className="parametrage-unite__list-column">
+            <div className="parametrage-unite__list-header">
+              <h4 className="parametrage-unite__list-title">Qualités configurées</h4>
+              <span className="parametrage-unite__list-count">
+                {parametrages.qualites?.length || 0}
+              </span>
+            </div>
+
+            <div className="parametrage-unite__list-body">
+              {!parametrages.qualites || parametrages.qualites.length === 0 ? (
+                <div className="parametrage-unite__empty">
+                  <div className="parametrage-unite__empty-icon">⭐</div>
+                  <p className="parametrage-unite__empty-text">
+                    Aucune qualité configurée.<br/>
+                    Ajoutez votre première qualité.
+                  </p>
+                </div>
+              ) : (
+                parametrages.qualites.map((qualite) => (
+                  <div key={qualite.id_qualite} className="parametrage-unite__list-item">
+                    <div className="parametrage-unite__item-content">
+                      <h5 className="parametrage-unite__item-title">{qualite.valeur}</h5>
+                      <p className="parametrage-unite__item-subtitle">Trait de caractère</p>
+                    </div>
+                    <div className="parametrage-unite__item-actions">
+                      <button 
+                        className="parametrage-unite__action-btn"
+                        title="Modifier"
+                      >
+                        ✏️
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 export default Qualites;

@@ -30,8 +30,15 @@ function LoginUnites() {
     setMessage('');
     setLoading(true);
 
+    // Validation côté client
     if (!selected || !password) {
       setMessage("Veuillez sélectionner une unité et entrer le mot de passe.");
+      setLoading(false);
+      return;
+    }
+
+    if (password.length < 3) {
+      setMessage("Le mot de passe doit contenir au moins 3 caractères.");
       setLoading(false);
       return;
     }
@@ -40,19 +47,39 @@ function LoginUnites() {
       // Trouver l'unité complète basée sur le nom sélectionné
       const selectedUnite = unites.find(unite => unite.nom === selected);
       
+      if (!selectedUnite) {
+        throw new Error('Unité sélectionnée introuvable');
+      }
+      
       const res = await unitesService.loginUnite(selected, password);
-      if (res.success) {
-        // Sauvegarder l'unité sélectionnée et son ID dans la session
+      
+      if (res && res.success) {
+        // Vérification sécurisée des données de session
+        const uniteId = selectedUnite.id_unite || res.data?.unite?.id_unite;
+        
+        if (!uniteId) {
+          throw new Error('Données d\'unité incomplètes');
+        }
+        
+        // Sauvegarder avec expiration (24h)
+        const sessionData = {
+          selectedUnite: selected,
+          id_unite: uniteId,
+          loginTime: Date.now(),
+          expiresAt: Date.now() + (24 * 60 * 60 * 1000)
+        };
+        
+        localStorage.setItem('uniteSession', JSON.stringify(sessionData));
         localStorage.setItem('selectedUnite', selected);
-        localStorage.setItem('id_unite', selectedUnite?.id_unite || res.data?.unite?.id_unite);
+        localStorage.setItem('id_unite', uniteId.toString());
         
         navigate(`/back-office/liste-annonces`);
       } else {
-        setMessage("Vérifiez l'unité sélectionnée et le mot de passe.");
+        setMessage(res?.message || "Identifiants incorrects. Vérifiez l'unité et le mot de passe.");
       }
     } catch (err) {
-      console.error(err);
-      setMessage("Erreur de connexion au serveur");
+      console.error('Erreur de connexion:', err);
+      setMessage(err.message || "Erreur de connexion au serveur. Veuillez réessayer.");
     } finally {
       setLoading(false);
     }

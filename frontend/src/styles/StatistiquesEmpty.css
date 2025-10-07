@@ -1,0 +1,220 @@
+/* CSS pour les états vides des statistiques - Axiom Design System */
+
+/* États vides pour Statistiques Unité */
+.stats-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--axiom-white);
+  border-radius: var(--axiom-radius-xl);
+  border: 2px dashed var(--axiom-border);
+  margin: 2rem 0;
+  min-height: 400px;
+}
+
+.stats-empty-icon {
+  font-size: 4rem;
+  color: var(--axiom-neutral-300);
+  margin-bottom: 1.5rem;
+  opacity: 0.6;
+}
+
+.stats-empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--axiom-neutral-700);
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.025em;
+}
+
+.stats-empty-message {
+  font-size: 1rem;
+  color: var(--axiom-neutral-500);
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.stats-empty-suggestions {
+  background: var(--axiom-neutral-50);
+  border-radius: var(--axiom-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--axiom-border-light);
+  text-align: left;
+  max-width: 600px;
+  width: 100%;
+}
+
+.stats-empty-suggestions p {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--axiom-neutral-700);
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stats-empty-suggestions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stats-empty-suggestions li {
+  font-size: 0.875rem;
+  color: var(--axiom-neutral-600);
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.5;
+}
+
+.stats-empty-suggestions li::before {
+  content: "•";
+  color: var(--axiom-primary);
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+/* États vides pour Statistiques RH */
+.stats-rh-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background: var(--axiom-white);
+  border-radius: var(--axiom-radius-xl);
+  border: 2px dashed var(--axiom-border);
+  margin: 2rem 0;
+  min-height: 400px;
+}
+
+.stats-rh-empty-icon {
+  font-size: 4rem;
+  color: var(--axiom-neutral-300);
+  margin-bottom: 1.5rem;
+  opacity: 0.6;
+}
+
+.stats-rh-empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--axiom-neutral-700);
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.025em;
+}
+
+.stats-rh-empty-message {
+  font-size: 1rem;
+  color: var(--axiom-neutral-500);
+  margin: 0 0 2rem 0;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.stats-rh-empty-suggestions {
+  background: var(--axiom-neutral-50);
+  border-radius: var(--axiom-radius-lg);
+  padding: 1.5rem;
+  border: 1px solid var(--axiom-border-light);
+  text-align: left;
+  max-width: 650px;
+  width: 100%;
+}
+
+.stats-rh-empty-suggestions p {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--axiom-neutral-700);
+  margin: 0 0 1rem 0;
+}
+
+.stats-rh-empty-suggestions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stats-rh-empty-suggestions li {
+  font-size: 0.875rem;
+  color: var(--axiom-neutral-600);
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.5;
+}
+
+.stats-rh-empty-suggestions li::before {
+  content: "📌";
+  position: absolute;
+  left: 0;
+  font-size: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats-empty-state,
+  .stats-rh-empty-state {
+    padding: 3rem 1.5rem;
+    min-height: 300px;
+  }
+  
+  .stats-empty-icon,
+  .stats-rh-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .stats-empty-title,
+  .stats-rh-empty-title {
+    font-size: 1.25rem;
+  }
+  
+  .stats-empty-message,
+  .stats-rh-empty-message {
+    font-size: 0.875rem;
+  }
+  
+  .stats-empty-suggestions,
+  .stats-rh-empty-suggestions {
+    padding: 1rem;
+  }
+}
+
+/* Animation pour les états vides */
+@keyframes fadeInEmpty {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stats-empty-state,
+.stats-rh-empty-state {
+  animation: fadeInEmpty 0.5s ease-out;
+}
+
+/* Icônes animées */
+.stats-empty-icon,
+.stats-rh-empty-icon {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}

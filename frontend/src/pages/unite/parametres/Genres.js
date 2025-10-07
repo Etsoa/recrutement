@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from '../../../router/useNavigateHelper';
-import { getAllParametres, createPoste , createGenre} from "../../../api/parametreApi";
-import Input, { Select } from "../../../components/Input";
-import { Button } from "../../../components";
-import '../../../styles/Parametrage.css';
+import { getAllParametres, createGenre} from "../../../api/parametreApi";
 
 function Genres() {
   const navigate = useNavigate();
   const [parametrages, setparametrages] = useState([]);
   const [genres, setGenres] = useState('');
-  const [showListeGenres, setShowListeGenres] = useState(false);
-  
+  const [showListeGenres, setShowListeGenres] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getAllParametres();
-        // console.log(response.data);
-        setparametrages(response.data); // tableau data
+        setparametrages(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -27,7 +23,13 @@ function Genres() {
   }, []);
 
   const handleGenres = async () => {
+    if (!genres.trim()) {
+      alert("Veuillez saisir un genre");
+      return;
+    }
+
     try {
+      setLoading(true);
       const data = {
         valeur: genres
       };
@@ -37,66 +39,109 @@ function Genres() {
         setparametrages(params.data);
         setGenres('');
       } else {
-        alert("Erreur lors de la création du poste");
+        alert("Erreur lors de la création du genre");
       }
     } catch (error) {
+      const msg = error.response?.data?.message || error.message || "Erreur serveur";
+      alert("Erreur serveur : " + msg);
       console.error(error);
-      alert("Erreur serveur");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const toggleList = () => {
+    setShowListeGenres(prev => !prev);
+  };
+
   return (
-    <div style={{width: '50%'}}>
-      {/* Formulaire d'ajout */}
-      <div className="form-container">
-        <h3>➕ Ajouter un nouveau genre</h3>
-        <Input
-          label="Libellé du genre"
-          type="text"
-          onChange={(e) => setGenres(e.target.value)}
-          value={genres}
-          placeholder="Ex: Masculin, Féminin, Non-binaire..."
-        />
-        <Button onClick={handleGenres} variant="primary">
-          Ajouter un genre
-        </Button>
+    <>
+      <div className="parametrage-unite__section-header">
+        <h3 className="parametrage-unite__section-title">Genres</h3>
+        <button 
+          className="parametrage-unite__toggle-btn"
+          onClick={toggleList}
+        >
+          {showListeGenres ? 'Masquer' : 'Afficher'}
+        </button>
       </div>
 
-      {/* Section liste des genres */}
-      <div className="list-container">
-        <div className="list-header">
-          <h3>Liste des genres ({parametrages.genres?.length || 0})</h3>
-          <Button
-            onClick={() => setShowListeGenres(prev => !prev)}
-            variant="secondary"
-          >
-            {showListeGenres ? 'Masquer' : 'Afficher'}
-          </Button>
-        </div>
+      {showListeGenres && (
+        <div className="parametrage-unite__section-content">
+          {/* Colonne gauche - Formulaire d'ajout */}
+          <div className="parametrage-unite__form-column">
+            <h4 className="parametrage-unite__form-title">
+              Ajouter un genre
+            </h4>
+            
+            <div className="parametrage-unite__form-group">
+              <label className="parametrage-unite__label parametrage-unite__label--required">
+                Libellé du genre
+              </label>
+              <input
+                type="text"
+                className="parametrage-unite__input"
+                value={genres}
+                onChange={(e) => setGenres(e.target.value)}
+                placeholder="Ex: Masculin, Féminin, Non-binaire..."
+              />
+            </div>
 
-        {showListeGenres && (
-          <div className="list-body">
-            {parametrages.genres?.length === 0 ? (
-              <div className="empty">
-                🏢 Aucun genre configuré
-                <p>Ajoutez votre premier genre ci-dessus</p>
-              </div>
-            ) : (
-              parametrages.genres?.map((genre) => (
-                <div key={genre.id_genre} className="list-item">
-                  <div>
-                    <h4>{genre.valeur}</h4>
-                  </div>
-                  <div className="actions">
-                    <button className="btn-icon">✏️</button>
-                  </div>
-                </div>
-              ))
-            )}
+            <button 
+              className="parametrage-unite__btn parametrage-unite__btn--primary"
+              onClick={handleGenres}
+              disabled={loading || !genres.trim()}
+            >
+              {loading ? (
+                <>
+                  <span className="parametrage-unite__spinner"></span>
+                  Traitement...
+                </>
+              ) : "Ajouter"}
+            </button>
           </div>
-        )}
-      </div>
-    </div>
+
+          {/* Colonne droite - Liste */}
+          <div className="parametrage-unite__list-column">
+            <div className="parametrage-unite__list-header">
+              <h4 className="parametrage-unite__list-title">Genres configurés</h4>
+              <span className="parametrage-unite__list-count">
+                {parametrages.genres?.length || 0}
+              </span>
+            </div>
+
+            <div className="parametrage-unite__list-body">
+              {!parametrages.genres || parametrages.genres.length === 0 ? (
+                <div className="parametrage-unite__empty">
+                  <div className="parametrage-unite__empty-icon">👤</div>
+                  <p className="parametrage-unite__empty-text">
+                    Aucun genre configuré.<br/>
+                    Ajoutez votre premier genre.
+                  </p>
+                </div>
+              ) : (
+                parametrages.genres.map((genre) => (
+                  <div key={genre.id_genre} className="parametrage-unite__list-item">
+                    <div className="parametrage-unite__item-content">
+                      <h5 className="parametrage-unite__item-title">{genre.valeur}</h5>
+                      <p className="parametrage-unite__item-subtitle">Genre disponible</p>
+                    </div>
+                    <div className="parametrage-unite__item-actions">
+                      <button 
+                        className="parametrage-unite__action-btn"
+                        title="Modifier"
+                      >
+                        ✏️
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 export default Genres;

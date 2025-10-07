@@ -132,14 +132,14 @@ const countByLanguesByUnite = async (id_unite) => {
 const countByNiveauByUnite = async (id_unite) => {
     try {
         const query = `
-            SELECT n.libelle_niveau as niveau, 
+            SELECT n.valeur as niveau, 
                    COUNT(*)::int as nbr_candidats
             FROM candidats c
             JOIN annonces a ON c.id_annonce = a.id_annonce
             JOIN niveau_filiere_tiers nft ON c.id_tiers = nft.id_tiers
             JOIN niveaux n ON nft.id_niveau = n.id_niveau
             WHERE a.id_unite = $1
-            GROUP BY n.libelle_niveau, n.id_niveau
+            GROUP BY n.valeur, n.id_niveau
             ORDER BY n.id_niveau;
         `;
         
@@ -157,10 +157,10 @@ const countByExperienceByUnite = async (id_unite) => {
         const query = `
             SELECT 
                 CASE
-                    WHEN et.experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
-                    WHEN et.experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
-                    WHEN et.experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
-                    WHEN et.experience_annees >= 10 THEN '+10 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN '1-3 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN '4-6 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN '7-9 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN '+10 ans'
                     ELSE '0 ans'
                 END as tranche_experience,
                 COUNT(*)::int as nbr_candidats
@@ -170,18 +170,18 @@ const countByExperienceByUnite = async (id_unite) => {
             WHERE a.id_unite = $1
             GROUP BY 
                 CASE
-                    WHEN et.experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
-                    WHEN et.experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
-                    WHEN et.experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
-                    WHEN et.experience_annees >= 10 THEN '+10 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN '1-3 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN '4-6 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN '7-9 ans'
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN '+10 ans'
                     ELSE '0 ans'
                 END
             ORDER BY 
                 CASE
-                    WHEN et.experience_annees BETWEEN 1 AND 3 THEN 1
-                    WHEN et.experience_annees BETWEEN 4 AND 6 THEN 2
-                    WHEN et.experience_annees BETWEEN 7 AND 9 THEN 3
-                    WHEN et.experience_annees >= 10 THEN 4
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN 1
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN 2
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN 3
+                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN 4
                     ELSE 0
                 END;
         `;
