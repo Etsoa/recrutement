@@ -1,7 +1,7 @@
 // services/candidatService.js
 const Candidat = require('../../models/viewCandidatsModel');
 const pool = require('../../config/db'); 
-const { Op, fn, col, literal } = require('sequelize'); // ✅ à importer
+const { Sequelize, fn, col, literal } = require('sequelize'); // ✅ à importer
 
 // ✅ Age minimum
 const getAgeMin = async () => {
@@ -103,8 +103,9 @@ const countCandidaturesByUnite = async (id_unite) => {
 const getAgeMinByUnite = async (id_unite) => {
   try {
     const query = `
-      SELECT MIN(c.age) as age_min
+      SELECT MIN(EXTRACT(YEAR FROM AGE(t.date_naissance))) as age_min
       FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
       JOIN annonces a ON c.id_annonce = a.id_annonce
       WHERE a.id_unite = $1;
     `;
@@ -121,8 +122,9 @@ const getAgeMinByUnite = async (id_unite) => {
 const getAgeMaxByUnite = async (id_unite) => {
   try {
     const query = `
-      SELECT MAX(c.age) as age_max
+      SELECT MAX(EXTRACT(YEAR FROM AGE(t.date_naissance))) as age_max
       FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
       JOIN annonces a ON c.id_annonce = a.id_annonce
       WHERE a.id_unite = $1;
     `;
@@ -139,8 +141,9 @@ const getAgeMaxByUnite = async (id_unite) => {
 const getAgeMoyenByUnite = async (id_unite) => {
   try {
     const query = `
-      SELECT AVG(c.age) as age_moyen
+      SELECT AVG(EXTRACT(YEAR FROM AGE(t.date_naissance))) as age_moyen
       FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
       JOIN annonces a ON c.id_annonce = a.id_annonce
       WHERE a.id_unite = $1;
     `;
@@ -159,22 +162,23 @@ const countByAgeRanges = async (id_unite) => {
     const query = `
       SELECT 
         CASE 
-          WHEN c.age BETWEEN 18 AND 25 THEN '18-25 ans'
-          WHEN c.age BETWEEN 26 AND 35 THEN '26-35 ans'
-          WHEN c.age BETWEEN 36 AND 45 THEN '36-45 ans'
-          WHEN c.age BETWEEN 46 AND 55 THEN '46-55 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 18 AND 25 THEN '18-25 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 26 AND 35 THEN '26-35 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 36 AND 45 THEN '36-45 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 46 AND 55 THEN '46-55 ans'
           ELSE '55+ ans'
         END as tranche_age,
         COUNT(*)::int as total
       FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
       JOIN annonces a ON c.id_annonce = a.id_annonce
       WHERE a.id_unite = $1
       GROUP BY 
         CASE 
-          WHEN c.age BETWEEN 18 AND 25 THEN '18-25 ans'
-          WHEN c.age BETWEEN 26 AND 35 THEN '26-35 ans'
-          WHEN c.age BETWEEN 36 AND 45 THEN '36-45 ans'
-          WHEN c.age BETWEEN 46 AND 55 THEN '46-55 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 18 AND 25 THEN '18-25 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 26 AND 35 THEN '26-35 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 36 AND 45 THEN '36-45 ans'
+          WHEN EXTRACT(YEAR FROM AGE(t.date_naissance)) BETWEEN 46 AND 55 THEN '46-55 ans'
           ELSE '55+ ans'
         END
       ORDER BY tranche_age;

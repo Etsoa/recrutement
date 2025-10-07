@@ -91,7 +91,7 @@ const ViewCandidat = db.define(
     }
   },
   {
-    tableName: 'v_candidats',
+    tableName: 'v_candidats', // Vue restaurée via create_v_candidats.sql
     timestamps: false,
     // Vue en lecture seule
     hooks: {

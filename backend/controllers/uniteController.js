@@ -314,10 +314,13 @@ exports.getQuestionsReponses = async (req, res) => {
   try {
     const questions = await questionQcmsService.getAllQuestionQcms();
     const reponses = await reponseQcmsService.getAllReponseQcms();
+    
+    // Sérialisation des objets Sequelize en JSON pur
     const data = {
-      questions,
-      reponses
+      questions: questions.map(q => q.toJSON ? q.toJSON() : q),
+      reponses: reponses.map(r => r.toJSON ? r.toJSON() : r)
     };
+    
     console.log("Data dans controller", data);
     res.json({ message: 'Liste des questions récupérée avec succès', data, success: true });
   } catch (err) {

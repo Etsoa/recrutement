@@ -244,7 +244,7 @@ const getCandidatsEligiblesPourRh = async (id_unite = null) => {
       include: [
         {
           model: Candidats,
-          as: 'candidat',
+          as: 'Candidat', // Correction de l'alias : 'candidat' -> 'Candidat'
           include: [
             {
               model: Tiers,

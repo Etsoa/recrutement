@@ -164,6 +164,10 @@ exports.getStatsByUnite = async (req, res) => {
     });
   } catch (err) {
     console.error("Erreur dans getStatsByUnite:", err.message, err.stack);
+    
+    // Récupération sécurisée de id_unite pour le catch
+    const uniteId = req.body?.id_unite || req.query?.id_unite || null;
+    
     res.status(500).json({
       message: 'Erreur lors de la récupération des statistiques par unité',
       error: err.message,
@@ -180,7 +184,7 @@ exports.getStatsByUnite = async (req, res) => {
         byNiveau: [],
         byExperience: [],
         hasData: false,
-        uniteId: id_unite
+        uniteId: uniteId
       },
       success: false
     });

@@ -282,6 +282,11 @@ export const rhService = {
       console.error('Erreur lors de la récupération des suggestions CEO:', error);
       throw error;
     }
+  },
+
+  // Alias pour les suggestions CEO
+  getAllCeoSuggestions: async () => {
+    return rhService.getCeoSuggestions();
   }
 };
 
