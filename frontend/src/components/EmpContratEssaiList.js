@@ -115,7 +115,7 @@ const EmpContratEssaiList = () => {
     },
     statusBadge: (jours) => {
       let bgColor = '#f0fdf4'; // Default light green
-      let textColor = '#059669'; // Default green
+      let textColor = '#176c2fff'; // Default green
       
       if (jours < 10) {
         bgColor = '#fef2f2';

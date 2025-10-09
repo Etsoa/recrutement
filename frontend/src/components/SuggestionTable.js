@@ -109,7 +109,7 @@ const SuggestionTable = () => {
     },
     statusBadge: (status) => {
       let bgColor = "#f0fdf4"; // Default light green
-      let textColor = "#059669"; // Default green
+      let textColor = "#176c2fff"; // Default green
 
       if (status === "Invalide") {
         bgColor = "#fef2f2";

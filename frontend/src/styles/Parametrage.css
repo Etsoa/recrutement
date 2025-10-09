@@ -2,8 +2,8 @@
 /* Thème: Blanc-Gris-Vert avec actions colorées uniquement */
 
 :root {
-  --axiom-primary: #16a085;
-  --axiom-primary-light: #1abc9c;
+  --axiom-primary: #176c2fff;
+  --axiom-primary-light: #176c2fff;
   --axiom-primary-dark: #138d75;
   --axiom-secondary: #6c757d;
   --axiom-success: #28a745;

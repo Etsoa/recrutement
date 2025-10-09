@@ -44,7 +44,7 @@ function QCM({ formData }) {
                                 fontWeight: r.correcte ? "bold" : "normal",
                                 boxShadow: r.correcte ? "0 1px 4px rgba(46,204,64,0.08)" : "none"
                             }}>
-                                {r.reponse} {r.correcte && <span style={{marginLeft: "8px", fontSize: "0.95em", color: "#27ae60", fontWeight: "bold"}}>✔ Correcte</span>}
+                                {r.reponse} {r.correcte && <span style={{marginLeft: "8px", fontSize: "0.95em", color: "#176c2fff", fontWeight: "bold"}}>✔ Correcte</span>}
                             </li>
                         ))}
                     </ul>

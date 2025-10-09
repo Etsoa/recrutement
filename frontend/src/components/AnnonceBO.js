@@ -77,7 +77,7 @@ function Annonce({ annonce }) {
                                 style={{
                                     backgroundColor: "white",
                                     border: "1px solid black",
-                                    color: detail.type_status === "En cours de demande" || detail.type_status === "Refusé" ? "orange" : "green"
+                                    color: detail.type_status === "En cours de demande" || detail.type_status === "Refusé" ? "orange" : "#176c2fff"
                                 }} >
                                 {detail.type_status || "Statut inconnu"}
                             </Button>

@@ -47,7 +47,7 @@ const RhCeoSuggestions = () => {
     switch (status?.toLowerCase()) {
       case 'valide':
       case 'validé':
-        return '#27ae60'; // Vert
+        return '#176c2fff'; // Vert
       case 'invalide':
       case 'invalidé':
       case 'refuse':

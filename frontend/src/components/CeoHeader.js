@@ -25,7 +25,7 @@ const CeoHeader = () => {
   const logoStyle = {
     fontSize: '1.5rem',
     fontWeight: 'bold',
-    color: '#059669',
+    color: '#176c2fff',
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
@@ -53,11 +53,11 @@ const CeoHeader = () => {
   const activeButtonStyle = {
     ...buttonStyle,
     backgroundColor: '#f0fdf4',
-    color: '#059669'
+    color: '#176c2fff'
   };
   
   const logoutButtonStyle = {
-    backgroundColor: '#059669',
+    backgroundColor: '#176c2fff',
     color: 'white',
     border: 'none',
     padding: '0.5rem 1rem',
@@ -110,8 +110,8 @@ const CeoHeader = () => {
         
         <button 
           style={logoutButtonStyle}
-          onMouseOver={(e) => e.target.style.backgroundColor = '#047857'}
-          onMouseOut={(e) => e.target.style.backgroundColor = '#059669'}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#176c2fff'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#176c2fff'}
           onClick={handleLogout}
         >
           Déconnexion

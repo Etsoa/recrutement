@@ -57,7 +57,7 @@ const EmployeCEOList = () => {
     },
     statusBadge: (status) => {
       let bgColor = '#f0fdf4'; // Default light green
-      let textColor = '#059669'; // Default green
+      let textColor = '#176c2fff'; // Default green
       
       if (status === 'Inactif') {
         bgColor = '#fef2f2';
@@ -242,7 +242,7 @@ const EmployeCEOList = () => {
   // Get status badge style based on status
   const getStatusBadgeStyle = (status) => {
     let bgColor = '#f0fdf4'; // Default light green
-    let textColor = '#059669'; // Default green
+    let textColor = '#176c2fff'; // Default green
     
     if (status === 'En période d\'essai') {
       bgColor = '#fff7ed';

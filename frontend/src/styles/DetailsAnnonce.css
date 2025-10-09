@@ -28,8 +28,8 @@
 
 .notification--success {
   background: rgba(39, 174, 96, 0.05);
-  color: #27ae60;
-  border-left: 3px solid #27ae60;
+  color: #176c2fff;
+  border-left: 3px solid #176c2fff;
 }
 
 .notification--error {
@@ -591,9 +591,9 @@
 }
 
 .candidat-action-status--completed {
-  background: rgba(39, 174, 96, 0.1);
-  color: #27ae60;
-  border: 1px solid rgba(39, 174, 96, 0.3);
+  background: rgba(23, 108, 47, 0.1);
+  color: #176c2fff;
+  border: 1px solid rgba(23, 108, 47, 0.3);
 }
 
 .candidat-action-status--not-started {

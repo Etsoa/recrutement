@@ -38,7 +38,7 @@ const ContractModal = ({ contract, onClose }) => {
       alignItems: 'center'
     },
     title: {
-      color: '#059669',
+      color: '#176c2fff',
       fontSize: '1.25rem',
       fontWeight: '600',
       margin: 0
@@ -121,7 +121,7 @@ const ContractModal = ({ contract, onClose }) => {
       gap: '0.75rem'
     },
     downloadButton: {
-      backgroundColor: '#059669',
+      backgroundColor: '#176c2fff',
       color: '#ffffff',
       border: 'none',
       borderRadius: '0.375rem',
@@ -278,8 +278,8 @@ const ContractModal = ({ contract, onClose }) => {
           <button 
             onClick={handleDownloadPDF}
             style={styles.downloadButton}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#047857'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#059669'}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#176c2fff'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#176c2fff'}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>

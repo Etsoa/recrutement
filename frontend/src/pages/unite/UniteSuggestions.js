@@ -70,7 +70,7 @@ const UniteSuggestions = () => {
   };
 
   const getScoreColor = (score) => {
-    if (score >= 16) return '#27ae60'; // Vert
+    if (score >= 16) return '#176c2fff'; // Vert
     if (score >= 12) return '#f39c12'; // Orange
     return '#e74c3c'; // Rouge
   };

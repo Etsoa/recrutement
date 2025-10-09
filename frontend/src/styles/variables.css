@@ -9,11 +9,11 @@
   --color-secondary-light: #95a5a6;   /* Gris plus clair */
   
   /* Couleur d'accent */
-  --color-accent: #16a085;            /* Vert sage - Accent principal */
-  --color-accent-hover: #27ae60;      /* État de survol */
+  --color-accent: #176c2fff;            /* Vert sage - Accent principal */
+  --color-accent-hover: #176c2fff;      /* État de survol */
   
   /* États et messages */
-  --color-success: #27ae60;           /* Vert sage - Succès */
+  --color-success: #176c2fff;           /* Vert sage - Succès */
   --color-error: #e74c3c;             /* Rouge discret - Erreurs */
   --color-danger: #e74c3c;            /* Rouge discret - Erreurs (alias) */
   --color-warning: #f39c12;           /* Orange tamisé - Alertes */
