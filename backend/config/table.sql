@@ -347,4 +347,3 @@ CREATE TABLE horaires_ouvres (
     heure_debut TIME NOT NULL,
     heure_fin TIME NOT NULL
 );
-
