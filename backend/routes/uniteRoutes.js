@@ -16,14 +16,6 @@ router.post('/send/qcm-candidat', uniteController.sendQcmCandidat);
 // table unite_entretien, status_unite_entretien(a venir id=1), envoi email 
 router.post('/send/unite-entretien', uniteController.sendUniteEntretien);
 
-// // liste d entretiens par jour
-// router.get('/unite_entretiens_jour', uniteController.getAllUniteEntretiensParJour);;
-// // ajouter dans status_unite_entretien (termine id=2/en attente de validation id=3)
-// router.post('/update/status/unite_entretien', uniteController.updateStatusUniteEntretien);
-// // ajouter score dans score_unite_entretien
-// router.post('/create/score/unite_entretien', uniteController.createScoreUniteEntretien);
-
-
 // pour se connecter et recuperer les infos de l'unite
 router.get('/', uniteController.getAllUnites);
 // verification et retour de id

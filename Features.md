@@ -7,6 +7,64 @@
 - **RG-U02** : Connexion avec nom d'unité + mot de passe (table `unites`)
 - **RG-U03** : Session utilisateur maintenue côté client
 
+#### Flux technique d'accès aux unités :
+1. **Page d'accueil** : Bouton "Accès Unités" (`Home.js`) → Navigation vers `/login-unites`
+2. **Récupération liste unités** : Appel API `GET /unite/` → `uniteController.getAllUnites()` → `unitesService.getAllUnites()` → `Unite.findAll()`
+3. **Affichage unités** : Select avec toutes les unités (nom + id_unite) + champ mot de passe
+4. **Connexion** : Appel API `POST /unite/login` → `uniteController.loginUnite()` → `unitesService.getUniteByCredentials(nom, mot_de_passe)`
+5. **Authentification** : Recherche `Unite.findOne({ where: { nom: username, mot_de_passe: password } })`
+6. **Session** : Stockage localStorage (`token`, `unite`, `id_unite`, `uniteSession`) + redirection vers `/back-office/liste-annonces`
+
+**Route backend login unités :** `GET /unite/` (récupération liste) + `POST /unite/login` (authentification)
+
+#### État des tests et debug :
+- ✅ **Configuration réseau** : Frontend (.env) → `http://localhost:5000/api` / Backend (server.js) → Port 5000
+- ✅ **Modèle données** : `unitesModel.js` conforme à `table.sql` (id_unite, nom, mot_de_passe)
+- ✅ **Données seed** : 6 unités dans `data_coherent.sql` avec mot de passe 'azerty'
+- ✅ **Services backend** : `getAllUnites()` → `Unite.findAll()` / `getUniteByCredentials()` → `Unite.findOne()`
+- ✅ **Frontend logique** : Select peuplé via `unitesService.getAllUnites()`, formulaire de connexion, session localStorage
+- ⚠️ **Tests requis** : Vérifier DB peuplée, CORS, connexion end-to-end (voir `test_unite_login.md`)
+
+### 📋 LISTE ANNONCES PAR UNITÉ :
+- **RG-U04** : Après connexion réussie, redirection automatique vers `/back-office/liste-annonces`
+- **RG-U05** : Affichage des annonces filtrées par l'unité connectée (utilise `id_unite` stocké)
+- **RG-U06** : Interface avec filtres (status, recherche) + bouton création d'annonce
+
+#### Flux technique liste annonces :
+1. **Redirection post-login** : `loginUnites.js` → `navigate('/back-office/liste-annonces')` après connexion réussie
+2. **Récupération ID unité** : `unitesService.getCurrentUnite().id_unite` depuis localStorage
+3. **Appel API annonces** : `annoncesService.getAnnoncesByUnite(id_unite)` → `GET /unite/annonces-unite?id={id_unite}`
+4. **Backend traitement** : `uniteController.getAllAnnoncesUnite()` → `traitementAnnonceService.getAllAnnonces(id)` 
+5. **Affichage** : Grid avec cartes d'annonces (poste, genre, ville, âge) + bouton détails
+
+**Route backend liste annonces :** `GET /unite/annonces-unite` (paramètre `id` = id_unite)
+
+#### État des tests et debug :
+- ✅ **Service frontend** : `annoncesService.getAnnoncesByUnite()` ajoutée, utilise query params `?id={id_unite}`
+- ✅ **Route backend** : `GET /unite/annonces-unite` → `req.query.id` pour filtrer par unité
+- ✅ **Stockage session** : `id_unite` disponible dans localStorage après login
+- ✅ **Page ListeAnnonces** : Logic de récupération + affichage + filtres opérationnels
+- ✅ **Fix endpoint** : Correction `ANNONCES_ENDPOINTS.LIST` de `/unite/annonces` → `/unite/annonces-unite`
+- ⚠️ **Backend requis** : S'assurer que le serveur backend tourne sur `http://localhost:5000`
+- ⚠️ **Tests requis** : Vérifier données annonces en DB + affichage end-to-end
+
+#### Problème résolu - Loading infini :
+**Cause** : Endpoint incorrect dans `annoncesService.js` (`/unite/annonces` au lieu de `/unite/annonces-unite`)
+**Solution** : Correction de `ANNONCES_ENDPOINTS.LIST` pour correspondre à la route backend
+**Vérification** : Le backend doit être lancé (`npm start` dans `backend/`) sur port 5000
+
+### 📝 CRÉATION D'ANNONCE :
+- **RG-U07** : Une unité peut créer une annonce pour un poste de son unité
+- **RG-U08** : À la création, le statut initial est automatiquement "Soumise par unité" (id_type_status_annonce = 1)
+- **RG-U09** : L'ID de l'unité créatrice doit être enregistré dans status_annonces
+
+#### Problème résolu - Création annonce (id_unite null) :
+**Cause** : `id_unite` n'était pas passé dans `req.body` lors de la création d'annonce
+**Solution** : 
+1. **Contrôleur** : Récupération de `id_unite` depuis `req.body`, `req.user` ou `req.query` avec validation
+2. **Service** : Validation que `id_unite` est présent avant création + erreur explicite si manquant
+**Impact** : Les annonces créées incluent maintenant correctement l'ID de l'unité dans le statut initial
+
 ### 📢 GESTION DES ANNONCES :
 - **RG-U04** : Une unité peut créer des annonces pour ses postes uniquement
 - **RG-U05** : Une annonce comprend : poste, ville, âge min/max, genre, unité

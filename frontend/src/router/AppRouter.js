@@ -103,7 +103,7 @@ const AppRouter = () => {
         {/* Routes RH (sans layout pour login, avec layout pour les autres) */}
         <Route exact path={ROUTES.RH_LOGIN} component={RhLoginRh} />
         {/* Route d'accueil RH - redirige vers Statistiques */}
-        <Route exact path={ROUTES.RH_HOME} render={() => <Redirect to={ROUTES.STATISTIQUES} />} />
+        <Route exact path={ROUTES.RH_HOME} render={() => <Redirect to={ROUTES.RH_CALENDRIER} />} />
         <Route exact path={ROUTES.RH_CALENDRIER} render={() => <LayoutRh><RhCalendrier /></LayoutRh>} />
         <Route exact path={ROUTES.RH_SUGGESTIONS} render={() => <LayoutRh><RhSuggestions /></LayoutRh>} />
         <Route exact path={ROUTES.RH_CEO_SUGGESTIONS} render={() => <LayoutRh><RhCeoSuggestions /></LayoutRh>} />

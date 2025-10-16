@@ -33,11 +33,11 @@ const HeaderUnite = () => {
           >
             Annonces
           </Link>
-              <Link 
-            to={ROUTES.UNITE_STATISTIQUES} 
-            className={`header__nav-item ${location.pathname === ROUTES.UNITE_STATISTIQUES ? 'header__nav-item--active' : ''}`}
+          <Link 
+            to={ROUTES.CREATE_ANNONCE} 
+            className={`header__nav-item ${location.pathname === ROUTES.CREATE_ANNONCE ? 'header__nav-item--active' : ''}`}
           >
-            Statistiques
+            Créer une annonce
           </Link>
           <Link 
             to={ROUTES.UNITE_CALENDRIER} 
@@ -58,16 +58,16 @@ const HeaderUnite = () => {
             Suivi RH
           </Link>
           <Link 
+            to={ROUTES.UNITE_STATISTIQUES} 
+            className={`header__nav-item ${location.pathname === ROUTES.UNITE_STATISTIQUES ? 'header__nav-item--active' : ''}`}
+          >
+            Statistiques
+          </Link>
+          <Link 
             to={ROUTES.PARAMETRES} 
             className={`header__nav-item ${location.pathname === ROUTES.PARAMETRES ? 'header__nav-item--active' : ''}`}
           >
             Paramètres
-          </Link>
-          <Link 
-            to={ROUTES.CREATE_ANNONCE} 
-            className={`header__nav-item ${location.pathname === ROUTES.CREATE_ANNONCE ? 'header__nav-item--active' : ''}`}
-          >
-            Créer une annonce
           </Link>
         </nav>
         

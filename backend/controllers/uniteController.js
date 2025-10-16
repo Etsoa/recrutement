@@ -443,7 +443,26 @@ exports.createSituationMatrimoniale = async (req, res) => {
 exports.createAnnonce = async (req, res) => {
   try {
     console.log("Body recu:", req.body);
-    const annonce = await annoncesService.createAnnonce(req.body);
+    
+    // Récupérer l'ID de l'unité depuis le body ou depuis l'authentification
+    // Si id_unite n'est pas dans le body, essayer de le récupérer depuis req.user ou req.query
+    const id_unite = req.body.id_unite || req.user?.id_unite || req.query.id_unite;
+    
+    if (!id_unite) {
+      return res.status(400).json({ 
+        message: 'ID de l\'unité requis pour créer une annonce', 
+        data: null, 
+        success: false 
+      });
+    }
+    
+    // Ajouter id_unite aux données
+    const annonceData = {
+      ...req.body,
+      id_unite: id_unite
+    };
+    
+    const annonce = await annoncesService.createAnnonce(annonceData);
     res.json({ message: 'Annonce créée avec succès', data: annonce, success: true });
   } catch (err) {
     console.error("Erreur dans creation annonce:", err);

@@ -3,6 +3,11 @@ const StatusAnnonces = require('../../models/statusAnnoncesModel');
 
 const createAnnonce = async (data) => {
     try {
+        // Vérifier que id_unite est présent
+        if (!data.id_unite) {
+            throw new Error('id_unite est requis pour créer une annonce');
+        }
+        
         // Créer l'annonce
         const newAnnonce = await Annonce.create(data);
         
@@ -10,7 +15,7 @@ const createAnnonce = async (data) => {
         await StatusAnnonces.create({
             id_annonce: newAnnonce.id_annonce,
             id_type_status_annonce: 1, // Soumise par unité
-            id_unite: data.id_unite || null, // Ajout de l'ID unité si fourni
+            id_unite: data.id_unite, // ID unité requis
             date_changement: new Date()
         });
         

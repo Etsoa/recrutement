@@ -57,6 +57,24 @@ export const annoncesService = {
     }
   },
 
+  // Récupérer les annonces par unité (méthode spécifique)
+  getAnnoncesByUnite: async (idUnite) => {
+    try {
+      if (!idUnite) {
+        throw new Error('ID unité requis');
+      }
+      
+      // Appel API avec l'ID de l'unité en paramètre
+      const response = await api.get(ANNONCES_ENDPOINTS.LIST, {
+        id: idUnite
+      });
+      return response;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des annonces par unité:', error);
+      throw error;
+    }
+  },
+
   // Récupérer les détails d'une annonce avec ses candidats
   getAnnonceById: async (idAnnonce) => {
     try {

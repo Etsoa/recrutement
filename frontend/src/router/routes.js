@@ -14,7 +14,6 @@ export const ROUTES = {
   CREATE_QCM: '/back-office/create-qcm/:id',
   DETAIL_QCM: '/back-office/detail-qcm/:id',
   HISTORIQUE: '/back-office/historique',
-  // Nouvelles routes Unité
   UNITE_CALENDRIER: '/back-office/calendrier',
   UNITE_SUGGESTIONS: '/back-office/suggestions',
   UNITE_RH_SUGGESTIONS: '/back-office/rh-suggestions',
