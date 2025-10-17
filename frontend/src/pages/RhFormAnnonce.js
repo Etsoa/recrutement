@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Button from '../components/Button';
 import '../styles/FormAnnonce.css';
 import rhService from '../services/rhService';
@@ -14,26 +14,32 @@ const FormAnnonce = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const [selectedAnnonce, setSelectedAnnonce] = useState(null);
+  const [submittingId, setSubmittingId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const annoncesData = await rhService.getAllAnnonces();
-        console.log('Réponse du serveur:', annoncesData);
-        if (annoncesData.success) {
-          setAnnonces(annoncesData.data);
-        } else {
-          setMessage(annoncesData.message || 'Erreur de chargement des données');
-          setMessageType('error');
-        }
-      } catch (err) {
-        console.error('Erreur détaillée:', err);
-        setMessage('Erreur de connexion au serveur');
+  const fetchAnnonces = useCallback(async () => {
+    try {
+      setLoading(true);
+      const annoncesData = await rhService.getAllAnnonces();
+      if (annoncesData.success) {
+        setAnnonces(annoncesData.data || []);
+      } else {
+        setMessage(annoncesData.message || 'Erreur de chargement des données');
         setMessageType('error');
       }
-    };
-    fetchData();
+    } catch (err) {
+      console.error('Erreur détaillée:', err);
+      setMessage('Erreur de connexion au serveur');
+      setMessageType('error');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchAnnonces();
+  }, [fetchAnnonces]);
 
   const handleLogout = () => {
     sessionStorage.removeItem('rhLoggedIn');
@@ -48,32 +54,50 @@ const FormAnnonce = () => {
 
   const handleStatusChange = async (id_annonce, newStatus) => {
     try {
+      setSubmittingId(id_annonce);
+      // Conserver l'annonce sélectionnée pour la réouvrir après refresh
+      const keepSelectedId = selectedAnnonce?.id_annonce;
+
+      const annonceCourante = annonces.find(a => a.id_annonce === id_annonce);
+      const idUnite = annonceCourante?.Poste?.Unite?.id_unite ?? 2; // fallback ancien comportement
 
       const response = await rhService.updateAnnonceStatus({
         id_annonce,
         id_type_status_annonce: newStatus,
-        id_unite: 2
+        id_unite: idUnite
       });
 
-      if (response.success) {
-        const updatedAnnonces = annonces.map(annonce => {
-          if (annonce.id_annonce === id_annonce) {
-            return { ...annonce, id_type_status_annonce: newStatus };
-          }
-          return annonce;
-        });
-        setAnnonces(updatedAnnonces);
+      if (response?.success) {
+        // Recharger depuis le serveur pour avoir currentStatus à jour
+        await fetchAnnonces();
+        // Rétablir la sélection si la même annonce existe encore
+        if (keepSelectedId) {
+          const anew = annonces.find(a => a.id_annonce === keepSelectedId);
+          setSelectedAnnonce(anew || null);
+        }
         setMessage('Statut mis à jour avec succès');
         setMessageType('success');
+        // Effacer le message après un court délai
+        setTimeout(() => {
+          setMessage('');
+          setMessageType('');
+        }, 2000);
+      } else {
+        setMessage(response?.message || 'Impossible de mettre à jour le statut');
+        setMessageType('error');
       }
     } catch (err) {
       setMessage('Erreur lors de la mise à jour du statut');
       setMessageType('error');
     }
+    finally {
+      setSubmittingId(null);
+    }
   };
 
   const getStatusActions = (annonce) => {
-    if (annonce.id_type_status_annonce === STATUS_TYPES.EN_COURS) {
+    const currentStatusId = annonce?.currentStatus?.id_type_status_annonce ?? annonce?.id_type_status_annonce;
+    if (currentStatusId === STATUS_TYPES.EN_COURS) {
       return (
         <div className="form-annonce__status-actions" onClick={e => e.stopPropagation()}>
           <Button 
@@ -82,6 +106,7 @@ const FormAnnonce = () => {
               handleStatusChange(annonce.id_annonce, STATUS_TYPES.PUBLIE);
             }}
             variant="primary"
+            disabled={submittingId === annonce.id_annonce}
           >
             Publier
           </Button>
@@ -91,6 +116,7 @@ const FormAnnonce = () => {
               handleStatusChange(annonce.id_annonce, STATUS_TYPES.NON_PUBLIE);
             }}
             variant="secondary"
+            disabled={submittingId === annonce.id_annonce}
           >
             Ne pas publier
           </Button>
@@ -105,6 +131,7 @@ const FormAnnonce = () => {
             handleStatusChange(annonce.id_annonce, STATUS_TYPES.EN_COURS);
           }}
           variant="success"
+          disabled={submittingId === annonce.id_annonce}
         >
           Modifier le statut
         </Button>
@@ -112,21 +139,62 @@ const FormAnnonce = () => {
     );
   };
 
+  // Filtrage par statut sélectionné
+  const filteredAnnonces = React.useMemo(() => {
+    if (statusFilter === 'all') return annonces;
+    const wantedId = STATUS_TYPES[statusFilter];
+    return annonces.filter(a => {
+      const current = a?.currentStatus?.id_type_status_annonce ?? a?.id_type_status_annonce;
+      return current === wantedId;
+    });
+  }, [annonces, statusFilter]);
+
   return (
     <div className="form-annonce">
       <div className="form-annonce__container">
         <div className="form-annonce__header">
           <h1 className="form-annonce__title">Gestion des annonces</h1>
         </div>
+        <div className="form-annonce__header-info">
+          <div className="form-annonce__filters">
+            <label>
+              Statut:
+              <select value={statusFilter} onChange={(e)=>setStatusFilter(e.target.value)}>
+                <option value="all">Tous</option>
+                <option value="EN_COURS">En cours</option>
+                <option value="PUBLIE">Publié</option>
+                <option value="NON_PUBLIE">Non publié</option>
+              </select>
+            </label>
+            </div>
+        </div>
 
         <div className="form-annonce__layout">
           <div className="form-annonce__list">
-            {annonces.map(annonce => (
-              <div 
-                key={annonce.id_annonce} 
-                className={`form-annonce__item ${selectedAnnonce?.id_annonce === annonce.id_annonce ? 'form-annonce__item--selected' : ''}`}
-                onClick={() => toggleAnnonceDetails(annonce)}
-              >
+            <div className="form-annonce__list">
+              {loading && (
+                <div className="form-annonce__skeleton-list">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="form-annonce__skeleton-item" />
+                  ))}
+                </div>
+              )}
+
+              {!loading && filteredAnnonces.length === 0 && (
+                <div className="form-annonce__empty">
+                  <div className="form-annonce__empty-icon">🗂️</div>
+                  <h3>Aucune annonce à traiter</h3>
+                  <p>Les annonces publiées ou refusées n’apparaissent plus ici.</p>
+                  <Button onClick={fetchAnnonces} variant="ghost">Rafraîchir</Button>
+                </div>
+              )}
+
+              {!loading && filteredAnnonces.map(annonce => (
+                <div
+                  key={annonce.id_annonce}
+                  className={`form-annonce__item ${selectedAnnonce?.id_annonce === annonce.id_annonce ? 'form-annonce__item--selected' : ''}`}
+                  onClick={() => toggleAnnonceDetails(annonce)}
+                >
                 <div className="form-annonce__item-summary">
                   <div className="form-annonce__item-main">
                     <h3>{annonce.Poste.valeur}</h3>
@@ -134,11 +202,11 @@ const FormAnnonce = () => {
                       <p><strong>Unité:</strong> {annonce.Poste.Unite.nom}</p>
                       <p><strong>Ville:</strong> {annonce.Ville.valeur}</p>
                       <span className={`form-annonce__status-badge form-annonce__status-badge--${
-                        annonce.id_type_status_annonce === STATUS_TYPES.EN_COURS ? 'pending' :
-                        annonce.id_type_status_annonce === STATUS_TYPES.PUBLIE ? 'published' : 'rejected'
+                        (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.EN_COURS ? 'pending' :
+                        (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.PUBLIE ? 'published' : 'rejected'
                       }`}>
-                        {annonce.id_type_status_annonce === STATUS_TYPES.EN_COURS ? 'En cours' :
-                         annonce.id_type_status_annonce === STATUS_TYPES.PUBLIE ? 'Publié' : 'Non publié'}
+                        {(annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.EN_COURS ? 'En cours' :
+                         (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.PUBLIE ? 'Publié' : 'Non publié'}
                       </span>
                     </div>
                   </div>
@@ -191,6 +259,7 @@ const FormAnnonce = () => {
               </div>
             ))}
           </div>
+        </div>
         </div>
 
         {message && (

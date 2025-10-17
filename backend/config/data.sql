@@ -135,12 +135,12 @@ INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre, id_unite) 
 INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre, id_unite) VALUES (3, 3, 27, 45, 2, 3);
 
 -- STATUS ANNONCES
-INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (1, 1, '2025-09-01', 1);
-INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (1, 2, '2025-09-05', 1);
-INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (2, 1, '2025-09-02', 2);
-INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (2, 3, '2025-09-06', 2);
-INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (3, 2, '2025-09-03', 1);
-INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (3, 2, '2025-09-07', 1);
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (1, 1, '2025-09-01 08:00:00', 1);
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (1, 2, '2025-09-05 09:30:00', 1);
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (2, 1, '2025-09-02 10:15:00', 2);
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (2, 3, '2025-09-06 16:45:00', 2);
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (3, 2, '2025-09-03 11:00:00', 1);
+INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) VALUES (3, 2, '2025-09-07 14:20:00', 1);
 
 -- LANGUES POUR TOUTES LES ANNONCES (1-10)
 -- Annonce 1 : Directeur Général

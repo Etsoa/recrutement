@@ -208,6 +208,25 @@ const RhCalendar = () => {
     }
   };
 
+  // Statut dérivé métier: si un score existe => Terminé, sinon
+  // - si la date d'entretien est dans le futur => À venir
+  // - sinon => Terminé (passé sans score ne reste pas en attente)
+  const getDerivedStatusMeta = (entretien) => {
+    const now = new Date();
+    const entretienDate = new Date(entretien.date_entretien);
+    const hasScore = entretien.dernier_score !== null && entretien.dernier_score !== undefined;
+
+    if (hasScore) {
+      return { label: 'Terminé', className: 'termine' };
+    }
+
+    if (entretienDate > now) {
+      return { label: 'À venir', className: 'a-venir' };
+    }
+
+    return { label: 'Terminé', className: 'termine' };
+  };
+
   // Fonction pour suggérer au CEO
   const suggestToCeo = async (id_rh_entretien, id_candidat) => {
     setSending(true);
@@ -389,9 +408,14 @@ const RhCalendar = () => {
                               Unité ID: {entretien.id_unite_entretien} | Candidat ID: {entretien.id_candidat}
                             </div>
                           </div>
-                          <div className={`status-badge ${entretien.statut ? entretien.statut.toLowerCase().replace(' ', '-') : 'undefined'}`}>
-                            {entretien.statut || 'Non défini'}
-                          </div>
+                          {(() => {
+                            const meta = getDerivedStatusMeta(entretien);
+                            return (
+                              <div className={`status-badge ${meta.className}`}>
+                                {meta.label}
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         <div className="entretien-details">

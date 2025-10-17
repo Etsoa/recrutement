@@ -452,6 +452,37 @@
   color: var(--text-light);
 }
 
+/* Nouveaux statuts normalisés */
+.status-badge { box-shadow: var(--shadow); }
+.status-badge.a-venir {
+  background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+  color: #0b3b75;
+  border: 1px solid #60a5fa;
+}
+
+.status-badge.termine {
+  background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+  color: #065f46;
+  border: 1px solid #34d399;
+}
+
+.status-badge.en-attente-de-validation {
+  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+  color: #7c2d12;
+  border: 1px solid #f59e0b;
+}
+
+/* Teinte des cartes selon statut */
+.entretien-card.termine {
+  border-left-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.entretien-card.a-venir {
+  border-left-color: #60a5fa;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
 .entretien-details {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

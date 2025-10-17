@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '../../components';
 import { rhService } from '../../services';
 import '../../styles/RhCeoSuggestions.css';
@@ -18,7 +18,7 @@ const RhCeoSuggestions = () => {
     try {
       const data = await rhService.getAllCeoSuggestions();
       if (data.success) {
-        setSuggestions(data.data);
+        setSuggestions(Array.isArray(data.data) ? data.data : []);
       } else {
         setMessage(data.message || 'Erreur lors du chargement');
         setMessageType('error');
@@ -30,6 +30,11 @@ const RhCeoSuggestions = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getSuggestionStatus = (s) => {
+    const val = s?.StatusCeoSuggestions?.[0]?.TypeStatusSuggestion?.valeur;
+    return val ? String(val).toLowerCase() : 'inconnu';
   };
 
   const formatDateTime = (dateString) => {
@@ -74,10 +79,10 @@ const RhCeoSuggestions = () => {
     }
   };
 
-  const filteredSuggestions = suggestions.filter(suggestion => {
-    if (filterStatus === 'all') return true;
-    return suggestion.status?.toLowerCase() === filterStatus;
-  });
+  const filteredSuggestions = useMemo(() => {
+    if (filterStatus === 'all') return suggestions;
+    return suggestions.filter(s => getSuggestionStatus(s) === filterStatus);
+  }, [suggestions, filterStatus]);
 
   if (loading) {
     return (
@@ -114,19 +119,19 @@ const RhCeoSuggestions = () => {
             variant={filterStatus === 'en attente de validation' ? 'primary' : 'ghost'}
             onClick={() => setFilterStatus('en attente de validation')}
           >
-            En attente ({suggestions.filter(s => s.status?.toLowerCase() === 'en attente de validation').length})
+            En attente ({suggestions.filter(s => getSuggestionStatus(s) === 'en attente de validation').length})
           </Button>
           <Button
             variant={filterStatus === 'valide' ? 'primary' : 'ghost'}
             onClick={() => setFilterStatus('valide')}
           >
-            Validées ({suggestions.filter(s => s.status?.toLowerCase() === 'valide').length})
+            Validées ({suggestions.filter(s => getSuggestionStatus(s) === 'valide').length})
           </Button>
           <Button
             variant={filterStatus === 'invalide' ? 'primary' : 'ghost'}
             onClick={() => setFilterStatus('invalide')}
           >
-            Refusées ({suggestions.filter(s => s.status?.toLowerCase() === 'invalide').length})
+            Refusées ({suggestions.filter(s => getSuggestionStatus(s) === 'invalide').length})
           </Button>
         </div>
       </div>
@@ -137,9 +142,8 @@ const RhCeoSuggestions = () => {
             <div key={suggestion.id_ceo_suggestion} className="ceo-suggestion-card">
               <div className="suggestion-header">
                 <div className="candidat-info">
-                  <h3>{suggestion.prenom_candidat} {suggestion.nom_candidat}</h3>
-                  <span className="poste-info">{suggestion.poste_nom}</span>
-                  <span className="unite-info">Unité: {suggestion.unite_nom}</span>
+                  <h3>{suggestion?.Candidat?.Tier?.prenom || 'Prénom inconnu'} {suggestion?.Candidat?.Tier?.nom || ''}</h3>
+                  {/* Poste / Unité non fournis dans la réponse actuelle */}
                 </div>
                 <div className="suggestion-meta">
                   <span className="suggestion-date">
@@ -147,9 +151,9 @@ const RhCeoSuggestions = () => {
                   </span>
                   <span 
                     className="status-badge"
-                    style={{ backgroundColor: getStatusColor(suggestion.status) }}
+                    style={{ backgroundColor: getStatusColor(suggestion?.StatusCeoSuggestions?.[0]?.TypeStatusSuggestion?.valeur) }}
                   >
-                    {getStatusText(suggestion.status)}
+                    {getStatusText(suggestion?.StatusCeoSuggestions?.[0]?.TypeStatusSuggestion?.valeur)}
                   </span>
                 </div>
               </div>
@@ -158,67 +162,31 @@ const RhCeoSuggestions = () => {
                 <div className="candidat-details-grid">
                   <div className="detail-item">
                     <strong>Email:</strong>
-                    <span>{suggestion.email_candidat}</span>
+                    <span>{suggestion?.Candidat?.Tier?.email || 'N/A'}</span>
                   </div>
-                  <div className="detail-item">
-                    <strong>Contact:</strong>
-                    <span>{suggestion.contact_candidat}</span>
-                  </div>
-                  <div className="detail-item">
-                    <strong>Ville:</strong>
-                    <span>{suggestion.ville}</span>
-                  </div>
-                  <div className="detail-item">
-                    <strong>Score entretien unité:</strong>
-                    <span>{suggestion.score_unite}/20</span>
-                  </div>
-                  <div className="detail-item">
-                    <strong>Score entretien RH:</strong>
-                    <span>{suggestion.score_rh}/20</span>
-                  </div>
-                  <div className="detail-item">
-                    <strong>Date entretien RH:</strong>
-                    <span>{formatDateTime(suggestion.date_entretien_rh)}</span>
-                  </div>
-                </div>
-
-                <div className="rh-evaluation-info">
-                  <h4>Évaluation RH</h4>
-                  <div className="entretien-rh-details">
+                  {suggestion?.RhEntretien?.date_entretien && (
                     <div className="detail-item">
                       <strong>Date entretien RH:</strong>
-                      <span>{formatDateTime(suggestion.date_entretien_rh)}</span>
+                      <span>{formatDateTime(suggestion.RhEntretien.date_entretien)}</span>
                     </div>
-                    <div className="detail-item">
-                      <strong>Score RH:</strong>
-                      <span>{suggestion.score_rh}/20</span>
-                    </div>
-                    <div className="detail-item">
-                      <strong>Statut entretien RH:</strong>
-                      <span>{suggestion.statut_entretien_rh}</span>
-                    </div>
-                    {suggestion.commentaire_rh && (
-                      <div className="detail-item">
-                        <strong>Commentaire RH:</strong>
-                        <span>{suggestion.commentaire_rh}</span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
 
-                {suggestion.date_changement_status && (
+                {/* Section d'évaluation RH non fournie dans la réponse courante; on cache si non disponible */}
+
+                {suggestion?.StatusCeoSuggestions?.[0]?.date_changement && (
                   <div className="status-history">
-                    <p><strong>Dernière mise à jour:</strong> {formatDateTime(suggestion.date_changement_status)}</p>
+                    <p><strong>Dernière mise à jour:</strong> {formatDateTime(suggestion.StatusCeoSuggestions[0].date_changement)}</p>
                   </div>
                 )}
               </div>
 
               <div className="suggestion-actions">
-                {suggestion.cv && (
+                {suggestion?.Candidat?.cv && (
                   <Button
                     variant="secondary"
                     size="sm"
-                    onClick={() => window.open(`/uploads/cv/${suggestion.cv}`, '_blank')}
+                    onClick={() => window.open(`/uploads/cv/${suggestion.Candidat.cv}`, '_blank')}
                   >
                     Voir CV
                   </Button>
@@ -233,13 +201,13 @@ const RhCeoSuggestions = () => {
                 </Button>
               </div>
 
-              {suggestion.status?.toLowerCase() === 'valide' && (
+              {getSuggestionStatus(suggestion) === 'valide' && (
                 <div className="success-notice">
                   🎉 Ce candidat a été validé par le CEO ! Il peut maintenant être embauché.
                 </div>
               )}
 
-              {suggestion.status?.toLowerCase() === 'invalide' && suggestion.commentaire_ceo && (
+              {getSuggestionStatus(suggestion) === 'invalide' && suggestion.commentaire_ceo && (
                 <div className="rejection-notice">
                   <strong>Commentaire CEO:</strong> {suggestion.commentaire_ceo}
                 </div>
@@ -286,19 +254,19 @@ const RhCeoSuggestions = () => {
           </div>
           <div className="stat-item">
             <span className="stat-number">
-              {suggestions.filter(s => s.status?.toLowerCase() === 'valide').length}
+              {suggestions.filter(s => getSuggestionStatus(s) === 'valide').length}
             </span>
             <span className="stat-label">Validées</span>
           </div>
           <div className="stat-item">
             <span className="stat-number">
-              {suggestions.filter(s => s.status?.toLowerCase() === 'en attente de validation').length}
+              {suggestions.filter(s => getSuggestionStatus(s) === 'en attente de validation').length}
             </span>
             <span className="stat-label">En attente</span>
           </div>
           <div className="stat-item">
             <span className="stat-number">
-              {suggestions.filter(s => s.status?.toLowerCase() === 'invalide').length}
+              {suggestions.filter(s => getSuggestionStatus(s) === 'invalide').length}
             </span>
             <span className="stat-label">Refusées</span>
           </div>

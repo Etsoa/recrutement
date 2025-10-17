@@ -63,9 +63,10 @@ const Annonce = db.define('Annonce', {
 });
 
 // Associations Sequelize
-Annonce.belongsTo(Poste, { foreignKey: 'id_poste' });
-Annonce.belongsTo(Ville, { foreignKey: 'id_ville' });
-Annonce.belongsTo(Genre, { foreignKey: 'id_genre' });
+Annonce.belongsTo(Poste, { foreignKey: 'id_poste', as: 'Poste' });
+Annonce.belongsTo(Ville, { foreignKey: 'id_ville', as: 'Ville' });
+Annonce.belongsTo(Genre, { foreignKey: 'id_genre', as: 'Genre' });
+
 Annonce.hasMany(NiveauFiliereAnnonce, { foreignKey: 'id_annonce', as: 'niveauFiliereAnnonces' });
 NiveauFiliereAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce', as: 'Annonce' });
 

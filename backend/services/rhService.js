@@ -96,7 +96,7 @@ const getAllSuggests = async () => {
 
 const getAllAnnonces = async () => {
   try {
-    // D'abord récupérer toutes les annonces
+    // 1) Récupérer toutes les annonces avec leurs dépendances
     const allAnnonces = await Annonces.findAll({
       include: [
         { model: Postes, as: 'Poste', include: [{ model: Unites, as: 'Unite', attributes: ['id_unite', 'nom'] }] },
@@ -113,26 +113,26 @@ const getAllAnnonces = async () => {
       ]
     });
 
-    // Filtrer pour ne garder que celles avec status = 1 (soumises par les unités)
-    const filteredAnnonces = [];
-    
+    // 2) Récupérer le dernier statut pour chaque annonce (visible par défaut si 1=En cours de demande ou 2=Publie)
+    const allowedStatusIds = [1, 2, 3, 4];
+    const results = [];
+
     for (const annonce of allAnnonces) {
-      // Récupérer le dernier statut de cette annonce
       const lastStatus = await StatusAnnonces.findOne({
         where: { id_annonce: annonce.id_annonce },
         order: [['date_changement', 'DESC']],
         limit: 1
       });
-      
-      // Ne garder que si le dernier statut est 1 (soumise par unité)
-      if (lastStatus && lastStatus.id_type_status_annonce === 1) {
-        // Ajouter le statut à l'objet annonce
+
+      if (lastStatus) {
         annonce.dataValues.currentStatus = lastStatus;
-        filteredAnnonces.push(annonce);
+        if (allowedStatusIds.includes(lastStatus.id_type_status_annonce)) {
+          results.push(annonce);
+        }
       }
     }
 
-    return filteredAnnonces;
+    return results;
   } catch (err) {
     console.error('Erreur getAllAnnonces:', err);
     throw err;
@@ -354,13 +354,19 @@ const getDisponibilitesRh = async (id_rh, date) => {
     }
   });
 
+  // Dédupliquer et trier les créneaux (en cas de doublons dans horaires_ouvres)
+  const uniqueHoraires = Array.from(new Set(horaires)).sort();
+
+  // Si aucun horaire ouvert, rien à proposer
+  if (uniqueHoraires.length === 0) return [];
+
   const existants = await RhEntretien.findAll({
     where: {
       id_rh_suggestion: id_rh,
       date_entretien: {
         [Op.between]: [
-          `${date} ${horaires[0]}`,
-          `${date} ${horaires[horaires.length-1]}`
+          `${date} ${uniqueHoraires[0]}`,
+          `${date} ${uniqueHoraires[uniqueHoraires.length-1]}`
         ]
       }
     }
@@ -371,7 +377,9 @@ const getDisponibilitesRh = async (id_rh, date) => {
     return `${String(date.getHours()).padStart(2, '0')}:00`;
   });
 
-  return horaires.filter(h => !horairesPrises.includes(h));
+  // Dédupliquer les heures prises au cas où
+  const prisesSet = new Set(horairesPrises);
+  return uniqueHoraires.filter(h => !prisesSet.has(h));
 }; 
 
 const getProchaineDisponibilite = async (id_rh, date_depart) => {

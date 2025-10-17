@@ -22,7 +22,7 @@ const RhSuggestions = () => {
     try {
       const data = await rhService.getSuggestions();
       if (data.success) {
-        setSuggestions(data.data);
+        setSuggestions(Array.isArray(data.data) ? data.data : []);
       } else {
         setMessage(data.message || 'Erreur lors du chargement');
         setMessageType('error');
@@ -35,6 +35,42 @@ const RhSuggestions = () => {
       setLoading(false);
     }
   };
+
+  // Helpers statut
+  const getCurrentStatusValue = (sugg) => {
+    const last = sugg?.status && sugg.status.length > 0 ? sugg.status[sugg.status.length - 1] : null;
+    const val = last?.typeStatus?.valeur || 'En attente de validation';
+    return String(val);
+  };
+
+  const getCurrentStatusLc = (sugg) => getCurrentStatusValue(sugg).toLowerCase();
+
+  const hasScore = (sugg) => {
+    return Array.isArray(sugg?.entretien?.scores) && sugg.entretien.scores.length > 0;
+  };
+
+  const getStatusColor = (statusText) => {
+    const s = (statusText || '').toLowerCase();
+    if (s.includes('valide')) return '#176c2f';
+    if (s.includes('invalide') || s.includes('refus')) return '#e74c3c';
+    if (s.includes('attente')) return '#f39c12';
+    return '#95a5a6';
+  };
+
+  const StatusBadge = ({ value }) => (
+    <span
+      className="rh-suggestions__status-badge"
+      style={{
+        backgroundColor: getStatusColor(value),
+        color: '#fff',
+        padding: '2px 8px',
+        borderRadius: '999px',
+        fontSize: '12px',
+      }}
+    >
+      {value}
+    </span>
+  );
 
   const formatDateTime = (dateString) => {
     if (!dateString) return 'Non disponible';
@@ -50,9 +86,15 @@ const RhSuggestions = () => {
   // === Vérifier créneaux ===
   const handleDisponibilites = async (suggestion) => {
     if (!suggestion?.id_rh_suggestion) return;
+    // Ne pas autoriser la replanification si un score existe déjà
+    if (hasScore(suggestion)) {
+      setMessage('Impossible de modifier le statut ou replanifier: un score existe déjà.');
+      setMessageType('error');
+      return;
+    }
     const date = suggestion.entretien?.date_entretien?.split('T')[0] || new Date().toISOString().split('T')[0];
     try {
-      const resp = await rhService.getDisponibilites(suggestion.id_rh_suggestion, date);
+  const resp = await rhService.getDisponibilites(suggestion.id_rh_suggestion, date);
       if (resp.success) {
         setDisponibilites(resp.data || []);
         setSelectedSuggestion(suggestion);
@@ -101,6 +143,12 @@ const RhSuggestions = () => {
     }
 
     try {
+      // Sécuriser: si la suggestion sélectionnée a déjà un score, on bloque la modification de statut
+      if (hasScore(selectedSuggestion)) {
+        setMessage('Action bloquée: la suggestion a déjà un score, son statut ne peut plus être modifié.');
+        setMessageType('error');
+        return;
+      }
       let response;
       // Si la suggestion a déjà un entretien planifié ou un statut
       if (selectedSuggestion.entretien?.date_entretien || selectedSuggestion.status?.length > 0) {
@@ -155,17 +203,22 @@ const RhSuggestions = () => {
             <div key={suggestion.id_rh_suggestion} className="rh-suggestions__item">
               <div className="rh-suggestions__item-info">
                 <div className="rh-suggestions__header-info">
-                  <h3>Unité: {suggestion.entretien?.unite?.nom}</h3>
-                  <span className="rh-suggestions__date">
-                    Suggéré le: {formatDateTime(suggestion.date_suggestion)}
-                  </span>
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <h3 style={{ margin: 0 }}>Unité: {suggestion.entretien?.unite?.nom || '—'}</h3>
+                    <StatusBadge value={getCurrentStatusValue(suggestion)} />
+                    <span className="rh-suggestions__date" style={{ opacity: 0.8 }}>
+                      Suggéré le: {formatDateTime(suggestion.date_suggestion)}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="rh-suggestions__candidate">
                   <h4>Informations du candidat :</h4>
                   <p>{suggestion.candidat?.Tier?.nom} {suggestion.candidat?.Tier?.prenom}</p>
-                  <p>Email: {suggestion.candidat?.Tier?.email}</p>
-                  <p>CV: {suggestion.candidat?.cv}</p>
+                  <p>Email: {suggestion.candidat?.Tier?.email || '—'}</p>
+                  {suggestion.candidat?.cv && (
+                    <p>CV: {suggestion.candidat.cv}</p>
+                  )}
                 </div>
 
                 <div className="rh-suggestions__entretien">
@@ -188,37 +241,62 @@ const RhSuggestions = () => {
                       ? `${suggestion.status[suggestion.status.length - 1].typeStatus.valeur} (depuis le ${formatDateTime(suggestion.status[suggestion.status.length - 1].date_changement)})`
                       : "Aucun statut"}
                   </p>
-                      {/* <div>
-                        Statuts:
-                        {suggestion.status?.length > 0 ? (
-                          suggestion.status.map((s, i) => (
-                            <div key={i}>
-                              {s.typeStatus.valeur} (depuis le {formatDateTime(s.date_changement)})
-                            </div>
-                          ))
-                        ) : (
-                          "Aucun statut"
-                        )}
-                      </div> */}
-
-
                 </div>
               </div>
 
-              <div className="rh-suggestions__item-actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                <Button variant="success" onClick={() => handleDisponibilites(suggestion)}>
-                  Valider
-                </Button>
-                <Button variant="danger" onClick={async () => {
-                  await rhService.updateStatusSuggestion({
-                    id_rh_suggestion: suggestion.id_rh_suggestion,
-                    id_type_status_suggestion: 2 // Invalide
-                  });
-                  alert("Suggestion refusée!");
-                  setMessage('Suggestion refusée');
-                  setMessageType('success');
-                  fetchSuggestions();
-                }}>Ne pas valider</Button>
+              <div className="rh-suggestions__item-actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                {hasScore(suggestion) ? (
+                  <>
+                    <Button variant="secondary" disabled>
+                      Score enregistré — statut verrouillé
+                    </Button>
+                  </>
+                ) : getCurrentStatusLc(suggestion).includes('invalide') ? (
+                  <>
+                    <Button variant="success" onClick={() => handleDisponibilites(suggestion)}>
+                      Valider et planifier
+                    </Button>
+                    <Button variant="danger" disabled>
+                      Déjà refusée
+                    </Button>
+                  </>
+                ) : getCurrentStatusLc(suggestion).includes('valide') ? (
+                  <>
+                    <Button variant="secondary" onClick={() => handleDisponibilites(suggestion)}>
+                      Replanifier
+                    </Button>
+                    <Button variant="danger" onClick={async () => {
+                      await rhService.updateStatusSuggestion({
+                        id_rh_suggestion: suggestion.id_rh_suggestion,
+                        id_type_status_suggestion: 2
+                      });
+                      alert('Suggestion refusée!');
+                      setMessage('Suggestion refusée');
+                      setMessageType('success');
+                      fetchSuggestions();
+                    }}>
+                      Ne pas valider
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="success" onClick={() => handleDisponibilites(suggestion)}>
+                      Planifier
+                    </Button>
+                    <Button variant="danger" onClick={async () => {
+                      await rhService.updateStatusSuggestion({
+                        id_rh_suggestion: suggestion.id_rh_suggestion,
+                        id_type_status_suggestion: 2
+                      });
+                      alert('Suggestion refusée!');
+                      setMessage('Suggestion refusée');
+                      setMessageType('success');
+                      fetchSuggestions();
+                    }}>
+                      Ne pas valider
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           ))}
