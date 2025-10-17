@@ -41,6 +41,6 @@ const StatusUniteEntretien = db.define('StatusUniteEntretien', {
 
 // Associations
 StatusUniteEntretien.belongsTo(UniteEntretien, { foreignKey: 'id_unite_entretien' });
-StatusUniteEntretien.belongsTo(TypeStatusEntretien, { foreignKey: 'id_type_status_entretien' });
+StatusUniteEntretien.belongsTo(TypeStatusEntretien, { foreignKey: 'id_type_status_entretien', as: 'TypeStatusEntretien' });
 
 module.exports = StatusUniteEntretien;

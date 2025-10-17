@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams } from 'react-router-dom';
 import { useNavigate } from '../../router/useNavigateHelper';
 import { parametresService, annoncesBackOfficeService } from "../../services";
 import { Button } from "../../components";
-import "../../styles/Parametrage.css";
+import "../../styles/QCM.css";
 
 function QCM() {
   const navigate = useNavigate();
@@ -11,10 +11,18 @@ function QCM() {
   const [allQuestions, setAllQuestions] = useState([]); 
   const [selectedQuestions, setSelectedQuestions] = useState([]); 
   const [donnees, setDonnees] = useState([]); // liste des qcms liés à l'annonce
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [search, setSearch] = useState('');
+  const [mode, setMode] = useState('standard');
+
+  const bankRef = useRef(null);
+  const attachedRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const response = await parametresService.getQuestionsReponses();
         setAllQuestions(response.data.questions || []);
 
@@ -29,6 +37,9 @@ function QCM() {
         }
       } catch (error) {
         console.error(error);
+        setMessage({ type: 'error', text: "Erreur lors du chargement des questions" });
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -42,9 +53,39 @@ function QCM() {
     }
   };
 
+  const existingQuestionIds = useMemo(() => new Set((donnees || []).map(d => d.id_question_qcm)), [donnees]);
+
+  const filteredQuestions = useMemo(() => {
+    if (!search) return allQuestions;
+    const s = search.toLowerCase();
+    return allQuestions.filter(q => (q.intitule || '').toLowerCase().includes(s));
+  }, [allQuestions, search]);
+
+  const toggleSelectAll = () => {
+    const ids = filteredQuestions.map(q => q.id_question_qcm);
+    const allSelected = ids.every(idq => selectedQuestions.includes(idq));
+    if (allSelected) {
+      // unselect all from filtered
+      setSelectedQuestions(selectedQuestions.filter(idq => !ids.includes(idq)));
+    } else {
+      // add all filtered
+      const union = new Set([...selectedQuestions, ...ids]);
+      setSelectedQuestions(Array.from(union));
+    }
+  };
+
+  const clearSelection = () => setSelectedQuestions([]);
+
   const handleAjoutQuestion = async () => {
     try {
-      const questionsPayload = selectedQuestions.map((item) => ({
+      // n'ajouter que les nouvelles questions non encore liées
+      const newIds = selectedQuestions.filter(qid => !existingQuestionIds.has(qid));
+      if (newIds.length === 0) {
+        setMessage({ type: 'info', text: 'Aucune nouvelle question à ajouter.' });
+        return;
+      }
+
+      const questionsPayload = newIds.map((item) => ({
         id_annonce: parseInt(id),
         id_question_qcm: parseInt(item),
       }));
@@ -53,8 +94,7 @@ function QCM() {
         await annoncesBackOfficeService.createQcmAnnonce(q);
       }
 
-      alert("QCM ajouté avec succès !");
-      console.log("Payload envoyé :", questionsPayload);
+      setMessage({ type: 'success', text: 'Questions ajoutées avec succès.' });
 
       // Recharge après ajout
       const qcmResponse = await annoncesBackOfficeService.getQCMAnnonce(id);
@@ -66,89 +106,133 @@ function QCM() {
 
     } catch (error) {
       console.error("Erreur lors de l'ajout du QCM :", error);
-      alert("Erreur lors de l'ajout du QCM");
+      setMessage({ type: 'error', text: "Erreur lors de l'ajout du QCM" });
     }
   };
 
   return (
-    <div>
-      <Button variant="primary" onClick={() => navigate(-1)}>
-        Retour
-      </Button>
-      <h1 style={{ textAlign: "center", marginBottom: "50px" }}>
-        Créer le QCM de l'annonce n°{id}
-      </h1>
+    <div className={`qcm-page ${mode === 'compact' ? 'qcm--compact' : ''}`}>
+      <div className="qcm-header qcm-header--bar">
+        <div className="qcm-header__left">
+          <Button variant="primary" onClick={() => navigate(-1)}>Retour</Button>
+        </div>
+        <h1 className="qcm-title qcm-header__title">Créer le QCM de l'annonce n°{id}</h1>
+        <div className="qcm-header__right">
+          <select className="qcm-select" value={mode} onChange={(e) => setMode(e.target.value)}>
+            <option value="standard">Standard</option>
+            <option value="compact">Compact</option>
+          </select>
+          <button className="qcm-btn qcm-btn--ghost" onClick={() => bankRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Banque</button>
+          <button className="qcm-btn qcm-btn--ghost" onClick={() => attachedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Attachées</button>
+        </div>
+      </div>
 
-      <main
-        className="App-main"
-        style={{ padding: "20px", justifyContent: "center", display: "flex" }}
-      >
-        <div style={{ width: "50%" }}>
-          {/* Liste des questions à ajouter */}
-          <div>
-            <label>Questions à ajouter</label>
-            <div
-              style={{
-                flexWrap: "wrap",
-                gap: "10px",
-                maxHeight: "150px",
-                overflowY: "scroll",
-                border: "1px solid #ccc",
-                padding: "10px",
-                borderRadius: "5px",
-              }}
-            >
-              {allQuestions.map((item) => (
-                <label
-                  key={item.id_question_qcm}
-                  style={{ display: "flex", alignItems: "center", gap: "5px" }}
-                >
+      {message.text && (
+        <div className={`qcm-message qcm-message--${message.type}`}>
+          {message.text}
+        </div>
+      )}
+
+      <div className="qcm-content">
+        <section className="qcm-card" ref={bankRef}>
+          <div className="qcm-card__header">
+            <h2 className="qcm-card__title">Banque de questions</h2>
+            <div className="qcm-tools">
+              <input
+                className="qcm-input"
+                placeholder="Rechercher une question..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <div className="qcm-actions-inline">
+                <button className="qcm-btn qcm-btn--secondary" onClick={toggleSelectAll} disabled={loading || filteredQuestions.length === 0}>
+                  Sélectionner tout
+                </button>
+                <button className="qcm-btn qcm-btn--ghost" onClick={clearSelection} disabled={selectedQuestions.length === 0}>
+                  Effacer sélection
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="qcm-counter">
+            <span>{filteredQuestions.length} questions</span>
+            <span>•</span>
+            <span>{selectedQuestions.length} sélectionnée(s)</span>
+          </div>
+
+          <div className="qcm-list">
+            {loading ? (
+              <div className="qcm-skeleton-list">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div className="qcm-skeleton-item" key={i} />
+                ))}
+              </div>
+            ) : (
+              filteredQuestions.map((item) => (
+                <label key={item.id_question_qcm} className="qcm-list-item">
                   <input
                     type="checkbox"
                     value={item.id_question_qcm}
                     checked={selectedQuestions.includes(item.id_question_qcm)}
                     onChange={() => handleCheckboxChange(item.id_question_qcm)}
                   />
-                  {item.intitule}
+                  <span className="qcm-question-text">{item.intitule}</span>
                 </label>
-              ))}
-            </div>
+              ))
+            )}
           </div>
 
-          <Button variant="primary" onClick={handleAjoutQuestion} style={{ marginTop: "20px" }}>
-            Ajouter la question à l'annonce
-          </Button>
+          {selectedQuestions.length > 0 && (
+            <div className="qcm-chips">
+              {selectedQuestions.map((qid) => {
+                const q = allQuestions.find(qq => qq.id_question_qcm === qid);
+                return (
+                  <span className="qcm-chip" key={qid} title={q?.intitule || ''}>
+                    {q?.intitule || `#${qid}`}
+                  </span>
+                );
+              })}
+            </div>
+          )}
 
-          {/* Liste des questions déjà attachées */}
-          <div style={{ marginTop: "50px" }}>
-            <h3>Liste des questions de l'annonce ({donnees.length})</h3>
-            <div
-              style={{
-                maxHeight: "300px",
-                overflowY: "scroll",
-                border: "1px solid #ccc",
-                padding: "10px",
-                borderRadius: "5px",
-              }}
-            >
-              {donnees.map((q, index) => {
-                // retrouver le texte de la question dans allQuestions
+          <div className="qcm-card__footer">
+            <button className="qcm-btn qcm-btn--primary" onClick={handleAjoutQuestion} disabled={loading || selectedQuestions.length === 0}>
+              Ajouter la sélection à l'annonce
+            </button>
+          </div>
+        </section>
+
+  <section className="qcm-card" ref={attachedRef}>
+          <div className="qcm-card__header">
+            <h2 className="qcm-card__title">Questions de l'annonce</h2>
+            <div className="qcm-counter"><span>{donnees.length}</span> question(s)</div>
+          </div>
+          <div className="qcm-attached-list">
+            {loading ? (
+              <div className="qcm-skeleton-list">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div className="qcm-skeleton-item" key={i} />
+                ))}
+              </div>
+            ) : donnees.length === 0 ? (
+              <div className="qcm-empty">Aucune question n'est encore attachée à cette annonce.</div>
+            ) : (
+              donnees.map((q, index) => {
                 const questionDetail = allQuestions.find(
                   (qq) => qq.id_question_qcm === q.id_question_qcm
                 );
                 return (
-                  <div
-                    key={q.id_qcm_annonce}
-                    style={{ marginBottom: "10px", padding: "10px", borderBottom: "1px solid #eee" }}
-                  >
-                    <strong>Q{index + 1}:</strong> {questionDetail?.intitule || "Question inconnue"}
+                  <div className="qcm-attached-item" key={q.id_qcm_annonce}>
+                    <div className="qcm-attached-index">Q{index + 1}</div>
+                    <div className="qcm-attached-text">{questionDetail?.intitule || "Question inconnue"}</div>
                   </div>
                 );
-              })}
-            </div>
+              })
+            )}
           </div>
-        </div>
-      </main>
+        </section>
+      </div>
     </div>
   );
 }

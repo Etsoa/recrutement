@@ -18,7 +18,49 @@ const UniteRhSuggestions = () => {
     try {
       const data = await unitesService.getAllRhSuggestions();
       if (data.success) {
-        setSuggestions(data.data);
+        const raw = Array.isArray(data.data) ? data.data : [];
+        // Normaliser les données pour supporter à la fois la forme aplatie et imbriquée
+        const normalized = raw.map((s) => {
+          // Si déjà aplati, garder tel quel
+          if (s.prenom_candidat || s.nom_candidat) return s;
+
+          const c = s.candidat || {};
+          const t = c.Tier || {};
+          const a = c.Annonce || {};
+          const p = a.Poste || {};
+          const e = s.entretien || {};
+          const u = e.unite || {};
+          const scores = e.scores || [];
+          const bestScore = scores
+            .slice()
+            .sort((a, b) => new Date(b.date_score) - new Date(a.date_score))[0]?.score;
+
+          return {
+            id_rh_suggestion: s.id_rh_suggestion,
+            id_unite_entretien: s.id_unite_entretien,
+            id_candidat: s.id_candidat,
+            date_suggestion: s.date_suggestion,
+
+            prenom_candidat: t.prenom,
+            nom_candidat: t.nom,
+            email_candidat: t.email,
+            contact_candidat: t.contact,
+            ville: t.Ville?.valeur,
+            cv: c.cv,
+
+            poste_nom: p.valeur,
+            unite_nom: u.nom,
+
+            date_entretien_unite: e.date_entretien,
+            duree_entretien: e.duree,
+            score_unite: bestScore ?? null,
+
+            status: s.status || 'En attente de validation',
+            date_changement_status: s.date_changement_status || s.date_suggestion,
+          };
+        });
+
+        setSuggestions(normalized);
       } else {
         setMessage(data.message || 'Erreur lors du chargement');
         setMessageType('error');
@@ -93,6 +135,9 @@ const UniteRhSuggestions = () => {
         <h1>Suggestions Envoyées à la RH</h1>
         <p className="description">
           Suivez ici l'état des suggestions de candidats que vous avez envoyées à la RH.
+        </p>
+        <p className="description">
+          Astuce: pour voir les candidats éligibles à suggérer, allez à <a href="/back-office/suggestions">Candidats à Suggérer</a>.
         </p>
         {message && (
           <div className={`message ${messageType}`}>

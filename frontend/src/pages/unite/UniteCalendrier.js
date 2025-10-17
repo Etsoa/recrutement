@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { unitesService } from '../../services';
 import '../../styles/RhCalendrier.css';
 import { Button } from '../../components';
@@ -151,13 +151,56 @@ const UniteCalendrier = () => {
   // États pour gestion des scores et suggestions
   const [scores, setScores] = useState({});
   const [sending, setSending] = useState(false);
+  const [rhSuggestions, setRhSuggestions] = useState([]);
+  const [loadingRhSuggestions, setLoadingRhSuggestions] = useState(false);
+
+  // Helpers: formatting and status computation
+  const isValidDate = (d) => d instanceof Date && !isNaN(d.getTime());
+  const formatTimeOrDash = (dateStr) => {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    if (!isValidDate(d)) return '—';
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    if (hh === '00' && mm === '00') return '—';
+    return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  };
+  const formatDateOrDash = (dateStr) => {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    if (!isValidDate(d)) return '—';
+    return d.toLocaleDateString('fr-FR');
+  };
+  const computeStatus = (entretien) => {
+    const hasScore = entretien.dernier_score !== null && entretien.dernier_score !== undefined;
+    const d = new Date(entretien.date_entretien);
+    const passed = isValidDate(d) && d.getTime() <= Date.now();
+    return (passed || hasScore) ? 'Terminé' : 'À venir';
+  };
+  const statusClass = (label) => {
+    const safe = (label || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return safe.toLowerCase().replace(/\s+/g, '-');
+  };
 
   const handleScoreChange = (id, value) => {
     setScores(prev => ({ ...prev, [id]: value }));
   };
 
   const submitScore = async (id) => {
-    if (!scores[id]) return alert("Veuillez saisir un score !");
+    if (!id) {
+      alert('Entretien introuvable (id manquant)');
+      return;
+    }
+    const raw = scores[id];
+    if (raw === undefined || raw === null || raw === '') {
+      alert('Veuillez saisir un score !');
+      return;
+    }
+    const num = Number(raw);
+    if (Number.isNaN(num) || num < 0 || num > 20) {
+      alert('Le score doit être un nombre entre 0 et 20');
+      return;
+    }
     setSending(true);
     const now = new Date();
     const dateScore = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ` +
@@ -165,8 +208,8 @@ const UniteCalendrier = () => {
 
     try {
       const resp = await unitesService.createScoreUniteEntretien({
-        id_unite_entretien: id,
-        score: Number(scores[id]),
+        id_unite_entretien: Number(id),
+        score: num,
         date_score: dateScore
       });
       if (resp.success) {
@@ -195,6 +238,65 @@ const UniteCalendrier = () => {
     } catch (err) {
       console.error(err);
       alert("Erreur serveur");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  // Charger les suggestions RH existantes (pour éviter les doublons côté front)
+  useEffect(() => {
+    const loadSuggestions = async () => {
+      try {
+        setLoadingRhSuggestions(true);
+        const resp = await unitesService.getAllRhSuggestions();
+        if (resp?.success && Array.isArray(resp.data)) {
+          setRhSuggestions(resp.data);
+        }
+      } catch (e) {
+        console.error('Erreur chargement suggestions RH:', e);
+      } finally {
+        setLoadingRhSuggestions(false);
+      }
+    };
+    loadSuggestions();
+  }, []);
+
+  const isAlreadySuggested = (entretien) => {
+    if (!entretien) return false;
+    const idC = entretien.id_candidat;
+    const idU = entretien.id_unite_entretien;
+    return rhSuggestions.some(s => {
+      const sameCandidat = s.id_candidat === idC;
+      const sameEntretien = s.id_unite_entretien === idU;
+      return sameCandidat || sameEntretien;
+    });
+  };
+
+  const handleSuggest = async (entretien) => {
+    if (!entretien?.id_unite_entretien || !entretien?.id_candidat) {
+      alert('Données incomplètes pour la suggestion');
+      return;
+    }
+    if (isAlreadySuggested(entretien)) {
+      alert('Ce candidat a déjà été suggéré au RH');
+      return;
+    }
+    setSending(true);
+    try {
+      const resp = await unitesService.suggestToRh({
+        id_unite_entretien: entretien.id_unite_entretien,
+        id_candidat: entretien.id_candidat
+      });
+      if (resp.success) {
+        // Mémoriser localement pour bloquer les renvois
+        setRhSuggestions(prev => ([...prev, { id_unite_entretien: entretien.id_unite_entretien, id_candidat: entretien.id_candidat }]));
+        alert('Suggestion envoyée à la RH !');
+      } else {
+        alert(resp.message || 'Erreur serveur');
+      }
+    } catch (e) {
+      console.error('Erreur suggestion RH:', e);
+      alert('Erreur lors de la suggestion');
     } finally {
       setSending(false);
     }
@@ -360,8 +462,8 @@ const UniteCalendrier = () => {
                               RH Entretien ID: {entretien.id_rh_entretien} | Candidat ID: {entretien.id_candidat}
                             </div>
                           </div>
-                          <div className={`status-badge ${entretien.statut ? entretien.statut.toLowerCase().replace(' ', '-') : 'undefined'}`}>
-                            {entretien.statut || 'Non défini'}
+                          <div className={`status-badge ${statusClass(computeStatus(entretien))}`}>
+                            {computeStatus(entretien) || '—'}
                           </div>
                         </div>
 
@@ -370,34 +472,24 @@ const UniteCalendrier = () => {
                             <h5>📅 Informations Entretien</h5>
                             <div className="detail-item">
                               <span className="detail-label">Heure:</span>
-                              <span className="detail-value">
-                                {new Date(entretien.date_entretien).toLocaleTimeString('fr-FR', { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
-                                })}
-                              </span>
+                              <span className="detail-value">{new Date(entretien.date_entretien).toLocaleTimeString('fr-FR', { 
+                                    hour: '2-digit', 
+                                    minute: '2-digit' 
+                                  })}</span>
                             </div>
                             <div className="detail-item">
                               <span className="detail-label">Durée:</span>
-                              <span className="detail-value">{entretien.duree} minutes</span>
+                              <span className="detail-value">{entretien.duree ? `${entretien.duree} minutes` : '—'}</span>
                             </div>
                             {entretien.status_date && (
                               <div className="detail-item">
                                 <span className="detail-label">MAJ Status:</span>
-                                <span className="detail-value">
-                                  {new Date(entretien.status_date).toLocaleDateString('fr-FR')}
-                                </span>
+                                <span className="detail-value">{formatDateOrDash(entretien.status_date)}</span>
                               </div>
                             )}
                             <div className="detail-item">
-                              <span className="detail-label">Date de la réception:</span>
-                              <span className="detail-value">
-                                {new Date(entretien.date_suggestion).toLocaleDateString('fr-FR')} à{' '}
-                                {new Date(entretien.date_suggestion).toLocaleTimeString('fr-FR', { 
-                                  hour: '2-digit', 
-                                  minute: '2-digit' 
-                                })}
-                              </span>
+                              <span className="detail-label">Date de l'entretien:</span>
+                              <span className="detail-value">{formatDateOrDash(entretien.date_entretien)}</span>
                             </div>
                             {/* Affichage du dernier score s'il existe */}
                             {entretien.dernier_score !== null && entretien.dernier_score !== undefined && (
@@ -416,31 +508,37 @@ const UniteCalendrier = () => {
 
                             <div className="entretien-actions">
                               {/* Input pour saisir un nouveau score */}
-                              <input
-                                type="number"
-                                min="0"
-                                max="20"
-                                placeholder="Score /20"
-                                value={scores[entretien.id_unite_entretien] || ''}
-                                onChange={(e) => handleScoreChange(entretien.id_unite_entretien, e.target.value)}
-                                disabled={sending}
-                              />
+                              {entretien.id_unite_entretien ? (
+                                <>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    placeholder="Score /20"
+                                    value={scores[entretien.id_unite_entretien] ?? ''}
+                                    onChange={(e) => handleScoreChange(entretien.id_unite_entretien, e.target.value)}
+                                    disabled={sending}
+                                  />
 
-                              {/* Bouton pour enregistrer le score */}
-                              <Button
-                                onClick={() => submitScore(entretien.id_unite_entretien)}
-                                disabled={sending || !scores[entretien.id_unite_entretien]}
-                              >
-                                Enregistrer Score
-                              </Button>
+                                  {/* Bouton pour enregistrer le score */}
+                                  <Button
+                                    onClick={() => submitScore(entretien.id_unite_entretien)}
+                                    disabled={sending || (scores[entretien.id_unite_entretien] === undefined || scores[entretien.id_unite_entretien] === '')}
+                                  >
+                                    Enregistrer Score
+                                  </Button>
+                                </>
+                              ) : (
+                                <span style={{ color: '#7f8c8d' }}>ID entretien manquant – impossible d'enregistrer le score</span>
+                              )}
 
                               {/* Bouton Suggérer à la RH : s'affiche si un score existe en DB */}
                               {(entretien.dernier_score) && (
                                 <Button
-                                  onClick={() => suggestToRh(entretien.id_unite_entretien, entretien.id_candidat)}
-                                  disabled={sending}
+                                  onClick={() => handleSuggest(entretien)}
+                                  disabled={sending || isAlreadySuggested(entretien) || loadingRhSuggestions}
                                 >
-                                  Suggérer à la RH
+                                  {isAlreadySuggested(entretien) ? 'Déjà suggéré' : 'Suggérer à la RH'}
                                 </Button>
                               )}
                             </div>

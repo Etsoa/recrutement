@@ -164,7 +164,6 @@ const ListeAnnonces = () => {
 
   return (
     <Container>
-      <Section>
         <div className="liste-annonces">
           <div className="liste-annonces__header">
             <h1>Liste des Annonces</h1>
@@ -303,7 +302,6 @@ const ListeAnnonces = () => {
               </div>
             )}
           </div>
-        </Section>
       </Container>
     );
   };

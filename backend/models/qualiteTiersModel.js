@@ -37,6 +37,6 @@ const QualiteTiers = db.define('QualiteTiers', {
 
 // Associations
 QualiteTiers.belongsTo(Tiers, { foreignKey: 'id_tiers' });
-QualiteTiers.belongsTo(Qualite, { foreignKey: 'id_qualite' });
+QualiteTiers.belongsTo(Qualite, { foreignKey: 'id_qualite', as: 'Qualite' });
 
 module.exports = QualiteTiers;

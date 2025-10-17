@@ -45,6 +45,6 @@ const ExperienceTiers = db.define('ExperienceTiers', {
 
 // Associations
 ExperienceTiers.belongsTo(Tiers, { foreignKey: 'id_tiers' });
-ExperienceTiers.belongsTo(Domaine, { foreignKey: 'id_domaine' });
+ExperienceTiers.belongsTo(Domaine, { foreignKey: 'id_domaine', as: 'Domaine' });
 
 module.exports = ExperienceTiers;

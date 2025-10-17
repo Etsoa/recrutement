@@ -780,8 +780,17 @@ exports.getCandidatsEligiblesPourRh = async (req, res) => {
 // Mettre à jour le statut d'un entretien unité
 exports.updateStatusUniteEntretien = async (req, res) => {
   try {
-    const { id_unite_entretien } = req.params;
-    const { id_type_status_entretien } = req.body;
+    // Support both param and body payloads
+    const id_unite_entretien = req.params?.id_unite_entretien || req.body?.id_unite_entretien || req.body?.id_entretien;
+    const id_type_status_entretien = req.body?.id_type_status_entretien || req.body?.id_status;
+
+    if (!id_unite_entretien || !id_type_status_entretien) {
+      return res.status(400).json({
+        message: "id_unite_entretien et id_type_status_entretien sont requis",
+        data: null,
+        success: false
+      });
+    }
 
     const status = await uniteMainService.updateStatusUniteEntretien(id_unite_entretien, id_type_status_entretien);
     
@@ -810,13 +819,22 @@ exports.updateStatusUniteEntretien = async (req, res) => {
 // Créer un score pour un entretien unité
 exports.createScoreUniteEntretien = async (req, res) => {
   try {
-    const { id_unite_entretien } = req.params;
-    const { score } = req.body;
+    // Accept id from either params or body to match current route definition
+    const id_unite_entretien = req.params?.id_unite_entretien || req.body?.id_unite_entretien;
+    const { score, date_score } = req.body || {};
+
+    if (!id_unite_entretien || score == null) {
+      return res.status(400).json({
+        message: 'id_unite_entretien et score sont obligatoires',
+        data: null,
+        success: false
+      });
+    }
 
     const scoreData = await uniteMainService.createScoreUniteEntretien({
       id_unite_entretien,
       score,
-      date_score: new Date()
+      date_score: date_score ? new Date(date_score) : new Date()
     });
 
     res.json({
