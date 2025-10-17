@@ -53,8 +53,18 @@ const uniteMainService = require('../services/unitesService');
 
 exports.getAllAnnoncesUnite = async (req, res) => {
   try {
-    const id = req.query.id;
-    const data = await traitementAnnonceService.getAllAnnonces(id);
+    // Supporter plusieurs sources pour id_unite (auth, query id_unite, ou fallback query id)
+    const id_unite = req.user?.id_unite || req.query.id_unite || req.query.id;
+
+    if (!id_unite) {
+      return res.status(400).json({
+        message: "Paramètre 'id_unite' manquant",
+        data: null,
+        success: false
+      });
+    }
+
+    const data = await traitementAnnonceService.getAllAnnonces(id_unite);
     res.json({ 
       message: 'Liste des annonces récupérée avec succès',
       data: data,

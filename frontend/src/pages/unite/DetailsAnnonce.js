@@ -75,11 +75,37 @@ const DetailsAnnonce = () => {
         ]);
         
         // L'API retourne { message, data, success }
-        setAnnonceData(annonceResponse.data);
+        const data = annonceResponse.data || {};
+
+        // Helpers de déduplication
+        const uniqueBy = (arr, keyFn) => {
+          const seen = new Set();
+          const out = [];
+          for (const item of arr || []) {
+            const key = keyFn(item);
+            if (!seen.has(key)) { seen.add(key); out.push(item); }
+          }
+          return out;
+        };
+
+        const normalized = {
+          ...data,
+          niveauxFiliere: uniqueBy(data.niveauxFiliere, (nf) => `${nf.id_niveau ?? nf.Niveau?.id_niveau ?? ''}-${nf.id_filiere ?? nf.Filiere?.id_filiere ?? ''}-${nf.Niveau?.valeur ?? ''}-${nf.Filiere?.valeur ?? ''}`),
+          experiences: uniqueBy(data.experiences, (exp) => `${exp.id_experience_annonce ?? ''}-${exp.id_domaine ?? exp.Domaine?.id_domaine ?? ''}-${exp.nombre_annee ?? ''}-${exp.Domaine?.valeur ?? ''}`),
+          langues: uniqueBy(data.langues, (l) => `${l.id_langue ?? l.Langue?.id_langue ?? ''}-${l.Langue?.valeur ?? ''}`),
+          qualites: uniqueBy(data.qualites, (q) => `${q.id_qualite ?? q.Qualite?.id_qualite ?? ''}-${q.Qualite?.valeur ?? ''}`),
+          statuts: uniqueBy(data.statuts, (s) => {
+            const d = s.date_changement ? new Date(s.date_changement).toISOString() : '';
+            const v = s.id_type_status_annonce ?? s.TypeStatusAnnonce?.id_type_status_annonce ?? s.TypeStatusAnnonce?.valeur ?? '';
+            return `${d}-${v}`;
+          })
+        };
+
+        setAnnonceData(normalized);
         setParametres(parametresResponse.data);
         
         // Initialiser la liste filtrée avec tous les candidats
-        setFilteredCandidats(annonceResponse.data?.candidatsDetails || []);
+        setFilteredCandidats(normalized?.candidatsDetails || []);
         
       } catch (err) {
         console.error('Erreur lors du chargement des données:', err);

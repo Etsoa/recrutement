@@ -1,16 +1,17 @@
 import { useNavigate as useRRNavigate, useLocation } from 'react-router-dom';
+import { useCallback } from 'react';
 import { ROUTES } from './routes';
 
 // Hook de compatibilité pour unifier l'API navigate
 export const useNavigate = () => {
   const navigate = useRRNavigate();
-  return (path, options = {}) => {
+  return useCallback((path, options = {}) => {
     if (typeof path === 'string') {
       navigate(path, { replace: !!options.replace, state: options.state });
     } else if (typeof path === 'number') {
       navigate(path);
     }
-  };
+  }, [navigate]);
 };
 
 // Hook personnalisé pour faciliter la navigation (version simplifiée)
@@ -19,9 +20,9 @@ const useNavigateHelper = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const navigateTo = (path, options = {}) => {
+  const navigateTo = useCallback((path, options = {}) => {
     rrNavigate(path, { replace: !!options.replace, state: options.state });
-  };
+  }, [rrNavigate]);
 
   const goBack = () => {
     rrNavigate(-1);

@@ -56,6 +56,16 @@ const Annonce = db.define('Annonce', {
     },
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
+  },
+  id_unite: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Unite,
+      key: 'id_unite'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   }
 }, {
   tableName: 'annonces',
@@ -66,6 +76,7 @@ const Annonce = db.define('Annonce', {
 Annonce.belongsTo(Poste, { foreignKey: 'id_poste', as: 'Poste' });
 Annonce.belongsTo(Ville, { foreignKey: 'id_ville', as: 'Ville' });
 Annonce.belongsTo(Genre, { foreignKey: 'id_genre', as: 'Genre' });
+Annonce.belongsTo(Unite, { foreignKey: 'id_unite', as: 'Unite' });
 
 Annonce.hasMany(NiveauFiliereAnnonce, { foreignKey: 'id_annonce', as: 'niveauFiliereAnnonces' });
 NiveauFiliereAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce', as: 'Annonce' });

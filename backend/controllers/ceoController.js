@@ -1,5 +1,6 @@
 const ceoService = require('../services/ceoService');
 const contratService = require('../services/contratEssaisService');
+const ContratEssai = require('../models/contratEssaisModel');
 
 // Mbola tsy mandeha
 exports.getAllCeos = async (req, res) => {
@@ -244,8 +245,58 @@ exports.getEmpEnContratDEssai = async (req, res) => {
 
 exports.renewContract = async (req, res) => {
   try {
-    const contrat = req.body;
-    await contratService.createContratEssai(contrat);
+    const { id_contrat, duree_mois } = req.body;
+
+    if (!id_contrat) {
+      return res.status(400).json({ success: false, message: 'id_contrat est requis', data: null });
+    }
+
+    const current = await ContratEssai.findByPk(id_contrat);
+    if (!current) {
+      return res.status(404).json({ success: false, message: 'Contrat introuvable', data: null });
+    }
+
+    const id_employe = current.id_employe;
+    const allForEmp = await ContratEssai.findAll({ where: { id_employe } });
+    const totalContracts = allForEmp.length; // initial + renewals
+
+    // Max 2 contrats au total: si déjà 2, on bloque
+    if (totalContracts >= 2) {
+      return res.status(400).json({ success: false, message: 'Limite de contrats d\'essai atteinte (2 maximum)', data: null });
+    }
+
+    // Trouver le dernier contrat pour positionner le nouveau juste après sa fin
+    const last = allForEmp.reduce((acc, c) => {
+      if (!acc) return c; const ad = new Date(acc.date_debut); const cd = new Date(c.date_debut); return cd > ad ? c : acc;
+    }, null);
+
+    let start = new Date();
+    if (last) {
+      const lastStart = new Date(last.date_debut);
+      const next = new Date(lastStart);
+      next.setMonth(lastStart.getMonth() + last.duree); // positionné à la fin du dernier
+      next.setDate(next.getDate() + 1); // démarrer le renouvellement le lendemain
+      start = next;
+    }
+
+    const toYMD = (d) => {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const newContrat = await contratService.createContratEssai({
+      id_employe,
+      date_debut: toYMD(start),
+      duree: duree_mois || current.duree
+    });
+
+    return res.json({
+      success: true,
+      message: 'Contrat renouvelé avec succès',
+      data: { contrat: { ...newContrat.toJSON?.() || newContrat, is_renewal: true } }
+    });
   } catch (err) {
     res.status(500).json({
       message: err.message,

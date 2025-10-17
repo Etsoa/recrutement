@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from '../../router/useNavigateHelper';
 import { Container, Section } from '../../components/LayoutUnite';
 import Button from '../../components/Button';
@@ -12,50 +12,31 @@ const ListeAnnonces = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    status: 'all',
-    search: ''
+    search: '',
+    ville: 'all',
+    genre: 'all',
+    ageBand: 'all', // all, lt30, 30to40, 40to50, 50plus
   });
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Vérifier la session avant de charger les données
-    if (!SessionManager.isSessionValid('uniteSession')) {
-      navigate('/login-unites');
-      return;
-    }
-
-    fetchAnnonces();
-  }, [navigate]);
-
-  const fetchAnnonces = async () => {
+  const fetchAnnonces = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      
-      // Vérifier l'unité connectée
       const currentUnite = unitesService.getCurrentUnite();
       if (!currentUnite || !currentUnite.id_unite) {
         throw new Error('Session unité invalide');
       }
-      
-      // Récupérer les annonces de l'unité
       const response = await annoncesService.getAnnoncesByUnite(currentUnite.id_unite);
-      
       if (!response || !response.success) {
         throw new Error(response?.message || 'Erreur lors de la récupération des annonces');
       }
-      
       setAnnonces(response.data || []);
-      
-      // Étendre la session sur activité réussie
       SessionManager.extendSession('uniteSession');
-      
     } catch (err) {
       const handledError = ErrorHandler.handleApiError(err, 'Chargement des annonces');
       setError(handledError.message);
       ErrorHandler.logError(handledError, 'ListeAnnonces.fetchAnnonces');
-      
-      // Si erreur d'authentification, rediriger
       if (handledError.type === ErrorHandler.ERROR_TYPES.AUTHENTICATION) {
         SessionManager.clearSession('uniteSession');
         navigate('/login-unites');
@@ -63,7 +44,16 @@ const ListeAnnonces = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    // Vérifier la session avant de charger les données
+    if (!SessionManager.isSessionValid('uniteSession')) {
+      navigate('/login-unites');
+      return;
+    }
+    fetchAnnonces();
+  }, [navigate, fetchAnnonces]);
 
   const handleVoirDossiers = (idAnnonce) => {
     if (!idAnnonce) {
@@ -77,8 +67,16 @@ const ListeAnnonces = () => {
     navigate('/back-office/create-annonce');
   };
 
-  const handleStatusFilter = (status) => {
-    setFilters(prev => ({ ...prev, status }));
+  const handleVilleFilter = (ville) => {
+    setFilters(prev => ({ ...prev, ville }));
+  };
+
+  const handleGenreFilter = (genre) => {
+    setFilters(prev => ({ ...prev, genre }));
+  };
+
+  const handleAgeBandFilter = (ageBand) => {
+    setFilters(prev => ({ ...prev, ageBand }));
   };
 
   const handleSearchFilter = (search) => {
@@ -86,15 +84,49 @@ const ListeAnnonces = () => {
   };
 
   // Filtrer les annonces
+  const villes = React.useMemo(() => {
+    const set = new Set();
+    annonces.forEach(a => { if (a?.Ville?.valeur) set.add(a.Ville.valeur); });
+    return Array.from(set);
+  }, [annonces]);
+
+  const genres = React.useMemo(() => {
+    const set = new Set();
+    annonces.forEach(a => { if (a?.Genre?.valeur) set.add(a.Genre.valeur); });
+    return Array.from(set);
+  }, [annonces]);
+
+  const intersects = (minA, maxA, minB, maxB) => {
+    if (minA == null && maxA == null) return true;
+    if (minB == null && maxB == null) return true;
+    const aMin = minA ?? -Infinity;
+    const aMax = maxA ?? Infinity;
+    const bMin = minB ?? -Infinity;
+    const bMax = maxB ?? Infinity;
+    return aMin <= bMax && bMin <= aMax;
+  };
+
   const filteredAnnonces = annonces.filter(annonce => {
-    const matchesStatus = filters.status === 'all' || 
-      (annonce.status_actuel && annonce.status_actuel.toLowerCase().includes(filters.status.toLowerCase()));
-    
-    const matchesSearch = !filters.search || 
-      (annonce.poste && annonce.poste.toLowerCase().includes(filters.search.toLowerCase())) ||
-      (annonce.ville && annonce.ville.toLowerCase().includes(filters.search.toLowerCase()));
-    
-    return matchesStatus && matchesSearch;
+    const p = (annonce.Poste?.valeur || '').toLowerCase();
+    const v = (annonce.Ville?.valeur || '').toLowerCase();
+    const g = (annonce.Genre?.valeur || '').toLowerCase();
+    const q = (filters.search || '').toLowerCase();
+
+    const matchesSearch = !filters.search || p.includes(q) || v.includes(q) || g.includes(q);
+    const matchesVille = filters.ville === 'all' || annonce.Ville?.valeur === filters.ville;
+    const matchesGenre = filters.genre === 'all' || annonce.Genre?.valeur === filters.genre;
+
+    let bandMin = null, bandMax = null;
+    switch (filters.ageBand) {
+      case 'lt30': bandMin = null; bandMax = 30; break;
+      case '30to40': bandMin = 30; bandMax = 40; break;
+      case '40to50': bandMin = 40; bandMax = 50; break;
+      case '50plus': bandMin = 50; bandMax = null; break;
+      default: bandMin = null; bandMax = null; break;
+    }
+    const matchesAge = filters.ageBand === 'all' || intersects(annonce.age_min, annonce.age_max, bandMin, bandMax);
+
+    return matchesSearch && matchesVille && matchesGenre && matchesAge;
   });
 
   if (loading) {
@@ -137,8 +169,8 @@ const ListeAnnonces = () => {
           <div className="liste-annonces__header">
             <h1>Liste des Annonces</h1>
             <p className="liste-annonces__subtitle">
-              {filteredAnnonces.length} annonce{filteredAnnonces.length > 1 ? 's' : ''} 
-              {filters.status !== 'all' || filters.search ? ' (filtrées)' : ''}
+              {filteredAnnonces.length} annonce{filteredAnnonces.length > 1 ? 's' : ''}
+              {(filters.search || filters.ville !== 'all' || filters.genre !== 'all' || filters.ageBand !== 'all') ? ' (filtrées)' : ''}
             </p>
           </div>
 
@@ -154,36 +186,61 @@ const ListeAnnonces = () => {
             </div>
             <div className="filter-group">
               <select 
-                value={filters.status} 
-                onChange={(e) => handleStatusFilter(e.target.value)}
+                value={filters.ville}
+                onChange={(e) => handleVilleFilter(e.target.value)}
                 className="status-filter"
               >
-                <option value="all">Tous les statuts</option>
-                <option value="publie">Publiées</option>
-                <option value="en cours">En cours</option>
-                <option value="refuse">Refusées</option>
+                <option value="all">Toutes les villes</option>
+                {villes.map(v => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
               </select>
             </div>
             <div className="filter-group">
+              <select 
+                value={filters.genre}
+                onChange={(e) => handleGenreFilter(e.target.value)}
+                className="status-filter"
+              >
+                <option value="all">Tous les genres</option>
+                {genres.map(g => (
+                  <option key={g} value={g}>{g}</option>
+                ))}
+              </select>
+            </div>
+            <div className="filter-group">
+              <select 
+                value={filters.ageBand}
+                onChange={(e) => handleAgeBandFilter(e.target.value)}
+                className="status-filter"
+              >
+                <option value="all">Tous âges</option>
+                <option value="lt30">Moins de 30</option>
+                <option value="30to40">30 à 40</option>
+                <option value="40to50">40 à 50</option>
+                <option value="50plus">50 et plus</option>
+              </select>
+            </div>
+            {/* <div className="filter-group">
               <Button onClick={handleCreateAnnonce}>
                 Créer une annonce
               </Button>
-            </div>
+            </div> */}
           </div>
 
           {filteredAnnonces.length === 0 ? (
             <div className="empty-state">
               <h3>Aucune annonce trouvée</h3>
               <p>
-                {filters.status !== 'all' || filters.search 
+                {(filters.search || filters.ville !== 'all' || filters.genre !== 'all' || filters.ageBand !== 'all')
                   ? 'Aucune annonce ne correspond à vos critères de recherche.' 
                   : 'Il n\'y a actuellement aucune annonce publiée.'
                 }
               </p>
-              {(filters.status !== 'all' || filters.search) && (
+              {(filters.search || filters.ville !== 'all' || filters.genre !== 'all' || filters.ageBand !== 'all') && (
                 <Button 
                   variant="secondary" 
-                  onClick={() => setFilters({ status: 'all', search: '' })}
+                  onClick={() => setFilters({ search: '', ville: 'all', genre: 'all', ageBand: 'all' })}
                 >
                   Effacer les filtres
                 </Button>
