@@ -45,10 +45,6 @@ const RhSuggestions = () => {
 
   const getCurrentStatusLc = (sugg) => getCurrentStatusValue(sugg).toLowerCase();
 
-  const hasScore = (sugg) => {
-    return Array.isArray(sugg?.entretien?.scores) && sugg.entretien.scores.length > 0;
-  };
-
   const getStatusColor = (statusText) => {
     const s = (statusText || '').toLowerCase();
     if (s.includes('valide')) return '#176c2f';
@@ -86,12 +82,6 @@ const RhSuggestions = () => {
   // === Vérifier créneaux ===
   const handleDisponibilites = async (suggestion) => {
     if (!suggestion?.id_rh_suggestion) return;
-    // Ne pas autoriser la replanification si un score existe déjà
-    if (hasScore(suggestion)) {
-      setMessage('Impossible de modifier le statut ou replanifier: un score existe déjà.');
-      setMessageType('error');
-      return;
-    }
     const date = suggestion.entretien?.date_entretien?.split('T')[0] || new Date().toISOString().split('T')[0];
     try {
   const resp = await rhService.getDisponibilites(suggestion.id_rh_suggestion, date);
@@ -143,12 +133,6 @@ const RhSuggestions = () => {
     }
 
     try {
-      // Sécuriser: si la suggestion sélectionnée a déjà un score, on bloque la modification de statut
-      if (hasScore(selectedSuggestion)) {
-        setMessage('Action bloquée: la suggestion a déjà un score, son statut ne peut plus être modifié.');
-        setMessageType('error');
-        return;
-      }
       let response;
       // Si la suggestion a déjà un entretien planifié ou un statut
       if (selectedSuggestion.entretien?.date_entretien || selectedSuggestion.status?.length > 0) {
@@ -245,13 +229,7 @@ const RhSuggestions = () => {
               </div>
 
               <div className="rh-suggestions__item-actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-                {hasScore(suggestion) ? (
-                  <>
-                    <Button variant="secondary" disabled>
-                      Score enregistré — statut verrouillé
-                    </Button>
-                  </>
-                ) : getCurrentStatusLc(suggestion).includes('invalide') ? (
+                {getCurrentStatusLc(suggestion).includes('invalide') ? (
                   <>
                     <Button variant="success" onClick={() => handleDisponibilites(suggestion)}>
                       Valider et planifier

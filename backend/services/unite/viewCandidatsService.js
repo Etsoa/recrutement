@@ -1,7 +1,7 @@
 // services/candidatService.js
 const Candidat = require('../../models/viewCandidatsModel');
-const pool = require('../../config/db'); 
-const { Sequelize, fn, col, literal } = require('sequelize'); // ✅ à importer
+const db = require('../../config/db'); 
+const { Sequelize, fn, col, literal, Op, QueryTypes } = require('sequelize'); // ✅ ajouter Op et QueryTypes
 
 // ✅ Age minimum
 const getAgeMin = async () => {
@@ -71,8 +71,8 @@ const countByLangues = async () => {
       ) AS sub;
     `;
 
-    const result = await pool.query(query);
-    return (result && result.rows && result.rows[0]);
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows && rows[0] ? rows[0] : {};
   } catch (error) {
     console.error('Erreur countByLangues2:', error);
     return 0;
@@ -91,8 +91,8 @@ const countCandidaturesByUnite = async (id_unite) => {
       WHERE a.id_unite = $1;
     `;
     
-    const result = await pool.query(query, [id_unite]);
-    return result.rows[0]?.total_candidatures || 0;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows && rows[0] && rows[0].total_candidatures ? rows[0].total_candidatures : 0;
   } catch (error) {
     console.error('Erreur countCandidaturesByUnite:', error);
     return 0;
@@ -110,8 +110,8 @@ const getAgeMinByUnite = async (id_unite) => {
       WHERE a.id_unite = $1;
     `;
     
-    const result = await pool.query(query, [id_unite]);
-    return result.rows[0]?.age_min || 0;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows && rows[0] && rows[0].age_min !== null ? rows[0].age_min : 0;
   } catch (error) {
     console.error('Erreur getAgeMinByUnite:', error);
     return 0;
@@ -129,8 +129,8 @@ const getAgeMaxByUnite = async (id_unite) => {
       WHERE a.id_unite = $1;
     `;
     
-    const result = await pool.query(query, [id_unite]);
-    return result.rows[0]?.age_max || 0;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows && rows[0] && rows[0].age_max !== null ? rows[0].age_max : 0;
   } catch (error) {
     console.error('Erreur getAgeMaxByUnite:', error);
     return 0;
@@ -148,8 +148,8 @@ const getAgeMoyenByUnite = async (id_unite) => {
       WHERE a.id_unite = $1;
     `;
     
-    const result = await pool.query(query, [id_unite]);
-    return parseFloat(result.rows[0]?.age_moyen) || 0;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows && rows[0] && rows[0].age_moyen !== null ? parseFloat(rows[0].age_moyen) : 0;
   } catch (error) {
     console.error('Erreur getAgeMoyenByUnite:', error);
     return 0;
@@ -184,8 +184,8 @@ const countByAgeRanges = async (id_unite) => {
       ORDER BY tranche_age;
     `;
     
-    const result = await pool.query(query, [id_unite]);
-    return result.rows;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows;
   } catch (error) {
     console.error('Erreur countByAgeRanges:', error);
     return [];
@@ -206,8 +206,8 @@ const countByVilleByUnite = async (id_unite) => {
       ORDER BY total DESC;
     `;
     
-    const result = await pool.query(query, [id_unite]);
-    return result.rows;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows;
   } catch (error) {
     console.error('Erreur countByVilleByUnite:', error);
     return [];
@@ -228,8 +228,8 @@ const countByGenreByUnite = async (id_unite) => {
       ORDER BY total DESC;
     `;
     
-    const result = await pool.query(query, [id_unite]);
-    return result.rows;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows;
   } catch (error) {
     console.error('Erreur countByGenreByUnite:', error);
     return [];
