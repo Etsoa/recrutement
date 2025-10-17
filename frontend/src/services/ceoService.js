@@ -101,9 +101,11 @@ export const ceoService = {
   },
 
   // Accepter une suggestion
-  accepterSuggestion: async (suggestionId) => {
+  accepterSuggestion: async (suggestionId, payload = {}) => {
     try {
-      const response = await api.post(CEO_ENDPOINTS.VALIDATE_SUGGESTION, { id_suggestion: suggestionId });
+      // Backend accepts id_ceo_suggestion or id_suggestion; we send both for safety
+      const body = { id_ceo_suggestion: suggestionId, id_suggestion: suggestionId, ...payload };
+      const response = await api.post(CEO_ENDPOINTS.VALIDATE_SUGGESTION, body);
       return response;
     } catch (error) {
       console.error('Erreur accepterSuggestion:', error);
@@ -114,7 +116,7 @@ export const ceoService = {
   // Refuser une suggestion
   refuserSuggestion: async (suggestionId) => {
     try {
-      const response = await api.post(CEO_ENDPOINTS.REJECT_SUGGESTION, { id_suggestion: suggestionId });
+      const response = await api.post(CEO_ENDPOINTS.REJECT_SUGGESTION, { id_ceo_suggestion: suggestionId, id_suggestion: suggestionId });
       return response;
     } catch (error) {
       console.error('Erreur refuserSuggestion:', error);

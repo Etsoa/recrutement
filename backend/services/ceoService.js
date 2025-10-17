@@ -35,18 +35,28 @@ const getAllSuggests = async () => {
       {
         model: Candidats,
         as: 'Candidat',
+        attributes: ['id_candidat', 'id_tiers', 'id_annonce'],
         include: [
           {
             model: Tiers,
             as: 'Tier',
             attributes: ['nom', 'prenom', 'email']
+          },
+          {
+            model: Annonces,
+            as: 'Annonce',
+            attributes: ['id_annonce', 'id_poste'],
+            include: [{
+              model: Postes,
+              as: 'Poste',
+              attributes: ['id_poste', 'valeur']
+            }]
           }
         ]
       }
     ],
     order: [['date_suggestion', 'DESC']]
   });
-
 
   return suggestions;
 };
@@ -156,28 +166,49 @@ const accepterSuggestion = async (id_ceo_suggestion, date_debut, duree, id_poste
     // Mise à jour du statut à 1 (valide)
     await suggestion.update({ id_type_status_suggestion: 1 });
 
-    // id_type_status_employe tokony 6 ny en contrat d'essai
-    emp = await EmployesService.createEmploye({ id_tiers: id_tiers, id_type_status_employe: 6, id_poste: id_poste })
+    // Créer l'employé en contrat d'essai (id_type_status_employe = 6)
+    const emp = await EmployesService.createEmploye({ id_tiers: id_tiers, id_type_status_employe: 6, id_poste: id_poste });
 
-    await ContratEssaisService.createContratEssai({ id_employe: emp.id_employe, date_debut: date_debut, duree: duree });
+    const createdContrat = await ContratEssaisService.createContratEssai({ id_employe: emp.id_employe, date_debut: date_debut, duree: duree });
 
     const poste = await Poste.findByPk(id_poste);
     const tiers = await Tiers.findByPk(id_tiers);
 
-    emailData = {
+    const emailData = {
       date_debut: date_debut,
       duree: duree,
-      poste: poste.valeur,
-      nom: tiers.nom,
-      prenom: tiers.prenom,
-      email: tiers.email
-    }
+      poste: poste?.valeur,
+      nom: tiers?.nom,
+      prenom: tiers?.prenom,
+      email: tiers?.email
+    };
 
-    await envoyerContratMail(emailData);
+    let mailSent = false;
+    try {
+      await envoyerContratMail(emailData);
+      mailSent = true;
+    } catch (e) {
+      console.error('Erreur envoi email (non bloquant):', e);
+    }
 
     return {
       success: true,
-      message: "Suggestion accepté avec succès"
+      message: "Suggestion accepté avec succès",
+      data: {
+        contrat: {
+          id_contrat_essai: createdContrat?.id_contrat_essai,
+          id_employe: emp?.id_employe,
+          id_poste: id_poste,
+          id_tiers: id_tiers,
+          date_debut: date_debut,
+          duree: duree,
+          poste: poste?.valeur,
+          nom: tiers?.nom,
+          prenom: tiers?.prenom,
+          email: tiers?.email
+        },
+        mailSent
+      }
     };
   } catch (error) {
     // console.error("Erreur accepterSuggestion:", error);
@@ -201,6 +232,11 @@ const transporter = nodemailer.createTransport({
 
 const envoyerContratMail = async (emailData) => {
   try {
+    // Skip email if SMTP env is not configured
+    if (!process.env.SMTP_HOST || !process.env.SMTP_PORT || !process.env.SMTP_USER || !process.env.SMTP_PASSWORD || !process.env.SMTP_FROM) {
+      console.warn('SMTP environment variables missing; skipping email send.');
+      return null;
+    }
     const mailOptions = {
       from: process.env.SMTP_FROM,
       to: emailData.email,

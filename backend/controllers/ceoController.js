@@ -148,7 +148,7 @@ exports.getAllSuggestsWaitingValidation = async (req, res) => {
 
 exports.refuserSuggestion = async (req, res) => {
   try {
-    const { id_ceo_suggestion } = req.body;
+    const id_ceo_suggestion = req.body.id_ceo_suggestion ?? req.body.id_suggestion;
 
     if (!id_ceo_suggestion) {
       return res.status(400).json({
@@ -158,11 +158,19 @@ exports.refuserSuggestion = async (req, res) => {
       });
     }
 
-    ceoService.refuserSuggestion(id_ceo_suggestion);
+    const result = await ceoService.refuserSuggestion(id_ceo_suggestion);
+
+    if (!result?.success) {
+      return res.status(400).json({
+        success: false,
+        message: result?.message || "Erreur lors du refus de la suggestion",
+        data: null
+      });
+    }
 
     return res.json({
       success: true,
-      message: "Suggestion refusée avec succès",
+      message: result.message || "Suggestion refusée avec succès",
       data: null
     });
   } catch (error) {
@@ -176,12 +184,8 @@ exports.refuserSuggestion = async (req, res) => {
 
 exports.accepterSuggestion = async (req, res) => {
   try {
-    const {
-      id_ceo_suggestion,
-      date_debut,
-      duree,
-      id_poste,
-      id_tiers } = req.body;
+    const id_ceo_suggestion = req.body.id_ceo_suggestion ?? req.body.id_suggestion;
+    const { date_debut, duree, id_poste, id_tiers } = req.body;
 
     if (!id_ceo_suggestion) {
       return res.status(400).json({
@@ -191,22 +195,31 @@ exports.accepterSuggestion = async (req, res) => {
       });
     }
 
-    ceoService.accepterSuggestion(
+    const result = await ceoService.accepterSuggestion(
       id_ceo_suggestion,
       date_debut,
       duree,
       id_poste,
-      id_tiers);
+      id_tiers
+    );
+
+    if (!result?.success) {
+      return res.status(400).json({
+        success: false,
+        message: result?.message || "Erreur lors de la validation de la suggestion",
+        data: null
+      });
+    }
 
     return res.json({
       success: true,
-      message: "Suggestion accepte avec succès",
-      data: null
+      message: result.message || "Suggestion acceptée avec succès",
+      data: result.data ?? null
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Erreur serveur lors du refus de la suggestion",
+      message: "Erreur serveur lors de l'acceptation de la suggestion",
       data: null
     });
   }
