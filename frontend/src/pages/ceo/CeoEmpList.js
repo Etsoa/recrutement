@@ -48,10 +48,11 @@ const CeoEmpList = () => {
                 <td>{emp.poste}</td>
                 <td>{emp.status}</td>
                 <td>
-                  <button onClick={() => handleAcceptEmploye(emp.id)}>
+                  <button onClick={() => handleAcceptEmploye(emp.id_employe)}>
                     Accepter
                   </button>
                 </td>
+                <td>{emp}</td>
               </tr>
             ))}
           </tbody>
