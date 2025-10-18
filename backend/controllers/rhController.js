@@ -67,6 +67,24 @@ exports.getAllAnnonces = async (req, res) => {
   }
 };
 
+exports.getTypeStatusAnnonces = async (req, res) => {
+  try {
+    const statusTypes = await rhService.getTypeStatusAnnonces();
+    res.json({ 
+      message: 'Types de statuts récupérés avec succès', 
+      data: statusTypes, 
+      success: true 
+    });
+  } catch (err) {
+    console.error('Erreur lors de la récupération des types de statuts:', err);
+    res.status(500).json({ 
+      message: 'Erreur serveur', 
+      data: null, 
+      success: false 
+    });
+  }
+};
+
 exports.updateAnnonceStatus = async (req, res) => {
   try {
     const { id_annonce, id_type_status_annonce, id_unite } = req.body;

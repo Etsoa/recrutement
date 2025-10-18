@@ -11,6 +11,7 @@ const StatusRhEntretien = require('../models/statusRhEntretiensModel');
 
 const RhEntretiensView = require('../models/rhEntretiensViewModel');
 const { Op } = require('sequelize');
+const db = require('../config/db');
 
 const ScoreRhEntretien = require('../models/scoreRhEntretiensModel'); 
 
@@ -31,7 +32,7 @@ const QualiteAnnonces = require('../models/qualiteAnnoncesModel');
 const Qualites = require('../models/qualitesModel');
 const ExperienceAnnonces = require('../models/experienceAnnoncesModel');
 const Domaines = require('../models/domainesModel');
-
+const TypeStatusAnnonces = require('../models/typeStatusAnnoncesModel');
 
 const JoursFeries = require('../models/joursFeriesModel');
 const HorairesOuvres = require('../models/horairesOuvresModel');
@@ -144,17 +145,80 @@ const loginRh = async (email, mot_de_passe) => {
   return await RhView.findOne({ where: { email, mot_de_passe } });
 };
 
-const updateAnnonceStatus = async ({ id_annonce, id_type_status_annonce, id_unite, date_changement }) => {
+// Récupérer tous les types de statuts d'annonces
+const getTypeStatusAnnonces = async () => {
   try {
+    const statusTypes = await TypeStatusAnnonces.findAll({
+      order: [['id_type_status_annonce', 'ASC']]
+    });
+    return statusTypes;
+  } catch (err) {
+    console.error('Erreur lors de la récupération des types de statuts:', err);
+    throw err;
+  }
+};
+
+const updateAnnonceStatus = async ({ id_annonce, id_type_status_annonce, id_unite, date_changement }) => {
+  const transaction = await db.transaction();
+  
+  try {
+    // Valider que l'annonce existe
+    const annonce = await Annonces.findByPk(id_annonce, { transaction });
+    if (!annonce) {
+      await transaction.rollback();
+      throw new Error(`Annonce avec id ${id_annonce} introuvable`);
+    }
+
+    // Récupérer le statut actuel de l'annonce
+    const currentStatus = await StatusAnnonces.findOne({
+      where: { id_annonce },
+      order: [['date_changement', 'DESC']],
+      transaction
+    });
+
+    const currentStatusId = currentStatus?.id_type_status_annonce || 1;
+
+    // Règles de transition de statut
+    // 1: En attente → peut aller vers 2 (Publié) ou 4 (Refusé)
+    // 2: Publié → peut aller vers 3 (Annulé)
+    // 3: Annulé → aucune transition possible
+    // 4: Refusé → aucune transition possible
+    
+    const allowedTransitions = {
+      1: [2, 4], // En attente → Publié ou Refusé
+      2: [3],    // Publié → Annulé
+      3: [],     // Annulé → rien
+      4: []      // Refusé → rien
+    };
+
+    const allowed = allowedTransitions[currentStatusId] || [];
+    
+    if (!allowed.includes(id_type_status_annonce)) {
+      await transaction.rollback();
+      const statusNames = { 1: 'En attente', 2: 'Publié', 3: 'Annulé', 4: 'Refusé' };
+      throw new Error(
+        `Transition invalide: impossible de passer de "${statusNames[currentStatusId]}" à "${statusNames[id_type_status_annonce]}". ` +
+        `Transitions autorisées: ${allowed.map(id => statusNames[id]).join(', ') || 'aucune'}`
+      );
+    }
+
+    // Créer le nouveau statut dans l'historique (INSERT transactionnel)
     const status = await StatusAnnonces.create({
       id_annonce,
       id_type_status_annonce,
-      id_unite,
+      id_unite: id_unite || annonce.id_unite,
       date_changement: date_changement || new Date()
-    });
+    }, { transaction });
+
+    await transaction.commit();
+    
+    const statusNames = { 1: 'En attente', 2: 'Publié', 3: 'Annulé', 4: 'Refusé' };
+    console.log(`✅ Statut annonce ${id_annonce} mis à jour: ${currentStatusId} (${statusNames[currentStatusId]}) → ${id_type_status_annonce} (${statusNames[id_type_status_annonce]})`);
+    
     return status;
   } catch (err) {
-    console.error('Erreur lors de la mise à jour du statut de l\'annonce:', err);
+    await transaction.rollback();
+    console.error('❌ Erreur lors de la mise à jour du statut de l\'annonce:', err);
     throw err;
   }
 };
@@ -528,7 +592,8 @@ module.exports = {
   getAllCeoSuggestions,
   getAllAnnonces,
   updateAnnonceStatus,
-  createAnnonceRh, 
+  createAnnonceRh,
+  getTypeStatusAnnonces, 
   getJoursFeries, 
   getHorairesOuvres
 };

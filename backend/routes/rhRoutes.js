@@ -8,6 +8,9 @@ router.post('/', rhController.loginRh);
 // Récupérer toutes les annonces avec leur statut
 router.get('/annonces', rhController.getAllAnnonces);
 
+// Récupérer les types de statuts d'annonce
+router.get('/status-types', rhController.getTypeStatusAnnonces);
+
 // Mettre à jour le statut d'une annonce
 router.post('/annonce/status', rhController.updateAnnonceStatus);
 

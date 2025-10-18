@@ -1,9 +1,10 @@
 // services/rh/candidatsStatsService.js - Service pour les statistiques RH générales
-const pool = require('../../config/db');
+const db = require('../../config/db');
+const { QueryTypes } = require('sequelize');
 
-// ===== STATISTIQUES GÉNÉRALES POUR RH (TOUTES LES ANNONCES) =====
+// ===== STATISTIQUES GÉNÉRALES POUR RH (TOUTES LES ANNONCES, TOUTES LES UNITÉS) =====
 
-// Nombre total de candidatures (toutes annonces)
+// Nombre total de candidatures (toutes annonces, toutes unités)
 const countAllCandidatures = async () => {
   try {
     const query = `
@@ -11,96 +12,104 @@ const countAllCandidatures = async () => {
       FROM candidats c;
     `;
     
-    const result = await pool.query(query);
-    return result.rows[0]?.total_candidatures || 0;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows[0]?.total_candidatures || 0;
   } catch (error) {
     console.error('Erreur countAllCandidatures:', error);
     return 0;
   }
 };
 
-// Age minimum (toutes annonces)
+// Age minimum (toutes annonces, toutes unités) - calculé depuis date_naissance
 const getAgeMinGeneral = async () => {
   try {
     const query = `
-      SELECT MIN(c.age) as age_min
-      FROM candidats c;
+      SELECT MIN(EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)))::int as age_min
+      FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
+      WHERE t.date_naissance IS NOT NULL;
     `;
     
-    const result = await pool.query(query);
-    return result.rows[0]?.age_min || 0;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows[0]?.age_min || 0;
   } catch (error) {
     console.error('Erreur getAgeMinGeneral:', error);
     return 0;
   }
 };
 
-// Age maximum (toutes annonces)
+// Age maximum (toutes annonces, toutes unités) - calculé depuis date_naissance
 const getAgeMaxGeneral = async () => {
   try {
     const query = `
-      SELECT MAX(c.age) as age_max
-      FROM candidats c;
+      SELECT MAX(EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)))::int as age_max
+      FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
+      WHERE t.date_naissance IS NOT NULL;
     `;
     
-    const result = await pool.query(query);
-    return result.rows[0]?.age_max || 0;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows[0]?.age_max || 0;
   } catch (error) {
     console.error('Erreur getAgeMaxGeneral:', error);
     return 0;
   }
 };
 
-// Age moyen (toutes annonces)
+// Age moyen (toutes annonces, toutes unités) - calculé depuis date_naissance
 const getAgeMoyenGeneral = async () => {
   try {
     const query = `
-      SELECT AVG(c.age) as age_moyen
-      FROM candidats c;
+      SELECT AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)))::numeric(10,2) as age_moyen
+      FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
+      WHERE t.date_naissance IS NOT NULL;
     `;
     
-    const result = await pool.query(query);
-    return parseFloat(result.rows[0]?.age_moyen) || 0;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return parseFloat(rows[0]?.age_moyen) || 0;
   } catch (error) {
     console.error('Erreur getAgeMoyenGeneral:', error);
     return 0;
   }
 };
 
-// Candidats par tranches d'âge prédéfinies (toutes annonces)
+// Candidats par tranches d'âge prédéfinies (toutes annonces, toutes unités)
 const countByAgeRangesGeneral = async () => {
   try {
     const query = `
       SELECT 
         CASE 
-          WHEN c.age BETWEEN 18 AND 25 THEN '18-25 ans'
-          WHEN c.age BETWEEN 26 AND 35 THEN '26-35 ans'
-          WHEN c.age BETWEEN 36 AND 45 THEN '36-45 ans'
-          WHEN c.age BETWEEN 46 AND 55 THEN '46-55 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 18 AND 25 THEN '18-25 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 26 AND 35 THEN '26-35 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 36 AND 45 THEN '36-45 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 46 AND 55 THEN '46-55 ans'
           ELSE '55+ ans'
         END as tranche_age,
         COUNT(*)::int as total
       FROM candidats c
+      JOIN tiers t ON c.id_tiers = t.id_tiers
+      WHERE t.date_naissance IS NOT NULL
       GROUP BY 
         CASE 
-          WHEN c.age BETWEEN 18 AND 25 THEN '18-25 ans'
-          WHEN c.age BETWEEN 26 AND 35 THEN '26-35 ans'
-          WHEN c.age BETWEEN 36 AND 45 THEN '36-45 ans'
-          WHEN c.age BETWEEN 46 AND 55 THEN '46-55 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 18 AND 25 THEN '18-25 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 26 AND 35 THEN '26-35 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 36 AND 45 THEN '36-45 ans'
+          WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, t.date_naissance)) BETWEEN 46 AND 55 THEN '46-55 ans'
           ELSE '55+ ans'
         END
       ORDER BY tranche_age;
     `;
     
-    const result = await pool.query(query);
-    return result.rows;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows;
   } catch (error) {
     console.error('Erreur countByAgeRangesGeneral:', error);
     return [];
   }
 };
 
-// Candidats par ville (toutes annonces)
+// Candidats par ville (toutes annonces, toutes unités)
 const countByVilleGeneral = async () => {
   try {
     const query = `
@@ -112,15 +121,15 @@ const countByVilleGeneral = async () => {
       ORDER BY total DESC;
     `;
     
-    const result = await pool.query(query);
-    return result.rows;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows;
   } catch (error) {
     console.error('Erreur countByVilleGeneral:', error);
     return [];
   }
 };
 
-// Candidats par genre (toutes annonces)
+// Candidats par genre (toutes annonces, toutes unités)
 const countByGenreGeneral = async () => {
   try {
     const query = `
@@ -132,81 +141,101 @@ const countByGenreGeneral = async () => {
       ORDER BY total DESC;
     `;
     
-    const result = await pool.query(query);
-    return result.rows;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows;
   } catch (error) {
     console.error('Erreur countByGenreGeneral:', error);
     return [];
   }
 };
 
-// Candidats par nombre de langues (toutes annonces)
+// Candidats par nombre de langues (toutes annonces, toutes unités)
 const countByLanguesGeneral = async () => {
   try {
+    // D'abord vérifier combien de candidats ont des langues
+    const debugQuery = `
+      SELECT COUNT(DISTINCT c.id_candidat) as total_candidats,
+             COUNT(lt.id_langue) as total_langues
+      FROM candidats c
+      LEFT JOIN langue_tiers lt ON c.id_tiers = lt.id_tiers;
+    `;
+    
+    const debugResult = await db.query(debugQuery, { type: QueryTypes.SELECT });
+    console.log('DEBUG countByLanguesGeneral - Total candidats et langues:', debugResult);
+    
     const query = `
       SELECT 
-        CASE 
+        CASE
           WHEN langue_count = 2 THEN '2 langues'
           WHEN langue_count = 3 THEN '3 langues'
           WHEN langue_count >= 4 THEN '4+ langues'
-          ELSE 'Moins de 2 langues'
-        END as categorie_langues,
+          ELSE '1 langue'
+        END as category,
         COUNT(*)::int as total
       FROM (
-        SELECT c.id_candidat, COUNT(lt.id_langue) as langue_count
+        SELECT c.id_candidat,
+               COUNT(lt.id_langue) as langue_count
         FROM candidats c
-        JOIN tiers t ON c.id_tiers = t.id_tiers
-        LEFT JOIN langue_tiers lt ON t.id_tiers = lt.id_tiers
+        LEFT JOIN langue_tiers lt ON c.id_tiers = lt.id_tiers
         GROUP BY c.id_candidat
-      ) as langue_stats
-      WHERE langue_count >= 2
+      ) as sub
       GROUP BY 
-        CASE 
+        CASE
           WHEN langue_count = 2 THEN '2 langues'
           WHEN langue_count = 3 THEN '3 langues'
           WHEN langue_count >= 4 THEN '4+ langues'
-          ELSE 'Moins de 2 langues'
+          ELSE '1 langue'
         END
-      ORDER BY categorie_langues;
+      ORDER BY total DESC;
     `;
     
-    const result = await pool.query(query);
-    return result.rows;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    
+    console.log('countByLanguesGeneral - Résultats bruts:', rows);
+    
+    // Si aucun résultat, retourner un objet vide plutôt qu'un objet avec des catégories à 0
+    if (!rows || rows.length === 0) {
+      console.log('countByLanguesGeneral - Aucun résultat, retour objet vide');
+      return {};
+    }
+    
+    // Convertir en objet pour compatibilité avec Unite
+    const languesObj = {};
+    rows.forEach(row => {
+      languesObj[row.category] = row.total;
+    });
+    
+    console.log('countByLanguesGeneral - Objet final:', languesObj);
+    
+    return languesObj;
   } catch (error) {
     console.error('Erreur countByLanguesGeneral:', error);
-    return [];
+    return {};
   }
 };
 
-// Candidats par niveau d'éducation (toutes annonces)
-const countByEducationGeneral = async () => {
+// Candidats par niveau d'éducation (toutes annonces, toutes unités)
+const countByNiveauGeneral = async () => {
   try {
     const query = `
-      SELECT n.valeur as niveau_education, COUNT(*)::int as total
+      SELECT n.valeur as niveau, 
+             COUNT(*)::int as nbr_candidats
       FROM candidats c
-      JOIN tiers t ON c.id_tiers = t.id_tiers
-      JOIN niveau_filiere_tiers nft ON t.id_tiers = nft.id_tiers
+      JOIN niveau_filiere_tiers nft ON c.id_tiers = nft.id_tiers
       JOIN niveaux n ON nft.id_niveau = n.id_niveau
       GROUP BY n.valeur, n.id_niveau
-      ORDER BY 
-        CASE n.valeur
-          WHEN 'Baccalauréat' THEN 1
-          WHEN 'Licence' THEN 2
-          WHEN 'Master' THEN 3
-          WHEN 'Doctorat' THEN 4
-          ELSE 5
-        END;
+      ORDER BY n.id_niveau;
     `;
     
-    const result = await pool.query(query);
-    return result.rows;
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
+    return rows;
   } catch (error) {
-    console.error('Erreur countByEducationGeneral:', error);
+    console.error('Erreur countByNiveauGeneral:', error);
     return [];
   }
 };
 
-// Candidats par expérience (toutes annonces)
+// Candidats par expérience (toutes annonces, toutes unités)
 const countByExperienceGeneral = async () => {
   try {
     // Définir toutes les tranches possibles
@@ -229,8 +258,7 @@ const countByExperienceGeneral = async () => {
             0
           ) as total_annees_experience
         FROM candidats c
-        JOIN tiers t ON c.id_tiers = t.id_tiers
-        LEFT JOIN experience_tiers et ON t.id_tiers = et.id_tiers
+        LEFT JOIN experience_tiers et ON c.id_tiers = et.id_tiers
         GROUP BY c.id_candidat
       ),
       experience_tranches AS (
@@ -262,7 +290,7 @@ const countByExperienceGeneral = async () => {
         END;
     `;
     
-    const rows = await sequelize.query(query, { type: QueryTypes.SELECT });
+    const rows = await db.query(query, { type: QueryTypes.SELECT });
     
     // Créer un map des résultats existants
     const resultMap = new Map(rows.map(row => [row.tranche_experience, row.total]));
@@ -281,7 +309,7 @@ const countByExperienceGeneral = async () => {
 };
 
 // Fonction principale pour récupérer toutes les statistiques RH
-const getAllRhStats = async (ageRange = {}) => {
+const getAllRhStats = async () => {
   try {
     const stats = {
       // Statistiques résumé
@@ -290,13 +318,13 @@ const getAllRhStats = async (ageRange = {}) => {
       ageMax: await getAgeMaxGeneral(),
       ageMoyen: await getAgeMoyenGeneral(),
       
-      // Répartitions détaillées
-      tranchesAge: await countByAgeRangesGeneral(),
-      villes: await countByVilleGeneral(),
-      genres: await countByGenreGeneral(),
-      langues: await countByLanguesGeneral(),
-      education: await countByEducationGeneral(),
-      experience: await countByExperienceGeneral()
+      // Répartitions détaillées (même structure que Unite)
+      byAge: await countByAgeRangesGeneral(),
+      byVille: await countByVilleGeneral(),
+      byGenre: await countByGenreGeneral(),
+      byLangue: await countByLanguesGeneral(),
+      byNiveau: await countByNiveauGeneral(),
+      byExperience: await countByExperienceGeneral()
     };
     
     return stats;
@@ -315,7 +343,7 @@ module.exports = {
   countByVilleGeneral,
   countByGenreGeneral,
   countByLanguesGeneral,
-  countByEducationGeneral,
+  countByNiveauGeneral,
   countByExperienceGeneral,
   getAllRhStats
 };

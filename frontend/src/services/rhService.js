@@ -11,6 +11,7 @@ const RH_ENDPOINTS = {
   UPDATE_STATUS_SUGGESTION: '/rh/suggestion/status',
   ENTRETIENS_JOUR: '/rh/rh_entretiens_jour',
   ALL_ANNONCES: '/rh/annonces',
+  STATUS_TYPES: '/rh/status-types',
   UPDATE_ANNONCE_STATUS: '/rh/annonce/status',
   ENTRETIENS_MOIS: '/rh/rh_entretiens_mois',
   UPDATE_DATE_ENTRETIEN: '/rh/update/date/rh_entretien',
@@ -161,6 +162,17 @@ export const rhService = {
       return response;
     } catch (error) {
       console.error('Erreur lors de la récupération des annonces:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer les types de statuts d'annonce
+  getTypeStatusAnnonces: async () => {
+    try {
+      const response = await api.get(RH_ENDPOINTS.STATUS_TYPES);
+      return response;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des types de statuts:', error);
       throw error;
     }
   },

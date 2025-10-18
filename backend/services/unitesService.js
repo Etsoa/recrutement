@@ -307,7 +307,7 @@ const getCandidatsEligiblesPourRh = async (id_unite = null) => {
 
       // Conditions d'éligibilité
       const statutTermine = dernierStatut && dernierStatut.TypeStatusEntretien.valeur === 'Termine';
-      const scoreValide = meilleurScore && meilleurScore.score >= 10;
+      const aUnScore = meilleurScore && typeof meilleurScore.score !== 'undefined';
 
       // Vérifier si pas encore suggéré au RH
       const dejaSuggere = await RhSuggestionsModel.findOne({
@@ -317,7 +317,8 @@ const getCandidatsEligiblesPourRh = async (id_unite = null) => {
         }
       });
 
-      if (statutTermine && scoreValide && !dejaSuggere) {
+      // Retourner uniquement ceux qui ont terminé l'entretien, ont un score mais ne sont pas encore suggérés
+      if (statutTermine && aUnScore && !dejaSuggere) {
         // Construire l'objet candidat avec toutes les informations
         const candidatInfo = {
           id_unite_entretien: entretien.id_unite_entretien,

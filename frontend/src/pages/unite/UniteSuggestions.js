@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../components';
 import { unitesService } from '../../services';
-import '../../styles/RhSuggestions.css'; // Réutilise les styles RH
+import '../../styles/UniteSuggestions.css';
 
 const UniteSuggestions = () => {
   const [candidatsEligibles, setCandidatsEligibles] = useState([]);
@@ -88,8 +88,8 @@ const UniteSuggestions = () => {
       <div className="rh-suggestions-header">
         <h1>Candidats à Suggérer à la RH</h1>
         <p className="description">
-          Voici la liste des candidats qui ont passé avec succès l'entretien de votre unité 
-          et peuvent être suggérés pour un entretien RH.
+          Liste des candidats ayant terminé leur entretien mais non suggérés automatiquement au RH.
+          Vous pouvez les suggérer manuellement pour un entretien RH.
         </p>
         {message && (
           <div className={`message ${messageType}`}>
@@ -206,7 +206,6 @@ const UniteSuggestions = () => {
                   <Button
                     variant="primary"
                     onClick={() => handleSuggestToRh(candidat)}
-                    disabled={candidat.score < 10}
                   >
                     Suggérer à la RH
                   </Button>
@@ -229,12 +228,6 @@ const UniteSuggestions = () => {
                     {selectedCandidat?.id_candidat === candidat.id_candidat ? 'Masquer' : 'Détails'}
                   </Button>
                 </div>
-
-                {candidat.score < 10 && (
-                  <p className="score-warning">
-                    ⚠️ Score insuffisant pour une suggestion RH (minimum 10/20 requis)
-                  </p>
-                )}
               </div>
 
               {selectedCandidat?.id_candidat === candidat.id_candidat && (
@@ -264,18 +257,16 @@ const UniteSuggestions = () => {
         </div>
       ) : (
         <div className="no-suggestions">
-          <h3>Aucun candidat éligible</h3>
+          <h3>Aucun candidat à suggérer</h3>
           <p>
-            Il n'y a actuellement aucun candidat avec un score suffisant 
-            pour être suggéré à la RH.
+            Tous les candidats ayant terminé leur entretien ont déjà été suggérés au RH.
           </p>
           <div className="suggestions-info">
-            <h4>Pour qu'un candidat soit éligible :</h4>
+            <h4>Pour qu'un candidat apparaisse ici :</h4>
             <ul>
-              <li>Il doit avoir passé un entretien avec votre unité</li>
-              <li>L'entretien doit être marqué comme terminé</li>
-              <li>Il doit avoir obtenu un score d'au moins 10/20</li>
-              <li>Il ne doit pas avoir déjà été suggéré</li>
+              <li>Il doit avoir terminé son entretien avec votre unité</li>
+              <li>Il doit avoir reçu un score d'entretien</li>
+              <li>Il ne doit pas encore avoir été suggéré au RH</li>
             </ul>
           </div>
         </div>

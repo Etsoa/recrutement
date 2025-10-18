@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../components';
 import { unitesService } from '../../services';
-import '../../styles/RhCeoSuggestions.css'; // Réutilise les styles RH
+import '../../styles/UniteRhSuggestions.css';
 
 const UniteRhSuggestions = () => {
   const [suggestions, setSuggestions] = useState([]);

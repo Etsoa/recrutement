@@ -1,0 +1,425 @@
+/* UniteSuggestions.css - Design épuré blanc-gris avec accents verts */
+
+/* Variables de couleur */
+:root {
+  --primary-green: #176c2f;
+  --primary-green-hover: #0f4d21;
+  --light-gray: #f5f7fa;
+  --medium-gray: #e1e8ed;
+  --dark-gray: #657786;
+  --text-primary: #14171a;
+  --text-secondary: #657786;
+  --white: #ffffff;
+  --success: #176c2f;
+  --warning: #f39c12;
+  --danger: #e74c3c;
+  --border-radius: 12px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Container principal */
+.rh-suggestions-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  background-color: var(--light-gray);
+  min-height: 100vh;
+}
+
+/* Header */
+.rh-suggestions-header {
+  background: var(--white);
+  padding: 32px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+}
+
+.rh-suggestions-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rh-suggestions-header h1::before {
+  content: '';
+  width: 4px;
+  height: 32px;
+  background: var(--primary-green);
+  border-radius: 2px;
+}
+
+.rh-suggestions-header .description {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+  line-height: 1.6;
+}
+
+/* Messages */
+.message {
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Liste des suggestions */
+.suggestions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Carte de suggestion */
+.suggestion-card {
+  background: var(--white);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.suggestion-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--medium-gray);
+  transform: translateY(-2px);
+}
+
+/* Header de la carte */
+.suggestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--medium-gray);
+  margin-bottom: 20px;
+}
+
+.candidat-basic-info h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.candidat-email {
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.candidat-email::before {
+  content: '✉';
+  color: var(--primary-green);
+}
+
+.suggestion-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.entretien-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--light-gray);
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.score-badge {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Détails candidat */
+.candidat-details {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.candidat-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item strong {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.info-item span {
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+/* Sections de compétences */
+.competences-section {
+  padding: 16px 20px;
+  background: var(--light-gray);
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-green);
+}
+
+.competences-section h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  background: var(--white);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  border: 1px solid var(--medium-gray);
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  border-color: var(--primary-green);
+  background: rgba(23, 108, 47, 0.05);
+}
+
+/* Expériences */
+.experiences-list,
+.formations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.experience-item,
+.formation-item {
+  background: var(--white);
+  padding: 12px 16px;
+  border-radius: 6px;
+  border-left: 2px solid var(--primary-green);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.experience-domain,
+.formation-niveau {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.experience-duration,
+.formation-filiere {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Actions */
+.suggestion-actions {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--medium-gray);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Détails étendus */
+.candidat-extended-details {
+  margin-top: 24px;
+  padding: 24px;
+  background: var(--light-gray);
+  border-radius: 8px;
+  border: 1px solid var(--medium-gray);
+}
+
+.candidat-extended-details h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--primary-green);
+}
+
+.extended-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.info-section h5 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-section p {
+  font-size: 14px;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+  line-height: 1.6;
+}
+
+/* Pas de suggestions */
+.no-suggestions {
+  background: var(--white);
+  padding: 48px 32px;
+  border-radius: var(--border-radius);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.no-suggestions h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+}
+
+.no-suggestions p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 24px 0;
+  line-height: 1.6;
+}
+
+.suggestions-info {
+  background: var(--light-gray);
+  padding: 24px;
+  border-radius: 8px;
+  text-align: left;
+  margin-top: 24px;
+}
+
+.suggestions-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.suggestions-info ul {
+  margin: 0;
+  padding-left: 24px;
+  list-style: none;
+}
+
+.suggestions-info li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  line-height: 1.6;
+  position: relative;
+}
+
+.suggestions-info li::before {
+  content: '✓';
+  position: absolute;
+  left: -24px;
+  color: var(--primary-green);
+  font-weight: 700;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .rh-suggestions-container {
+    padding: 16px;
+  }
+
+  .rh-suggestions-header {
+    padding: 24px 20px;
+  }
+
+  .rh-suggestions-header h1 {
+    font-size: 24px;
+  }
+
+  .suggestion-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .suggestion-meta {
+    align-items: flex-start;
+  }
+
+  .candidat-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons button {
+    width: 100%;
+  }
+}

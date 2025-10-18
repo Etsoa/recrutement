@@ -29,23 +29,18 @@ const HeaderRh = () => {
         <h1 className="header__logo">Axiom</h1>
         
         <nav className="header__nav">
+          
           <Link 
-            to={ROUTES.STATISTIQUES} 
-            className={`header__nav-item ${location.pathname === ROUTES.STATISTIQUES ? 'header__nav-item--active' : ''}`}
+            to={ROUTES.RH_SUGGESTIONS} 
+            className={`header__nav-item ${location.pathname === ROUTES.RH_SUGGESTIONS ? 'header__nav-item--active' : ''}`}
           >
-            Statistiques
+            Suggestions
           </Link>
           <Link 
             to={ROUTES.RH_CALENDRIER} 
             className={`header__nav-item ${location.pathname === ROUTES.RH_CALENDRIER ? 'header__nav-item--active' : ''}`}
           >
             Calendrier
-          </Link>
-          <Link 
-            to={ROUTES.RH_SUGGESTIONS} 
-            className={`header__nav-item ${location.pathname === ROUTES.RH_SUGGESTIONS ? 'header__nav-item--active' : ''}`}
-          >
-            Suggestions
           </Link>
           <Link 
             to={ROUTES.RH_CEO_SUGGESTIONS} 
@@ -59,6 +54,13 @@ const HeaderRh = () => {
           >
             Créer une annonce
           </Link>
+          <Link 
+            to={ROUTES.STATISTIQUES} 
+            className={`header__nav-item ${location.pathname === ROUTES.STATISTIQUES ? 'header__nav-item--active' : ''}`}
+          >
+            Statistiques
+          </Link>
+          
         </nav>
         
         <div className="header__actions">

@@ -93,7 +93,6 @@ const CeoEmpList = () => {
 
   return (
     <div className="ceo-emp">
-      <CeoHeader />
       <div className="ceo-emp__content">
         <h1 className="ceo-emp__title">Liste des Employés</h1>
         {loading ? (

@@ -3,10 +3,12 @@ import Button from '../components/Button';
 import '../styles/FormAnnonce.css';
 import rhService from '../services/rhService';
 
-const STATUS_TYPES = {
-  EN_COURS: 1,
-  PUBLIE: 2,
-  NON_PUBLIE: 3
+// Règles de transition de statuts
+const ALLOWED_TRANSITIONS = {
+  1: [2, 4], // En attente → Publié ou Refusé
+  2: [3],    // Publié → Annulé (Non publié)
+  3: [],     // Annulé → aucune transition
+  4: []      // Refusé → aucune transition
 };
 
 const FormAnnonce = () => {
@@ -17,6 +19,18 @@ const FormAnnonce = () => {
   const [submittingId, setSubmittingId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [statusTypes, setStatusTypes] = useState([]);
+
+  const fetchStatusTypes = useCallback(async () => {
+    try {
+      const response = await rhService.getTypeStatusAnnonces();
+      if (response.success) {
+        setStatusTypes(response.data || []);
+      }
+    } catch (err) {
+      console.error('Erreur lors du chargement des types de statuts:', err);
+    }
+  }, []);
 
   const fetchAnnonces = useCallback(async () => {
     try {
@@ -38,8 +52,9 @@ const FormAnnonce = () => {
   }, []);
 
   useEffect(() => {
+    fetchStatusTypes();
     fetchAnnonces();
-  }, [fetchAnnonces]);
+  }, [fetchAnnonces, fetchStatusTypes]);
 
   const handleLogout = () => {
     sessionStorage.removeItem('rhLoggedIn');
@@ -97,44 +112,42 @@ const FormAnnonce = () => {
 
   const getStatusActions = (annonce) => {
     const currentStatusId = annonce?.currentStatus?.id_type_status_annonce ?? annonce?.id_type_status_annonce;
-    if (currentStatusId === STATUS_TYPES.EN_COURS) {
-      return (
-        <div className="form-annonce__status-actions" onClick={e => e.stopPropagation()}>
-          <Button 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleStatusChange(annonce.id_annonce, STATUS_TYPES.PUBLIE);
-            }}
-            variant="primary"
-            disabled={submittingId === annonce.id_annonce}
-          >
-            Publier
-          </Button>
-          <Button 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleStatusChange(annonce.id_annonce, STATUS_TYPES.NON_PUBLIE);
-            }}
-            variant="secondary"
-            disabled={submittingId === annonce.id_annonce}
-          >
-            Ne pas publier
-          </Button>
-        </div>
-      );
+    const allowedTransitions = ALLOWED_TRANSITIONS[currentStatusId] || [];
+    
+    // Si aucune transition possible, ne rien afficher
+    if (allowedTransitions.length === 0) {
+      return null;
     }
+
+    // Fonction helper pour obtenir le nom d'un statut
+    const getStatusName = (statusId) => {
+      const status = statusTypes.find(s => s.id_type_status_annonce === statusId);
+      return status?.valeur || `Statut ${statusId}`;
+    };
+
+    // Fonction helper pour obtenir le variant approprié
+    const getButtonVariant = (statusId) => {
+      if (statusId === 2) return 'primary'; // Publier
+      if (statusId === 3) return 'secondary'; // Annuler
+      if (statusId === 4) return 'danger'; // Refuser
+      return 'default';
+    };
+
     return (
-      <div onClick={e => e.stopPropagation()}>
-        <Button 
-          onClick={(e) => {
-            e.stopPropagation();
-            handleStatusChange(annonce.id_annonce, STATUS_TYPES.EN_COURS);
-          }}
-          variant="success"
-          disabled={submittingId === annonce.id_annonce}
-        >
-          Modifier le statut
-        </Button>
+      <div className="form-annonce__status-actions" onClick={e => e.stopPropagation()}>
+        {allowedTransitions.map(targetStatusId => (
+          <Button 
+            key={targetStatusId}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleStatusChange(annonce.id_annonce, targetStatusId);
+            }}
+            variant={getButtonVariant(targetStatusId)}
+            disabled={submittingId === annonce.id_annonce}
+          >
+            {getStatusName(targetStatusId)}
+          </Button>
+        ))}
       </div>
     );
   };
@@ -142,10 +155,9 @@ const FormAnnonce = () => {
   // Filtrage par statut sélectionné
   const filteredAnnonces = React.useMemo(() => {
     if (statusFilter === 'all') return annonces;
-    const wantedId = STATUS_TYPES[statusFilter];
     return annonces.filter(a => {
       const current = a?.currentStatus?.id_type_status_annonce ?? a?.id_type_status_annonce;
-      return current === wantedId;
+      return current === parseInt(statusFilter);
     });
   }, [annonces, statusFilter]);
 
@@ -161,9 +173,11 @@ const FormAnnonce = () => {
               Statut:
               <select value={statusFilter} onChange={(e)=>setStatusFilter(e.target.value)}>
                 <option value="all">Tous</option>
-                <option value="EN_COURS">En cours</option>
-                <option value="PUBLIE">Publié</option>
-                <option value="NON_PUBLIE">Non publié</option>
+                {statusTypes.map(status => (
+                  <option key={status.id_type_status_annonce} value={status.id_type_status_annonce}>
+                    {status.valeur}
+                  </option>
+                ))}
               </select>
             </label>
             </div>
@@ -202,11 +216,14 @@ const FormAnnonce = () => {
                       <p><strong>Unité:</strong> {annonce.Poste.Unite.nom}</p>
                       <p><strong>Ville:</strong> {annonce.Ville.valeur}</p>
                       <span className={`form-annonce__status-badge form-annonce__status-badge--${
-                        (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.EN_COURS ? 'pending' :
-                        (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.PUBLIE ? 'published' : 'rejected'
+                        (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === 1 ? 'pending' :
+                        (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === 2 ? 'published' : 'rejected'
                       }`}>
-                        {(annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.EN_COURS ? 'En cours' :
-                         (annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce) === STATUS_TYPES.PUBLIE ? 'Publié' : 'Non publié'}
+                        {(() => {
+                          const statusId = annonce.currentStatus?.id_type_status_annonce ?? annonce.id_type_status_annonce;
+                          const status = statusTypes.find(s => s.id_type_status_annonce === statusId);
+                          return status?.valeur || 'Statut inconnu';
+                        })()}
                       </span>
                     </div>
                   </div>

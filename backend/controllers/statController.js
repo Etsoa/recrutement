@@ -194,40 +194,29 @@ exports.getStatsByUnite = async (req, res) => {
 // ===== NOUVELLE FONCTION POUR STATISTIQUES RH GENERALES =====
 exports.getRhStats = async (req, res) => {
   try {
-    const { age1 = 1, age2 = 100 } = req.body;
-    
-    // Validation des paramètres d'âge
-    if (age1 < 0 || age2 < 0 || age1 > age2) {
-      return res.status(400).json({
-        message: 'Paramètres d\'âge invalides',
-        data: null,
-        success: false
-      });
-    }
-
-    // Récupération de toutes les statistiques RH générales
-    const stats = await rhCandidatsStatsService.getAllRhStats({ age1, age2 });
+    // Récupération de toutes les statistiques RH générales (toutes unités)
+    const stats = await rhCandidatsStatsService.getAllRhStats();
     
     // Contrôle des données vides
     const hasData = stats && (
       stats.totalCandidatures > 0 ||
-      (Array.isArray(stats.tranchesAge) && stats.tranchesAge.length > 0) ||
-      (Array.isArray(stats.villes) && stats.villes.length > 0) ||
-      (Array.isArray(stats.genres) && stats.genres.length > 0)
+      (Array.isArray(stats.byAge) && stats.byAge.length > 0) ||
+      (Array.isArray(stats.byVille) && stats.byVille.length > 0) ||
+      (Array.isArray(stats.byGenre) && stats.byGenre.length > 0)
     );
     
-    // Sécurisation des données
+    // Sécurisation des données (même structure que Unite)
     const secureStats = {
       totalCandidatures: stats?.totalCandidatures || 0,
       ageMin: (stats?.ageMin !== null && stats?.ageMin !== undefined) ? stats.ageMin : 0,
       ageMax: (stats?.ageMax !== null && stats?.ageMax !== undefined) ? stats.ageMax : 0,
       ageMoyen: (stats?.ageMoyen !== null && stats?.ageMoyen !== undefined && !isNaN(stats.ageMoyen)) ? Math.round(stats.ageMoyen * 100) / 100 : 0,
-      tranchesAge: Array.isArray(stats?.tranchesAge) ? stats.tranchesAge : [],
-      villes: Array.isArray(stats?.villes) ? stats.villes : [],
-      genres: Array.isArray(stats?.genres) ? stats.genres : [],
-      langues: Array.isArray(stats?.langues) ? stats.langues : [],
-      education: Array.isArray(stats?.education) ? stats.education : [],
-      experience: Array.isArray(stats?.experience) ? stats.experience : [],
+      byAge: Array.isArray(stats?.byAge) ? stats.byAge : [],
+      byVille: Array.isArray(stats?.byVille) ? stats.byVille : [],
+      byGenre: Array.isArray(stats?.byGenre) ? stats.byGenre : [],
+      byLangues: stats?.byLangue && typeof stats.byLangue === 'object' ? stats.byLangue : {},
+      byNiveau: Array.isArray(stats?.byNiveau) ? stats.byNiveau : [],
+      byExperience: Array.isArray(stats?.byExperience) ? stats.byExperience : [],
       hasData: hasData
     };
 
@@ -246,12 +235,12 @@ exports.getRhStats = async (req, res) => {
         ageMin: 0,
         ageMax: 0,
         ageMoyen: 0,
-        tranchesAge: [],
-        villes: [],
-        genres: [],
-        langues: [],
-        education: [],
-        experience: [],
+        byAge: [],
+        byVille: [],
+        byGenre: [],
+        byLangues: {},
+        byNiveau: [],
+        byExperience: [],
         hasData: false
       },
       success: false

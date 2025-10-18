@@ -60,12 +60,12 @@ const StatistiquesRh = () => {
         ageMin: 0,
         ageMax: 0,
         ageMoyen: 0,
-        tranchesAge: [],
-        villes: [],
-        genres: [],
-        langues: [],
-        education: [],
-        experience: [],
+        byAge: [],
+        byVille: [],
+        byGenre: [],
+        byLangues: {},
+        byNiveau: [],
+        byExperience: [],
         isEmpty: true,
         hasData: false
       });
@@ -226,8 +226,8 @@ const StatistiquesRh = () => {
               <h3 className="stats-rh-card-title">Candidats par Tranches d'Âge</h3>
             </div>
             <ul className="stats-rh-list">
-              {stats.tranchesAge && stats.tranchesAge.length > 0 ? (
-                stats.tranchesAge.map((tranche, index) => (
+              {stats.byAge && stats.byAge.length > 0 ? (
+                stats.byAge.map((tranche, index) => (
                   <li key={index} className="stats-rh-list-item">
                     <span className="stats-rh-list-label">{tranche.tranche_age}</span>
                     <span className="stats-rh-list-value">{formatNumber(tranche.total)}</span>
@@ -248,8 +248,8 @@ const StatistiquesRh = () => {
               <h3 className="stats-rh-card-title">Candidats par Ville</h3>
             </div>
             <ul className="stats-rh-list">
-              {stats.villes && stats.villes.length > 0 ? (
-                stats.villes.slice(0, 10).map((ville, index) => (
+              {stats.byVille && stats.byVille.length > 0 ? (
+                stats.byVille.slice(0, 10).map((ville, index) => (
                   <li key={index} className="stats-rh-list-item">
                     <span className="stats-rh-list-label">{ville.ville || 'Non spécifié'}</span>
                     <span className="stats-rh-list-value">{formatNumber(ville.total)}</span>
@@ -270,8 +270,8 @@ const StatistiquesRh = () => {
               <h3 className="stats-rh-card-title">Candidats par Genre</h3>
             </div>
             <ul className="stats-rh-list">
-              {stats.genres && stats.genres.length > 0 ? (
-                stats.genres.map((genre, index) => (
+              {stats.byGenre && stats.byGenre.length > 0 ? (
+                stats.byGenre.map((genre, index) => (
                   <li key={index} className="stats-rh-list-item">
                     <span className="stats-rh-list-label">
                       {genre.genre === 'Masculin' ? '👨 Homme' : 
@@ -296,11 +296,11 @@ const StatistiquesRh = () => {
               <h3 className="stats-rh-card-title">Candidats par Compétences Linguistiques</h3>
             </div>
             <ul className="stats-rh-list">
-              {stats.langues && stats.langues.length > 0 ? (
-                stats.langues.map((langue, index) => (
+              {stats.byLangues && Object.keys(stats.byLangues).length > 0 ? (
+                Object.entries(stats.byLangues).map(([category, total], index) => (
                   <li key={index} className="stats-rh-list-item">
-                    <span className="stats-rh-list-label">{langue.categorie_langues}</span>
-                    <span className="stats-rh-list-value">{formatNumber(langue.total)}</span>
+                    <span className="stats-rh-list-label">{category}</span>
+                    <span className="stats-rh-list-value">{formatNumber(total)}</span>
                   </li>
                 ))
               ) : (
@@ -318,17 +318,17 @@ const StatistiquesRh = () => {
               <h3 className="stats-rh-card-title">Candidats par Niveau d'Éducation</h3>
             </div>
             <ul className="stats-rh-list">
-              {stats.education && stats.education.length > 0 ? (
-                stats.education.map((education, index) => (
+              {stats.byNiveau && stats.byNiveau.length > 0 ? (
+                stats.byNiveau.map((niveau, index) => (
                   <li key={index} className="stats-rh-list-item">
                     <span className="stats-rh-list-label">
-                      {education.niveau_education === 'Baccalauréat' ? '🎯 Baccalauréat' :
-                       education.niveau_education === 'Licence' ? '📚 Licence' :
-                       education.niveau_education === 'Master' ? '🏆 Master' :
-                       education.niveau_education === 'Doctorat' ? '👨‍🎓 Doctorat' :
-                       education.niveau_education}
+                      {niveau.niveau === 'Baccalauréat' ? '🎯 Baccalauréat' :
+                       niveau.niveau === 'Licence' ? '📚 Licence' :
+                       niveau.niveau === 'Master' ? '🏆 Master' :
+                       niveau.niveau === 'Doctorat' ? '👨‍🎓 Doctorat' :
+                       niveau.niveau}
                     </span>
-                    <span className="stats-rh-list-value">{formatNumber(education.total)}</span>
+                    <span className="stats-rh-list-value">{formatNumber(niveau.nbr_candidats)}</span>
                   </li>
                 ))
               ) : (
@@ -346,14 +346,14 @@ const StatistiquesRh = () => {
               <h3 className="stats-rh-card-title">Candidats par Expérience Professionnelle</h3>
             </div>
             <ul className="stats-rh-list">
-              {stats.experience && stats.experience.length > 0 ? (
-                stats.experience.map((exp, index) => (
+              {stats.byExperience && stats.byExperience.length > 0 ? (
+                stats.byExperience.map((exp, index) => (
                   <li key={index} className="stats-rh-list-item">
                     <span className="stats-rh-list-label">
-                      {exp.tranche_experience === '1-3 ans' ? '🌱 ' + exp.tranche_experience :
-                       exp.tranche_experience === '4-6 ans' ? '📈 ' + exp.tranche_experience :
-                       exp.tranche_experience === '7-9 ans' ? '⭐ ' + exp.tranche_experience :
-                       exp.tranche_experience === '10+ ans' ? '🏅 ' + exp.tranche_experience :
+                      {exp.tranche_experience === 'Moins de 1 an' ? '🌱 ' + exp.tranche_experience :
+                       exp.tranche_experience === '2-4 ans' ? '📈 ' + exp.tranche_experience :
+                       exp.tranche_experience === '5-7 ans' ? '⭐ ' + exp.tranche_experience :
+                       exp.tranche_experience === '+8 ans' ? '🏅 ' + exp.tranche_experience :
                        exp.tranche_experience}
                     </span>
                     <span className="stats-rh-list-value">{formatNumber(exp.total)}</span>
