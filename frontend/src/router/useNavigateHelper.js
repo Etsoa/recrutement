@@ -1,43 +1,35 @@
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate as useRRNavigate, useLocation } from 'react-router-dom';
+import { useCallback } from 'react';
 import { ROUTES } from './routes';
 
-// Hook de compatibilité pour remplacer useNavigate
+// Hook de compatibilité pour unifier l'API navigate
 export const useNavigate = () => {
-  const history = useHistory();
-  
-  return (path, options = {}) => {
+  const navigate = useRRNavigate();
+  return useCallback((path, options = {}) => {
     if (typeof path === 'string') {
-      if (options.replace) {
-        history.replace(path);
-      } else {
-        history.push(path);
-      }
+      navigate(path, { replace: !!options.replace, state: options.state });
     } else if (typeof path === 'number') {
-      history.go(path);
+      navigate(path);
     }
-  };
+  }, [navigate]);
 };
 
 // Hook personnalisé pour faciliter la navigation (version simplifiée)
 const useNavigateHelper = () => {
-  const history = useHistory();
+  const rrNavigate = useRRNavigate();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const navigateTo = (path, options = {}) => {
-    if (options.replace) {
-      history.replace(path, options.state);
-    } else {
-      history.push(path, options.state);
-    }
-  };
+  const navigateTo = useCallback((path, options = {}) => {
+    rrNavigate(path, { replace: !!options.replace, state: options.state });
+  }, [rrNavigate]);
 
   const goBack = () => {
-    history.goBack();
+    rrNavigate(-1);
   };
 
   const goForward = () => {
-    history.goForward();
+    rrNavigate(1);
   };
 
   const goToHome = () => {
@@ -78,7 +70,8 @@ const useNavigateHelper = () => {
     // Accès direct aux hooks React Router
     location,
     navigate,
-    history
+    // history n'existe plus en v6; on expose rrNavigate pour compat
+    rrNavigate
   };
 };
 

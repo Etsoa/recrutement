@@ -96,7 +96,7 @@ const getAllSuggests = async () => {
 
 const getAllAnnonces = async () => {
   try {
-    // D'abord récupérer toutes les annonces
+    // 1) Récupérer toutes les annonces avec leurs dépendances
     const allAnnonces = await Annonces.findAll({
       include: [
         { model: Postes, as: 'Poste', include: [{ model: Unites, as: 'Unite', attributes: ['id_unite', 'nom'] }] },
@@ -113,26 +113,26 @@ const getAllAnnonces = async () => {
       ]
     });
 
-    // Filtrer pour ne garder que celles avec status = 1 (soumises par les unités)
-    const filteredAnnonces = [];
-    
+    // 2) Récupérer le dernier statut pour chaque annonce (visible par défaut si 1=En cours de demande ou 2=Publie)
+    const allowedStatusIds = [1, 2, 3, 4];
+    const results = [];
+
     for (const annonce of allAnnonces) {
-      // Récupérer le dernier statut de cette annonce
       const lastStatus = await StatusAnnonces.findOne({
         where: { id_annonce: annonce.id_annonce },
         order: [['date_changement', 'DESC']],
         limit: 1
       });
-      
-      // Ne garder que si le dernier statut est 1 (soumise par unité)
-      if (lastStatus && lastStatus.id_type_status_annonce === 1) {
-        // Ajouter le statut à l'objet annonce
+
+      if (lastStatus) {
         annonce.dataValues.currentStatus = lastStatus;
-        filteredAnnonces.push(annonce);
+        if (allowedStatusIds.includes(lastStatus.id_type_status_annonce)) {
+          results.push(annonce);
+        }
       }
     }
 
-    return filteredAnnonces;
+    return results;
   } catch (err) {
     console.error('Erreur getAllAnnonces:', err);
     throw err;
@@ -181,32 +181,42 @@ const createAnnonceRh = async (annonceData) => {
 
 const createRhEntretien = async ({ id_rh_suggestion, id_candidat, date_entretien, duree }) => {
   try {
-    // S'assurer que la date est au bon format
+    if (!id_rh_suggestion || !id_candidat || !date_entretien) {
+      throw new Error('id_rh_suggestion, id_candidat et date_entretien sont requis');
+    }
+
     const formattedDate = new Date(date_entretien).toISOString();
-    
-    const entretien = await RhEntretien.create({
-      id_rh_suggestion,
-      id_candidat,
-      date_entretien: formattedDate,
-      duree
-    });
 
-    await StatusRhEntretien.create({
-      id_rh_entretien: entretien.id_rh_entretien,
-      id_type_status_entretien: 1,
-      date_changement: new Date()
-    });
+    // Vérifier s'il existe déjà un entretien pour cette suggestion
+    let entretien = await RhEntretien.findOne({ where: { id_rh_suggestion } });
 
-    return {
-      success: true,
-      data: entretien
-    };
+    if (entretien) {
+      // Mettre à jour
+      entretien.date_entretien = formattedDate;
+      if (duree) entretien.duree = duree;
+      if (id_candidat) entretien.id_candidat = id_candidat;
+      await entretien.save();
+    } else {
+      // Créer
+      entretien = await RhEntretien.create({
+        id_rh_suggestion,
+        id_candidat,
+        date_entretien: formattedDate,
+        duree: duree || 60
+      });
+
+      // Créer un statut initial "à venir" (id=1)
+      await StatusRhEntretien.create({
+        id_rh_entretien: entretien.id_rh_entretien,
+        id_type_status_entretien: 1,
+        date_changement: new Date()
+      });
+    }
+
+    return { success: true, data: entretien };
   } catch (err) {
-    console.error("Erreur dans createRhEntretien:", err);
-    return {
-      success: false,
-      message: err.message
-    };
+    console.error('Erreur dans createRhEntretien:', err);
+    return { success: false, message: err.message };
   }
 };
 
@@ -354,13 +364,19 @@ const getDisponibilitesRh = async (id_rh, date) => {
     }
   });
 
+  // Dédupliquer et trier les créneaux (en cas de doublons dans horaires_ouvres)
+  const uniqueHoraires = Array.from(new Set(horaires)).sort();
+
+  // Si aucun horaire ouvert, rien à proposer
+  if (uniqueHoraires.length === 0) return [];
+
   const existants = await RhEntretien.findAll({
     where: {
       id_rh_suggestion: id_rh,
       date_entretien: {
         [Op.between]: [
-          `${date} ${horaires[0]}`,
-          `${date} ${horaires[horaires.length-1]}`
+          `${date} ${uniqueHoraires[0]}`,
+          `${date} ${uniqueHoraires[uniqueHoraires.length-1]}`
         ]
       }
     }
@@ -371,7 +387,9 @@ const getDisponibilitesRh = async (id_rh, date) => {
     return `${String(date.getHours()).padStart(2, '0')}:00`;
   });
 
-  return horaires.filter(h => !horairesPrises.includes(h));
+  // Dédupliquer les heures prises au cas où
+  const prisesSet = new Set(horairesPrises);
+  return uniqueHoraires.filter(h => !prisesSet.has(h));
 }; 
 
 const getProchaineDisponibilite = async (id_rh, date_depart) => {

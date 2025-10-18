@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import '../styles/globals.css';
 import '../styles/variables.css';
 
@@ -39,7 +39,7 @@ import {
   CeoContratList
 } from '../pages';
 
-import { ROUTES, ROUTE_METADATA } from './routes';
+import { ROUTES } from './routes';
 
 // Composant 404
 const NotFound = () => (
@@ -77,48 +77,48 @@ const NotFound = () => (
 const AppRouter = () => {
   return (
     <Router>
-      <Switch>
-         {/* Page d'accueil */}
-        <Route exact path={ROUTES.HOME} component={Home} />
+      <Routes>
+        {/* Page d'accueil */}
+        <Route path={ROUTES.HOME} element={<Home />} />
 
         {/* Page de connexion (sans layout) */}
-        <Route exact path={ROUTES.LOGIN_UNITES} component={LoginUnites} />
-        
+        <Route path={ROUTES.LOGIN_UNITES} element={<LoginUnites />} />
+
         {/* Routes Back-Office Unite */}
-        <Route exact path={ROUTES.LISTE_ANNONCES} render={() => <LayoutUnite><ListeAnnonces /></LayoutUnite>} />
-        <Route exact path={ROUTES.DETAILS_ANNONCE} render={() => <LayoutUnite><DetailsAnnonce /></LayoutUnite>} />
-        <Route exact path={ROUTES.FICHE_CANDIDAT} render={() => <LayoutUnite><FicheCandidat /></LayoutUnite>} />
-        <Route exact path={ROUTES.PARAMETRES} render={() => <LayoutUnite><Parametres /></LayoutUnite>} />
-        <Route exact path={ROUTES.CREATE_ANNONCE} render={() => <LayoutUnite><CreateAnnonce /></LayoutUnite>} />
-        <Route exact path={ROUTES.UPDATE_ANNONCE} render={() => <LayoutUnite><CreateAnnonce /></LayoutUnite>} />
-        <Route exact path={ROUTES.CREATE_QCM} render={() => <LayoutUnite><QCM /></LayoutUnite>} />
-        <Route exact path={ROUTES.DETAIL_QCM} render={() => <LayoutUnite><DetailQCM /></LayoutUnite>} />
-        <Route exact path={ROUTES.HISTORIQUE} render={() => <LayoutUnite><Historiques /></LayoutUnite>} />
+        <Route path={ROUTES.LISTE_ANNONCES} element={<LayoutUnite><ListeAnnonces /></LayoutUnite>} />
+        <Route path={ROUTES.DETAILS_ANNONCE} element={<LayoutUnite><DetailsAnnonce /></LayoutUnite>} />
+        <Route path={ROUTES.FICHE_CANDIDAT} element={<LayoutUnite><FicheCandidat /></LayoutUnite>} />
+        <Route path={ROUTES.PARAMETRES} element={<LayoutUnite><Parametres /></LayoutUnite>} />
+        <Route path={ROUTES.CREATE_ANNONCE} element={<LayoutUnite><CreateAnnonce /></LayoutUnite>} />
+        <Route path={ROUTES.UPDATE_ANNONCE} element={<LayoutUnite><CreateAnnonce /></LayoutUnite>} />
+        <Route path={ROUTES.CREATE_QCM} element={<LayoutUnite><QCM /></LayoutUnite>} />
+        <Route path={ROUTES.DETAIL_QCM} element={<LayoutUnite><DetailQCM /></LayoutUnite>} />
+        <Route path={ROUTES.HISTORIQUE} element={<LayoutUnite><Historiques /></LayoutUnite>} />
         {/* Nouvelles routes Unité */}
-        <Route exact path={ROUTES.UNITE_CALENDRIER} render={() => <LayoutUnite><UniteCalendrier /></LayoutUnite>} />
-        <Route exact path={ROUTES.UNITE_SUGGESTIONS} render={() => <LayoutUnite><UniteSuggestions /></LayoutUnite>} />
-        <Route exact path={ROUTES.UNITE_RH_SUGGESTIONS} render={() => <LayoutUnite><UniteRhSuggestions /></LayoutUnite>} />
-        <Route exact path={ROUTES.UNITE_STATISTIQUES} render={() => <LayoutUnite><StatistiquesUnite /></LayoutUnite>} />
-        
+        <Route path={ROUTES.UNITE_CALENDRIER} element={<LayoutUnite><UniteCalendrier /></LayoutUnite>} />
+        <Route path={ROUTES.UNITE_SUGGESTIONS} element={<LayoutUnite><UniteSuggestions /></LayoutUnite>} />
+        <Route path={ROUTES.UNITE_RH_SUGGESTIONS} element={<LayoutUnite><UniteRhSuggestions /></LayoutUnite>} />
+        <Route path={ROUTES.UNITE_STATISTIQUES} element={<LayoutUnite><StatistiquesUnite /></LayoutUnite>} />
+
         {/* Routes RH (sans layout pour login, avec layout pour les autres) */}
-        <Route exact path={ROUTES.RH_LOGIN} component={RhLoginRh} />
+        <Route path={ROUTES.RH_LOGIN} element={<RhLoginRh />} />
         {/* Route d'accueil RH - redirige vers Statistiques */}
-        <Route exact path={ROUTES.RH_HOME} render={() => <Redirect to={ROUTES.RH_CALENDRIER} />} />
-        <Route exact path={ROUTES.RH_CALENDRIER} render={() => <LayoutRh><RhCalendrier /></LayoutRh>} />
-        <Route exact path={ROUTES.RH_SUGGESTIONS} render={() => <LayoutRh><RhSuggestions /></LayoutRh>} />
-        <Route exact path={ROUTES.RH_CEO_SUGGESTIONS} render={() => <LayoutRh><RhCeoSuggestions /></LayoutRh>} />
-        <Route exact path={ROUTES.RH_FORM_ANNONCE} render={() => <LayoutRh><RhFormAnnonce /></LayoutRh>} />
-        <Route exact path={ROUTES.STATISTIQUES} render={() => <LayoutRh><Statistiques /></LayoutRh>} />
-        
+        <Route path={ROUTES.RH_HOME} element={<Navigate to={ROUTES.RH_CALENDRIER} replace />} />
+        <Route path={ROUTES.RH_CALENDRIER} element={<LayoutRh><RhCalendrier /></LayoutRh>} />
+        <Route path={ROUTES.RH_SUGGESTIONS} element={<LayoutRh><RhSuggestions /></LayoutRh>} />
+        <Route path={ROUTES.RH_CEO_SUGGESTIONS} element={<LayoutRh><RhCeoSuggestions /></LayoutRh>} />
+        <Route path={ROUTES.RH_FORM_ANNONCE} element={<LayoutRh><RhFormAnnonce /></LayoutRh>} />
+        <Route path={ROUTES.STATISTIQUES} element={<LayoutRh><Statistiques /></LayoutRh>} />
+
         {/* Routes CEO */}
-        <Route exact path={ROUTES.LOGIN_CEO} component={LoginCeo} />
-        <Route exact path={ROUTES.CEO_EMP_LIST} render={() => <LayoutCeo><CeoEmpList /></LayoutCeo>} />
-        <Route exact path={ROUTES.CEO_SUGG_TABLE} render={() => <LayoutCeo><CeoSuggTable /></LayoutCeo>} />
-        <Route exact path={ROUTES.CEO_CONTRAT_LIST} render={() => <LayoutCeo><CeoContratList /></LayoutCeo>} />
+        <Route path={ROUTES.LOGIN_CEO} element={<LoginCeo />} />
+        <Route path={ROUTES.CEO_EMP_LIST} element={<LayoutCeo><CeoEmpList /></LayoutCeo>} />
+        <Route path={ROUTES.CEO_SUGG_TABLE} element={<LayoutCeo><CeoSuggTable /></LayoutCeo>} />
+        <Route path={ROUTES.CEO_CONTRAT_LIST} element={<LayoutCeo><CeoContratList /></LayoutCeo>} />
 
         {/* Route 404 */}
-        <Route component={NotFound} />
-        </Switch>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </Router>
   );
 };

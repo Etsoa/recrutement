@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from '../router/useNavigateHelper';
+import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../router/routes';
 import { ceoService } from '../services/ceoService';
 import CeoHeader from './CeoHeader';
@@ -57,7 +57,7 @@ const EmployeCEOList = () => {
     },
     statusBadge: (status) => {
       let bgColor = '#f0fdf4'; // Default light green
-      let textColor = '#176c2fff'; // Default green
+      let textColor = '#059669'; // Default green
       
       if (status === 'Inactif') {
         bgColor = '#fef2f2';
@@ -181,6 +181,7 @@ const EmployeCEOList = () => {
       }
     }
   };
+  
 
   // Fetch employee data from API
   useEffect(() => {
@@ -242,7 +243,7 @@ const EmployeCEOList = () => {
   // Get status badge style based on status
   const getStatusBadgeStyle = (status) => {
     let bgColor = '#f0fdf4'; // Default light green
-    let textColor = '#176c2fff'; // Default green
+    let textColor = '#059669'; // Default green
     
     if (status === 'En période d\'essai') {
       bgColor = '#fff7ed';
@@ -434,7 +435,7 @@ const EmployeCEOList = () => {
                   <th style={styles.th}>Email</th>
                   <th style={styles.th}>Unité</th>
                   <th style={styles.th}>Statut</th>
-                  <th style={styles.th}>Actions</th>
+                  <th style={styles.th}>Voir détails</th>
                 </tr>
               </thead>
               <tbody>

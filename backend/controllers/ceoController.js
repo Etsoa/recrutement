@@ -1,5 +1,6 @@
 const ceoService = require('../services/ceoService');
 const contratService = require('../services/contratEssaisService');
+const ContratEssai = require('../models/contratEssaisModel');
 
 // Mbola tsy mandeha
 exports.getAllCeos = async (req, res) => {
@@ -148,7 +149,7 @@ exports.getAllSuggestsWaitingValidation = async (req, res) => {
 
 exports.refuserSuggestion = async (req, res) => {
   try {
-    const { id_ceo_suggestion } = req.body;
+    const id_ceo_suggestion = req.body.id_ceo_suggestion ?? req.body.id_suggestion;
 
     if (!id_ceo_suggestion) {
       return res.status(400).json({
@@ -158,11 +159,19 @@ exports.refuserSuggestion = async (req, res) => {
       });
     }
 
-    ceoService.refuserSuggestion(id_ceo_suggestion);
+    const result = await ceoService.refuserSuggestion(id_ceo_suggestion);
+
+    if (!result?.success) {
+      return res.status(400).json({
+        success: false,
+        message: result?.message || "Erreur lors du refus de la suggestion",
+        data: null
+      });
+    }
 
     return res.json({
       success: true,
-      message: "Suggestion refusée avec succès",
+      message: result.message || "Suggestion refusée avec succès",
       data: null
     });
   } catch (error) {
@@ -176,12 +185,8 @@ exports.refuserSuggestion = async (req, res) => {
 
 exports.accepterSuggestion = async (req, res) => {
   try {
-    const {
-      id_ceo_suggestion,
-      date_debut,
-      duree,
-      id_poste,
-      id_tiers } = req.body;
+    const id_ceo_suggestion = req.body.id_ceo_suggestion ?? req.body.id_suggestion;
+    const { date_debut, duree, id_poste, id_tiers } = req.body;
 
     if (!id_ceo_suggestion) {
       return res.status(400).json({
@@ -191,22 +196,31 @@ exports.accepterSuggestion = async (req, res) => {
       });
     }
 
-    ceoService.accepterSuggestion(
+    const result = await ceoService.accepterSuggestion(
       id_ceo_suggestion,
       date_debut,
       duree,
       id_poste,
-      id_tiers);
+      id_tiers
+    );
+
+    if (!result?.success) {
+      return res.status(400).json({
+        success: false,
+        message: result?.message || "Erreur lors de la validation de la suggestion",
+        data: null
+      });
+    }
 
     return res.json({
       success: true,
-      message: "Suggestion accepte avec succès",
-      data: null
+      message: result.message || "Suggestion acceptée avec succès",
+      data: result.data ?? null
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      message: "Erreur serveur lors du refus de la suggestion",
+      message: "Erreur serveur lors de l'acceptation de la suggestion",
       data: null
     });
   }
@@ -231,8 +245,58 @@ exports.getEmpEnContratDEssai = async (req, res) => {
 
 exports.renewContract = async (req, res) => {
   try {
-    const contrat = req.body;
-    await contratService.createContratEssai(contrat);
+    const { id_contrat, duree_mois } = req.body;
+
+    if (!id_contrat) {
+      return res.status(400).json({ success: false, message: 'id_contrat est requis', data: null });
+    }
+
+    const current = await ContratEssai.findByPk(id_contrat);
+    if (!current) {
+      return res.status(404).json({ success: false, message: 'Contrat introuvable', data: null });
+    }
+
+    const id_employe = current.id_employe;
+    const allForEmp = await ContratEssai.findAll({ where: { id_employe } });
+    const totalContracts = allForEmp.length; // initial + renewals
+
+    // Max 2 contrats au total: si déjà 2, on bloque
+    if (totalContracts >= 2) {
+      return res.status(400).json({ success: false, message: 'Limite de contrats d\'essai atteinte (2 maximum)', data: null });
+    }
+
+    // Trouver le dernier contrat pour positionner le nouveau juste après sa fin
+    const last = allForEmp.reduce((acc, c) => {
+      if (!acc) return c; const ad = new Date(acc.date_debut); const cd = new Date(c.date_debut); return cd > ad ? c : acc;
+    }, null);
+
+    let start = new Date();
+    if (last) {
+      const lastStart = new Date(last.date_debut);
+      const next = new Date(lastStart);
+      next.setMonth(lastStart.getMonth() + last.duree); // positionné à la fin du dernier
+      next.setDate(next.getDate() + 1); // démarrer le renouvellement le lendemain
+      start = next;
+    }
+
+    const toYMD = (d) => {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const newContrat = await contratService.createContratEssai({
+      id_employe,
+      date_debut: toYMD(start),
+      duree: duree_mois || current.duree
+    });
+
+    return res.json({
+      success: true,
+      message: 'Contrat renouvelé avec succès',
+      data: { contrat: { ...newContrat.toJSON?.() || newContrat, is_renewal: true } }
+    });
   } catch (err) {
     res.status(500).json({
       message: err.message,

@@ -46,7 +46,7 @@ const UniteEntretien = db.define('UniteEntretien', {
 
 
 // Associations
-UniteEntretien.belongsTo(Candidat, { foreignKey: 'id_candidat' });
+UniteEntretien.belongsTo(Candidat, { foreignKey: 'id_candidat', as: 'Candidat' });
 UniteEntretien.belongsTo(Unite, { foreignKey: 'id_unite', as: 'unite' });
 
 UniteEntretien.hasMany(ScoreUniteEntretien, { foreignKey: 'id_unite_entretien', as: 'scores' });

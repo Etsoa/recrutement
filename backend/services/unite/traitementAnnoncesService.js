@@ -49,9 +49,9 @@ exports.getAllAnnonces = async (id) => {
     const annonces = await Annonce.findAll({
       where: { id_unite: id },
       include: [
-        { model: Poste, attributes: ['valeur'] }, // ou 'nom_poste' selon ton schéma
-        { model: Ville, attributes: ['valeur'] }, // ou 'nom_ville'
-        { model: Genre, attributes: ['valeur'] }  // ou 'nom_genre'
+        { model: Poste, as: 'Poste', attributes: ['valeur'] },
+        { model: Ville, as: 'Ville', attributes: ['valeur'] },
+        { model: Genre, as: 'Genre', attributes: ['valeur'] }
       ],
       order: [['id_annonce', 'ASC']]
     });
@@ -67,9 +67,9 @@ exports.getAnnonceById = async (id) => {
     const annonce = await Annonce.findOne({
       where: { id_annonce: id },
       include: [
-        { model: Poste, attributes: ['valeur'] },
-        { model: Ville, attributes: ['valeur'] },
-        { model: Genre, attributes: ['valeur'] }
+        { model: Poste, as: 'Poste', attributes: ['valeur'] },
+        { model: Ville, as: 'Ville', attributes: ['valeur'] },
+        { model: Genre, as: 'Genre', attributes: ['valeur'] }
       ]
     });
     if (!annonce) return null;

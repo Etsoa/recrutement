@@ -7,6 +7,9 @@ const uniteRoutes = require('./routes/uniteRoutes');
 const rhRoutes = require('./routes/rhRoutes');
 const ceoRoutes = require('./routes/ceoRoutes');
 const statRoutes = require('./routes/statRoutes ');
+// Initialize associations that are not inline in model files
+require('./models/tiersAssociations');
+require('./models/uniteAssociations');
 
 const app = express();
 const PORT = process.env.PORT || 5000;

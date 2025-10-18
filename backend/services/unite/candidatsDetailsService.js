@@ -1,6 +1,6 @@
 const ViewCandidatsDetails = require('../../models/viewCandidatsDetailsModel');
-const pool = require('../../config/db');
-const { fn, col, literal, Op } = require('sequelize'); // <--- ajoute Op
+const db = require('../../config/db');
+const { fn, col, literal, Op, QueryTypes } = require('sequelize'); // <--- ajoute Op et QueryTypes
 
 // Récupérer tous les détails
 const getAllCandidatsDetails = async () => {
@@ -113,11 +113,11 @@ const countByLanguesByUnite = async (id_unite) => {
             ORDER BY total DESC;
         `;
         
-        const result = await pool.query(query, [id_unite]);
+        const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
         
         // Convertir en objet pour compatibilité
         const languesObj = {};
-        result.rows.forEach(row => {
+        rows.forEach(row => {
             languesObj[row.category] = row.total;
         });
         
@@ -143,8 +143,8 @@ const countByNiveauByUnite = async (id_unite) => {
             ORDER BY n.id_niveau;
         `;
         
-        const result = await pool.query(query, [id_unite]);
-        return result.rows;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows;
     } catch (error) {
         console.error('Erreur countByNiveauByUnite:', error);
         return [];
@@ -186,8 +186,8 @@ const countByExperienceByUnite = async (id_unite) => {
                 END;
         `;
         
-        const result = await pool.query(query, [id_unite]);
-        return result.rows;
+    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+    return rows;
     } catch (error) {
         console.error('Erreur countByExperienceByUnite:', error);
         return [];

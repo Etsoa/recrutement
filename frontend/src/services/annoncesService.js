@@ -40,7 +40,7 @@ export const annoncesService = {
     try {
       // Vérifier que l'utilisateur est connecté
       if (!annoncesService.isLoggedIn()) {
-        throw new Error('Utilisateur non connecté');
+        return { success: false, message: 'Utilisateur non connecté' };
       }
       
       // Récupérer l'id_unite depuis le localStorage
@@ -48,7 +48,7 @@ export const annoncesService = {
       
       // Envoyer l'id_unite comme paramètre de requête
       const response = await api.get(ANNONCES_ENDPOINTS.LIST, {
-        id: idUnite
+        id_unite: idUnite
       });
       return response;
     } catch (error) {
@@ -66,7 +66,7 @@ export const annoncesService = {
       
       // Appel API avec l'ID de l'unité en paramètre
       const response = await api.get(ANNONCES_ENDPOINTS.LIST, {
-        id: idUnite
+        id_unite: idUnite
       });
       return response;
     } catch (error) {

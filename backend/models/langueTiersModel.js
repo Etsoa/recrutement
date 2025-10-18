@@ -37,6 +37,6 @@ const LangueTiers = db.define('LangueTiers', {
 
 // Associations
 LangueTiers.belongsTo(Tiers, { foreignKey: 'id_tiers' });
-LangueTiers.belongsTo(Langue, { foreignKey: 'id_langue' });
+LangueTiers.belongsTo(Langue, { foreignKey: 'id_langue', as: 'Langue' });
 
 module.exports = LangueTiers;

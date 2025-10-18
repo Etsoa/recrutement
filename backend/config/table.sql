@@ -87,7 +87,8 @@ CREATE TABLE status_annonces (
     id_status_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
     id_type_status_annonce INTEGER REFERENCES type_status_annonces(id_type_status_annonce) ON DELETE CASCADE,
-    date_changement DATE NOT NULL,
+    -- Store date and time for status changes
+    date_changement TIMESTAMP NOT NULL,
     id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE
 );
 

@@ -388,6 +388,24 @@ const suggestToRh = async ({ id_unite_entretien, id_candidat }) => {
       date_suggestion: new Date()
     });
 
+    // Ajouter un statut initial "En attente de validation" dans status_rh_suggestions
+    const TypeStatusSuggestions = require('../models/typeStatusSuggestionsModel');
+    const StatusRhSuggestions = require('../models/statusRhSuggestionsModel');
+
+    // Chercher l'id du type par valeur (fallback id=3 si existant)
+    let type = await TypeStatusSuggestions.findOne({ where: { valeur: 'En attente de validation' } });
+    if (!type) {
+      // si introuvable, tenter id=3 selon vos données seed
+      type = await TypeStatusSuggestions.findByPk(3);
+    }
+    if (type) {
+      await StatusRhSuggestions.create({
+        id_rh_suggestion: suggestion.id_rh_suggestion,
+        id_type_status_suggestion: type.id_type_status_suggestion,
+        date_changement: new Date()
+      });
+    }
+
     return suggestion;
   } catch (err) {
     console.error('Erreur suggestToRh:', err);
@@ -400,6 +418,9 @@ const suggestToRh = async ({ id_unite_entretien, id_candidat }) => {
  */
 const getAllRhSuggestions = async (id_unite = null) => {
   try {
+    const StatusRhSuggestions = require('../models/statusRhSuggestionsModel');
+    const TypeStatusSuggestions = require('../models/typeStatusSuggestionsModel');
+
     const suggestions = await RhSuggestionsModel.findAll({
       include: [
         {
@@ -407,7 +428,8 @@ const getAllRhSuggestions = async (id_unite = null) => {
           as: 'entretien',
           where: id_unite ? { id_unite } : {},
           include: [
-            { model: Unites, as: 'unite', attributes: ['nom'] }
+            { model: Unites, as: 'unite', attributes: ['nom'] },
+            { model: ScoreUniteEntretiens, as: 'scores', attributes: ['score', 'date_score'] }
           ]
         },
         {
@@ -430,12 +452,57 @@ const getAllRhSuggestions = async (id_unite = null) => {
               ]
             }
           ]
+        },
+        {
+          model: StatusRhSuggestions,
+          as: 'status',
+          include: [{ model: TypeStatusSuggestions, as: 'typeStatus', attributes: ['valeur'] }]
         }
       ],
       order: [['date_suggestion', 'DESC']]
     });
 
-    return suggestions;
+    // Flatten to DTO expected by frontend
+    const result = suggestions.map(s => {
+      const scores = s.entretien?.scores || [];
+      const bestScore = scores
+        .slice()
+        .sort((a, b) => new Date(b.date_score) - new Date(a.date_score))[0]?.score;
+      const lastStatus = (s.status || [])
+        .slice()
+        .sort((a, b) => new Date(a.date_changement) - new Date(b.date_changement))
+        .pop();
+
+      return {
+        id_rh_suggestion: s.id_rh_suggestion,
+        id_unite_entretien: s.id_unite_entretien,
+        id_candidat: s.id_candidat,
+        date_suggestion: s.date_suggestion,
+
+        // Flattened candidate info
+        prenom_candidat: s.candidat?.Tier?.prenom,
+        nom_candidat: s.candidat?.Tier?.nom,
+        email_candidat: s.candidat?.Tier?.email,
+        contact_candidat: s.candidat?.Tier?.contact,
+        ville: s.candidat?.Tier?.Ville?.valeur,
+        cv: s.candidat?.cv,
+
+        // Poste / Unite
+        poste_nom: s.candidat?.Annonce?.Poste?.valeur,
+        unite_nom: s.entretien?.unite?.nom,
+
+        // Entretien Unite
+        date_entretien_unite: s.entretien?.date_entretien,
+        duree_entretien: s.entretien?.duree,
+        score_unite: bestScore ?? null,
+
+        // Status RH Suggestion
+        status: lastStatus?.typeStatus?.valeur || 'En attente de validation',
+        date_changement_status: lastStatus?.date_changement || s.date_suggestion
+      };
+    });
+
+    return result;
   } catch (err) {
     console.error('Erreur getAllRhSuggestions:', err);
     throw err;

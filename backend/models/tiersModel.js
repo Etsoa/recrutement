@@ -71,8 +71,8 @@ const Tiers = db.define('Tiers', {
 });
 
 // Associations
-Tiers.belongsTo(Ville, { foreignKey: 'id_ville' });
-Tiers.belongsTo(Genre, { foreignKey: 'id_genre' });
-Tiers.belongsTo(SituationMatrimoniale, { foreignKey: 'id_situation_matrimoniale' });
+Tiers.belongsTo(Ville, { foreignKey: 'id_ville', as: 'Ville' });
+Tiers.belongsTo(Genre, { foreignKey: 'id_genre', as: 'Genre' });
+Tiers.belongsTo(SituationMatrimoniale, { foreignKey: 'id_situation_matrimoniale', targetKey: 'id_situation', as: 'SituationMatrimoniale' });
 
 module.exports = Tiers;
