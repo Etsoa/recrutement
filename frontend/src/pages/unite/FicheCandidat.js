@@ -242,43 +242,6 @@ const FicheCandidat = () => {
             </div>
           </div>
 
-          {/* Statut employé si existe */}
-          {employe && (
-            <div className="employe-section">
-              <h3>Informations Employé</h3>
-              <div className="employe-info">
-                <div className="detail-row">
-                  <span className="detail-label">Statut actuel:</span>
-                  <span className="detail-value">
-                    {employe.type_status_employe?.valeur || 'Non défini'}
-                  </span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-label">Poste:</span>
-                  <span className="detail-value">
-                    {employe.poste?.valeur || 'Non défini'}
-                  </span>
-                </div>
-              </div>
-
-              {statutsEmploye && statutsEmploye.length > 0 && (
-                <div className="statuts-timeline">
-                  <h4>Historique des statuts</h4>
-                  {statutsEmploye.map((status, index) => (
-                    <div key={index} className="timeline-item">
-                      <div className="timeline-date">
-                        {ficheCandidatService.formatDate(status.date_changement)}
-                      </div>
-                      <div className="timeline-content">
-                        {status.type_status_employe?.valeur}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
           {/* Compétences et qualifications */}
           <Grid columns={1} className="competences-grid">
             {/* Niveaux et filières */}
@@ -347,6 +310,49 @@ const FicheCandidat = () => {
             )}
           </Grid>
 
+          {/* Statut employé si existe */}
+          <div className="employe-section">
+            <h3>Informations Employé</h3>
+            {employe ? (
+              <>
+                <div className="employe-info">
+                  <div className="detail-row">
+                    <span className="detail-label">Statut actuel:</span>
+                    <span className="detail-value">
+                      {employe.type_status_employe?.valeur || 'Non défini'}
+                    </span>
+                  </div>
+                  <div className="detail-row">
+                    <span className="detail-label">Poste:</span>
+                    <span className="detail-value">
+                      {employe.poste?.valeur || 'Non défini'}
+                    </span>
+                  </div>
+                </div>
+
+                {statutsEmploye && statutsEmploye.length > 0 && (
+                  <div className="statuts-timeline">
+                    <h4>Historique des statuts</h4>
+                    {statutsEmploye.map((status, index) => (
+                      <div key={index} className="timeline-item">
+                        <div className="timeline-date">
+                          {ficheCandidatService.formatDate(status.date_changement)}
+                        </div>
+                        <div className="timeline-content">
+                          {status.type_status_employe?.valeur}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="employe-empty">
+                <p>Ce candidat n'a jamais été employé</p>
+              </div>
+            )}
+          </div>
+
           {/* Autres candidatures */}
           {autresAnnonces && autresAnnonces.length > 1 && (
             <div className="autres-candidatures">
@@ -371,15 +377,6 @@ const FicheCandidat = () => {
                           <td>{candidature?.annonce?.Poste?.valeur || 'N/A'}</td>
                           <td>{candidature?.annonce?.Ville?.valeur || 'N/A'}</td>
                           <td>{candidature?.annonce?.Genre?.valeur || 'N/A'}</td>
-                          <td>
-                            {candidature?.candidature?.cv ? (
-                              <a href={candidature.candidature.cv} target="_blank" rel="noopener noreferrer">
-                                Voir CV
-                              </a>
-                            ) : (
-                              'CV indisponible'
-                            )}
-                          </td>
                         </tr>
                       )) || []}
                   </tbody>

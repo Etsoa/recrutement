@@ -49,7 +49,7 @@ const HeaderUnite = () => {
             to={ROUTES.UNITE_SUGGESTIONS} 
             className={`header__nav-item ${location.pathname === ROUTES.UNITE_SUGGESTIONS ? 'header__nav-item--active' : ''}`}
           >
-            Suggestions
+            Suggestions RH
           </Link>
           <Link 
             to={ROUTES.UNITE_RH_SUGGESTIONS} 

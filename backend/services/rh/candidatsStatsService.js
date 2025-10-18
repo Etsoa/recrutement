@@ -209,39 +209,71 @@ const countByEducationGeneral = async () => {
 // Candidats par expérience (toutes annonces)
 const countByExperienceGeneral = async () => {
   try {
+    // Définir toutes les tranches possibles
+    const allTranches = [
+      { tranche: 'Moins de 1 an', order: 1 },
+      { tranche: '2-4 ans', order: 2 },
+      { tranche: '5-7 ans', order: 3 },
+      { tranche: '+8 ans', order: 4 }
+    ];
+
     const query = `
+      WITH candidat_total_experience AS (
+        -- D'abord, sommer toutes les années d'expérience par candidat
+        SELECT 
+          c.id_candidat,
+          COALESCE(
+            SUM(
+              EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut))
+            ), 
+            0
+          ) as total_annees_experience
+        FROM candidats c
+        JOIN tiers t ON c.id_tiers = t.id_tiers
+        LEFT JOIN experience_tiers et ON t.id_tiers = et.id_tiers
+        GROUP BY c.id_candidat
+      ),
+      experience_tranches AS (
+        -- Ensuite, classer chaque candidat dans une tranche
+        SELECT 
+          id_candidat,
+          CASE 
+            WHEN total_annees_experience < 1 THEN 'Moins de 1 an'
+            WHEN total_annees_experience BETWEEN 2 AND 4 THEN '2-4 ans'
+            WHEN total_annees_experience BETWEEN 5 AND 7 THEN '5-7 ans'
+            WHEN total_annees_experience >= 8 THEN '+8 ans'
+            ELSE 'Moins de 1 an'
+          END as tranche_experience
+        FROM candidat_total_experience
+      )
+      -- Enfin, compter le nombre de candidats par tranche
       SELECT 
-        CASE 
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN '1-3 ans'
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN '4-6 ans'
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN '7-9 ans'
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN '10+ ans'
-          ELSE 'Moins de 1 an'
-        END as tranche_experience,
-        COUNT(*)::int as total
-      FROM candidats c
-      JOIN tiers t ON c.id_tiers = t.id_tiers
-      JOIN experience_tiers et ON t.id_tiers = et.id_tiers
-      GROUP BY 
-        CASE 
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN '1-3 ans'
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN '4-6 ans'
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN '7-9 ans'
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN '10+ ans'
-          ELSE 'Moins de 1 an'
-        END
+        tranche_experience,
+        COUNT(DISTINCT id_candidat)::int as total
+      FROM experience_tranches
+      GROUP BY tranche_experience
       ORDER BY 
-        CASE 
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN 1
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN 2
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN 3
-          WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN 4
-          ELSE 0
+        CASE tranche_experience
+          WHEN 'Moins de 1 an' THEN 1
+          WHEN '2-4 ans' THEN 2
+          WHEN '5-7 ans' THEN 3
+          WHEN '+8 ans' THEN 4
+          ELSE 5
         END;
     `;
     
-    const result = await pool.query(query);
-    return result.rows;
+    const rows = await sequelize.query(query, { type: QueryTypes.SELECT });
+    
+    // Créer un map des résultats existants
+    const resultMap = new Map(rows.map(row => [row.tranche_experience, row.total]));
+    
+    // Remplir avec toutes les tranches, mettant 0 pour celles sans données
+    const completeResults = allTranches.map(({ tranche, order }) => ({
+      tranche_experience: tranche,
+      total: resultMap.get(tranche) || 0
+    }));
+    
+    return completeResults;
   } catch (error) {
     console.error('Erreur countByExperienceGeneral:', error);
     return [];

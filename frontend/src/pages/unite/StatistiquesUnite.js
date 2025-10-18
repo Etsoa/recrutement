@@ -256,7 +256,7 @@ function StatistiquesUnite() {
           <div className="stats-card">
             <div className="stats-card-header">
               <div className="stats-card-icon">🌍</div>
-              <h3 className="stats-card-title">Candidats par Nombre de Langues</h3>
+              <h3 className="stats-card-title">Repartition par Nombre de Langues</h3>
             </div>
             <ul className="stats-list">
               {statistics?.byLangues && Object.entries(statistics.byLangues).map(([key, value], index) => (
@@ -288,7 +288,7 @@ function StatistiquesUnite() {
           <div className="stats-card">
             <div className="stats-card-header">
               <div className="stats-card-icon">💼</div>
-              <h3 className="stats-card-title">Répartition par Expérience</h3>
+              <h3 className="stats-card-title">Répartition par années d'expérience</h3>
             </div>
             <ul className="stats-list">
               {statistics?.byExperience?.map((item, index) => (

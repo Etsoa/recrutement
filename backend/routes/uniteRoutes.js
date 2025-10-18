@@ -85,4 +85,11 @@ router.post('/suggest/rh', uniteController.suggestToRh);
 // liste des suggestions envoyées à la RH
 router.get('/suggest', uniteController.getAllRhSuggestions);
 
+// ===== ROUTES RÉFÉRENTIELS =====
+// Récupérer toutes les villes disponibles
+router.get('/villes', uniteController.getAllVilles);
+
+// Récupérer tous les genres disponibles
+router.get('/genres', uniteController.getAllGenres);
+
 module.exports = router;

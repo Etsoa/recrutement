@@ -184,6 +184,21 @@
   margin-bottom: var(--spacing-lg);
 }
 
+.employe-empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: var(--color-background-alt);
+  border-radius: var(--border-radius);
+  border: 1px dashed var(--color-border);
+}
+
+.employe-empty p {
+  color: var(--color-text-secondary);
+  font-style: italic;
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
 /* Grille des compétences */
 .competences-grid {
   margin-bottom: var(--spacing-2xl);

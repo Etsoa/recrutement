@@ -111,6 +111,7 @@ exports.getAnnonceById = async (id) => {
       include: [
         {
           model: Tiers,
+          as: 'Tier',
           attributes: [
             'id_tiers', 'nom', 'prenom', 'date_naissance', 'contact', 
             'email', 'cin', 'photo', 'id_genre', 'id_situation_matrimoniale', 
@@ -129,17 +130,17 @@ exports.getAnnonceById = async (id) => {
         // Détails du tiers (langues, qualités, expériences, niveaux/filière)
         const languesTiers = await LangueTiers.findAll({
           where: { id_tiers: tiersId },
-          include: [{ model: Langue, attributes: ['valeur'] }]
+          include: [{ model: Langue, as: 'Langue', attributes: ['valeur'] }]
         });
 
         const qualitesTiers = await QualiteTiers.findAll({
           where: { id_tiers: tiersId },
-          include: [{ model: Qualite, attributes: ['valeur'] }]
+          include: [{ model: Qualite, as: 'Qualite', attributes: ['valeur'] }]
         });
 
         const experiencesTiers = await ExperienceTiers.findAll({
           where: { id_tiers: tiersId },
-          include: [{ model: Domaine, attributes: ['valeur'] }]
+          include: [{ model: Domaine, as: 'Domaine', attributes: ['valeur'] }]
         });
 
         const niveauxFiliereTiers = await NiveauFiliereTiers.findAll({
@@ -239,6 +240,7 @@ exports.getCandidatById = async (id_candidat) => {
       include: [
         {
           model: Tiers,
+          as: 'Tier',
           attributes: [
             'id_tiers', 'nom', 'prenom', 'date_naissance', 'contact',
             'email', 'cin', 'photo', 'id_genre', 'id_situation_matrimoniale',
@@ -264,17 +266,17 @@ exports.getCandidatById = async (id_candidat) => {
     // 2️⃣ Détails liés au candidat (langues, qualités, expériences, niveaux/filière)
     const langues = await LangueTiers.findAll({
       where: { id_tiers: tiersId },
-      include: [{ model: Langue, attributes: ['valeur'] }]
+      include: [{ model: Langue, as: 'Langue', attributes: ['valeur'] }]
     });
 
     const qualites = await QualiteTiers.findAll({
       where: { id_tiers: tiersId },
-      include: [{ model: Qualite, attributes: ['valeur'] }]
+      include: [{ model: Qualite, as: 'Qualite', attributes: ['valeur'] }]
     });
 
     const experiences = await ExperienceTiers.findAll({
       where: { id_tiers: tiersId },
-      include: [{ model: Domaine, attributes: ['valeur'] }]
+      include: [{ model: Domaine, as: 'Domaine', attributes: ['valeur'] }]
     });
 
     const niveauxFiliere = await NiveauFiliereTiers.findAll({
@@ -296,9 +298,9 @@ exports.getCandidatById = async (id_candidat) => {
         const annonceInfo = await Annonce.findOne({
           where: { id_annonce: cand.id_annonce },
           include: [
-            { model: Poste, attributes: ['valeur'] },
-            { model: Ville, attributes: ['valeur'] },
-            { model: Genre, attributes: ['valeur'] }
+            { model: Poste, as: 'Poste', attributes: ['valeur'] },
+            { model: Ville, as: 'Ville', attributes: ['valeur'] },
+            { model: Genre, as: 'Genre', attributes: ['valeur'] }
           ]
         });
         return {

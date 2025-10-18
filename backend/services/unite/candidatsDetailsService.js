@@ -54,26 +54,71 @@ const countByNiveau = async () => {
 
 const countByExperience = async () => {
     try {
-        const result = await ViewCandidatsDetails.findAll({
-            attributes: [
-                [literal(`CASE
-          WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
-          WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
-          WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
-          ELSE '+10 ans'
-        END`), 'tranche_experience'],
-                [fn('COUNT', col('id_candidat')), 'nbr_candidats']
-            ],
-            where: { experience_annees: { [Op.ne]: null } },
-            group: [literal(`CASE
-          WHEN experience_annees BETWEEN 1 AND 3 THEN '1-3 ans'
-          WHEN experience_annees BETWEEN 4 AND 6 THEN '4-6 ans'
-          WHEN experience_annees BETWEEN 7 AND 9 THEN '7-9 ans'
-          ELSE '+10 ans'
-        END`)],
-            raw: true
-        });
-        return result;
+        // Définir toutes les tranches possibles
+        const allTranches = [
+            { tranche: 'Moins de 1 an', order: 1 },
+            { tranche: '2-4 ans', order: 2 },
+            { tranche: '5-7 ans', order: 3 },
+            { tranche: '+8 ans', order: 4 }
+        ];
+
+        // Utiliser une requête SQL brute pour sommer les expériences par candidat
+        const query = `
+            WITH candidat_total_experience AS (
+                -- D'abord, sommer toutes les années d'expérience par candidat
+                SELECT 
+                    c.id_candidat,
+                    COALESCE(
+                        SUM(
+                            EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut))
+                        ), 
+                        0
+                    ) as total_annees_experience
+                FROM candidats c
+                LEFT JOIN experience_tiers et ON c.id_tiers = et.id_tiers
+                GROUP BY c.id_candidat
+            ),
+            experience_tranches AS (
+                -- Ensuite, classer chaque candidat dans une tranche
+                SELECT 
+                    id_candidat,
+                    CASE
+                        WHEN total_annees_experience < 1 THEN 'Moins de 1 an'
+                        WHEN total_annees_experience BETWEEN 2 AND 4 THEN '2-4 ans'
+                        WHEN total_annees_experience BETWEEN 5 AND 7 THEN '5-7 ans'
+                        WHEN total_annees_experience >= 8 THEN '+8 ans'
+                        ELSE 'Moins de 1 an'
+                    END as tranche_experience
+                FROM candidat_total_experience
+            )
+            -- Enfin, compter le nombre de candidats par tranche
+            SELECT 
+                tranche_experience,
+                COUNT(DISTINCT id_candidat)::int as nbr_candidats
+            FROM experience_tranches
+            GROUP BY tranche_experience
+            ORDER BY 
+                CASE tranche_experience
+                    WHEN 'Moins de 1 an' THEN 1
+                    WHEN '2-4 ans' THEN 2
+                    WHEN '5-7 ans' THEN 3
+                    WHEN '+8 ans' THEN 4
+                    ELSE 5
+                END;
+        `;
+        
+        const rows = await db.query(query, { type: QueryTypes.SELECT });
+        
+        // Créer un map des résultats existants
+        const resultMap = new Map(rows.map(row => [row.tranche_experience, row.nbr_candidats]));
+        
+        // Remplir avec toutes les tranches, mettant 0 pour celles sans données
+        const completeResults = allTranches.map(({ tranche, order }) => ({
+            tranche_experience: tranche,
+            nbr_candidats: resultMap.get(tranche) || 0
+        }));
+        
+        return completeResults;
     } catch (error) {
         console.error('Erreur countByExperience:', error);
         return [];
@@ -154,40 +199,72 @@ const countByNiveauByUnite = async (id_unite) => {
 // Nombre de candidats par expérience pour une unité
 const countByExperienceByUnite = async (id_unite) => {
     try {
+        // Définir toutes les tranches possibles
+        const allTranches = [
+            { tranche: 'Moins de 1 an', order: 1 },
+            { tranche: '2-4 ans', order: 2 },
+            { tranche: '5-7 ans', order: 3 },
+            { tranche: '+8 ans', order: 4 }
+        ];
+
         const query = `
+            WITH candidat_total_experience AS (
+                -- D'abord, sommer toutes les années d'expérience par candidat
+                SELECT 
+                    c.id_candidat,
+                    COALESCE(
+                        SUM(
+                            EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut))
+                        ), 
+                        0
+                    ) as total_annees_experience
+                FROM candidats c
+                JOIN annonces a ON c.id_annonce = a.id_annonce
+                LEFT JOIN experience_tiers et ON c.id_tiers = et.id_tiers
+                WHERE a.id_unite = $1
+                GROUP BY c.id_candidat
+            ),
+            experience_tranches AS (
+                -- Ensuite, classer chaque candidat dans une tranche
+                SELECT 
+                    id_candidat,
+                    CASE
+                        WHEN total_annees_experience < 1 THEN 'Moins de 1 an'
+                        WHEN total_annees_experience BETWEEN 2 AND 4 THEN '2-4 ans'
+                        WHEN total_annees_experience BETWEEN 5 AND 7 THEN '5-7 ans'
+                        WHEN total_annees_experience >= 8 THEN '+8 ans'
+                        ELSE 'Moins de 1 an'
+                    END as tranche_experience
+                FROM candidat_total_experience
+            )
+            -- Enfin, compter le nombre de candidats par tranche
             SELECT 
-                CASE
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN '1-3 ans'
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN '4-6 ans'
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN '7-9 ans'
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN '+10 ans'
-                    ELSE '0 ans'
-                END as tranche_experience,
-                COUNT(*)::int as nbr_candidats
-            FROM candidats c
-            JOIN annonces a ON c.id_annonce = a.id_annonce
-            JOIN experience_tiers et ON c.id_tiers = et.id_tiers
-            WHERE a.id_unite = $1
-            GROUP BY 
-                CASE
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN '1-3 ans'
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN '4-6 ans'
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN '7-9 ans'
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN '+10 ans'
-                    ELSE '0 ans'
-                END
+                tranche_experience,
+                COUNT(DISTINCT id_candidat)::int as nbr_candidats
+            FROM experience_tranches
+            GROUP BY tranche_experience
             ORDER BY 
-                CASE
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 1 AND 3 THEN 1
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 4 AND 6 THEN 2
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) BETWEEN 7 AND 9 THEN 3
-                    WHEN EXTRACT(YEAR FROM AGE(COALESCE(et.date_fin, CURRENT_DATE), et.date_debut)) >= 10 THEN 4
-                    ELSE 0
+                CASE tranche_experience
+                    WHEN 'Moins de 1 an' THEN 1
+                    WHEN '2-4 ans' THEN 2
+                    WHEN '5-7 ans' THEN 3
+                    WHEN '+8 ans' THEN 4
+                    ELSE 5
                 END;
         `;
         
-    const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
-    return rows;
+        const rows = await db.query(query, { bind: [id_unite], type: QueryTypes.SELECT });
+        
+        // Créer un map des résultats existants
+        const resultMap = new Map(rows.map(row => [row.tranche_experience, row.nbr_candidats]));
+        
+        // Remplir avec toutes les tranches, mettant 0 pour celles sans données
+        const completeResults = allTranches.map(({ tranche, order }) => ({
+            tranche_experience: tranche,
+            nbr_candidats: resultMap.get(tranche) || 0
+        }));
+        
+        return completeResults;
     } catch (error) {
         console.error('Erreur countByExperienceByUnite:', error);
         return [];

@@ -14,7 +14,6 @@ function QCM() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [search, setSearch] = useState('');
-  const [mode, setMode] = useState('standard');
 
   const bankRef = useRef(null);
   const attachedRef = useRef(null);
@@ -111,17 +110,13 @@ function QCM() {
   };
 
   return (
-    <div className={`qcm-page ${mode === 'compact' ? 'qcm--compact' : ''}`}>
+    <div className="qcm-page">
       <div className="qcm-header qcm-header--bar">
         <div className="qcm-header__left">
           <Button variant="primary" onClick={() => navigate(-1)}>Retour</Button>
         </div>
         <h1 className="qcm-title qcm-header__title">Créer le QCM de l'annonce n°{id}</h1>
         <div className="qcm-header__right">
-          <select className="qcm-select" value={mode} onChange={(e) => setMode(e.target.value)}>
-            <option value="standard">Standard</option>
-            <option value="compact">Compact</option>
-          </select>
           <button className="qcm-btn qcm-btn--ghost" onClick={() => bankRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Banque</button>
           <button className="qcm-btn qcm-btn--ghost" onClick={() => attachedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Attachées</button>
         </div>

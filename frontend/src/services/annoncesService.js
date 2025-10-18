@@ -5,7 +5,9 @@ const ANNONCES_ENDPOINTS = {
   LIST: '/unite/annonces-unite',
   DETAILS: '/unite/annonce-unite',
   SEND_QCM: '/unite/send/qcm-candidat',
-  SEND_ENTRETIEN: '/unite/send/unite-entretien'
+  SEND_ENTRETIEN: '/unite/send/unite-entretien',
+  VILLES: '/unite/villes',
+  GENRES: '/unite/genres'
 };
 
 export const annoncesService = {
@@ -110,6 +112,28 @@ export const annoncesService = {
       return response;
     } catch (error) {
       console.error('Erreur lors de l\'envoi de la convocation d\'entretien:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer toutes les villes disponibles
+  getAllVilles: async () => {
+    try {
+      const response = await api.get(ANNONCES_ENDPOINTS.VILLES);
+      return response;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des villes:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer tous les genres disponibles
+  getAllGenres: async () => {
+    try {
+      const response = await api.get(ANNONCES_ENDPOINTS.GENRES);
+      return response;
+    } catch (error) {
+      console.error('Erreur lors de la récupération des genres:', error);
       throw error;
     }
   }

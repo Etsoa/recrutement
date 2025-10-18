@@ -29,6 +29,9 @@ const qualiteAnnoncesService = require('../services/unite/qualiteAnnoncesService
 // Services d'annonces
 const annoncesService = require('../services/unite/AnnoncesService');
 const annoncesCompletService = require('../services/unite/annoncesCompletService');
+
+// Service de référentiels
+const referentielService = require('../services/referentielService');
 const statusAnnonceService = require('../services/unite/statusAnnoncesService');
 
 // Services QCM
@@ -892,6 +895,50 @@ exports.getAllRhSuggestions = async (req, res) => {
     console.error("Erreur getAllRhSuggestions:", err);
     res.status(500).json({
       message: 'Erreur lors de la récupération des suggestions',
+      data: null,
+      success: false
+    });
+  }
+};
+
+// ===== ENDPOINTS RÉFÉRENTIELS =====
+
+/**
+ * Récupérer toutes les villes disponibles
+ */
+exports.getAllVilles = async (req, res) => {
+  try {
+    const villes = await referentielService.getAllVilles();
+    res.json({
+      message: 'Villes récupérées avec succès',
+      data: villes,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur getAllVilles:", err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des villes',
+      data: null,
+      success: false
+    });
+  }
+};
+
+/**
+ * Récupérer tous les genres disponibles
+ */
+exports.getAllGenres = async (req, res) => {
+  try {
+    const genres = await referentielService.getAllGenres();
+    res.json({
+      message: 'Genres récupérés avec succès',
+      data: genres,
+      success: true
+    });
+  } catch (err) {
+    console.error("Erreur getAllGenres:", err);
+    res.status(500).json({
+      message: 'Erreur lors de la récupération des genres',
       data: null,
       success: false
     });

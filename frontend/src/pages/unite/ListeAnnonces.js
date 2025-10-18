@@ -17,6 +17,8 @@ const ListeAnnonces = () => {
     genre: 'all',
     ageBand: 'all', // all, lt30, 30to40, 40to50, 50plus
   });
+  const [toutesVilles, setToutesVilles] = useState([]);
+  const [tousGenres, setTousGenres] = useState([]);
   const navigate = useNavigate();
 
   const fetchAnnonces = useCallback(async () => {
@@ -46,6 +48,26 @@ const ListeAnnonces = () => {
     }
   }, [navigate]);
 
+  const fetchReferentiels = useCallback(async () => {
+    try {
+      // Charger toutes les villes
+      const villesResponse = await annoncesService.getAllVilles();
+      if (villesResponse && villesResponse.success) {
+        setToutesVilles(villesResponse.data || []);
+      }
+
+      // Charger tous les genres
+      const genresResponse = await annoncesService.getAllGenres();
+      if (genresResponse && genresResponse.success) {
+        setTousGenres(genresResponse.data || []);
+      }
+    } catch (err) {
+      console.error('Erreur lors du chargement des référentiels:', err);
+      // On ne bloque pas l'application si les référentiels ne se chargent pas
+      // Les filtres utiliseront juste les villes/genres des annonces comme fallback
+    }
+  }, []);
+
   useEffect(() => {
     // Vérifier la session avant de charger les données
     if (!SessionManager.isSessionValid('uniteSession')) {
@@ -53,7 +75,8 @@ const ListeAnnonces = () => {
       return;
     }
     fetchAnnonces();
-  }, [navigate, fetchAnnonces]);
+    fetchReferentiels();
+  }, [navigate, fetchAnnonces, fetchReferentiels]);
 
   const handleVoirDossiers = (idAnnonce) => {
     if (!idAnnonce) {
@@ -83,18 +106,27 @@ const ListeAnnonces = () => {
     setFilters(prev => ({ ...prev, search }));
   };
 
-  // Filtrer les annonces
+  // Utiliser toutes les villes du système ou fallback sur les villes des annonces
   const villes = React.useMemo(() => {
+    if (toutesVilles.length > 0) {
+      return toutesVilles.map(v => v.valeur);
+    }
+    // Fallback : extraire les villes des annonces
     const set = new Set();
     annonces.forEach(a => { if (a?.Ville?.valeur) set.add(a.Ville.valeur); });
     return Array.from(set);
-  }, [annonces]);
+  }, [toutesVilles, annonces]);
 
+  // Utiliser tous les genres du système ou fallback sur les genres des annonces
   const genres = React.useMemo(() => {
+    if (tousGenres.length > 0) {
+      return tousGenres.map(g => g.valeur);
+    }
+    // Fallback : extraire les genres des annonces
     const set = new Set();
     annonces.forEach(a => { if (a?.Genre?.valeur) set.add(a.Genre.valeur); });
     return Array.from(set);
-  }, [annonces]);
+  }, [tousGenres, annonces]);
 
   const intersects = (minA, maxA, minB, maxB) => {
     if (minA == null && maxA == null) return true;
@@ -174,15 +206,6 @@ const ListeAnnonces = () => {
           </div>
 
           <div className="liste-annonces__filters">
-            <div className="filter-group">
-              <input
-                type="text"
-                placeholder="Rechercher par poste ou ville..."
-                value={filters.search}
-                onChange={(e) => handleSearchFilter(e.target.value)}
-                className="search-input"
-              />
-            </div>
             <div className="filter-group">
               <select 
                 value={filters.ville}
