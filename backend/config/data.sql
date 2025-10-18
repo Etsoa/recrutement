@@ -385,6 +385,12 @@ INSERT INTO niveau_filiere_tiers (id_tiers, id_niveau, id_filiere) VALUES (4, 5,
 -- EMPLOYES
 INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (4, 1, 1);
 
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
+VALUES (1, 1, 4)
+RETURNING id_employe;
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste)
+VALUES (1, 1, 1)
+RETURNING id_employe;
 -- STATUS EMPLOYES
 INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES (1, 1, '2020-01-01');
 
