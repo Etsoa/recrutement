@@ -73,21 +73,49 @@ class EmailService {
         // Remplacer les variables dans le template
         let content = template.contenu;
         content = content.replace(/\{candidat_id\}/g, candidatId);
+        content = content.replace(/\{nom\}/g, qcmDetails.nom || '');
+        content = content.replace(/\{prenom\}/g, qcmDetails.prenom || '');
+        content = content.replace(/\{poste\}/g, qcmDetails.poste || 'le poste');
         content = content.replace(/\{qcm_link\}/g, qcmDetails.link || '#');
+        content = content.replace(/\{lienQcm\}/g, qcmDetails.link || '#');
         content = content.replace(/\{deadline\}/g, qcmDetails.deadline || 'À déterminer');
+        content = content.replace(/\{dateExpiration\}/g, qcmDetails.dateExpiration || 'À déterminer');
         
         return content;
       } else {
-        // Template par défaut
+        // Template par défaut amélioré
+        const dateExpiration = qcmDetails.dateExpiration || new Date(Date.now() + 24*60*60*1000).toLocaleDateString('fr-FR');
+        
         return `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>QCM - Processus de recrutement</h2>
-            <p>Bonjour,</p>
-            <p>Nous avons le plaisir de vous informer que votre candidature a retenu notre attention.</p>
-            <p>Veuillez cliquer sur le lien suivant pour accéder au QCM :</p>
-            <p><a href="${qcmDetails.link || '#'}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Accéder au QCM</a></p>
-            <p>Date limite : ${qcmDetails.deadline || 'À déterminer'}</p>
-            <p>Cordialement,<br>L'équipe RH</p>
+            <h2>Bonjour ${qcmDetails.prenom || ''} ${qcmDetails.nom || ''},</h2>
+            
+            <p>Nous avons le plaisir de vous informer que votre candidature pour le poste <strong>${qcmDetails.poste || 'le poste proposé'}</strong> a retenu notre attention.</p>
+            
+            <p>Afin de poursuivre le processus de recrutement, nous vous invitons à passer un QCM en ligne.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${qcmDetails.link || '#'}" 
+                 style="background-color: #007bff; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+                Commencer le QCM
+              </a>
+            </div>
+            
+            <p><strong>Important :</strong></p>
+            <ul>
+              <li>Ce lien est personnel et ne peut être utilisé qu'une seule fois</li>
+              <li>Le QCM doit être complété avant le ${dateExpiration}</li>
+              <li>Une fois commencé, vous devez terminer le QCM en une seule fois</li>
+            </ul>
+            
+            <p>Si vous rencontrez des difficultés, n'hésitez pas à nous contacter.</p>
+            
+            <p>Bonne chance !</p>
+            
+            <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+            <p style="font-size: 12px; color: #666;">
+              Cet email a été envoyé automatiquement. Merci de ne pas y répondre directement.
+            </p>
           </div>
         `;
       }

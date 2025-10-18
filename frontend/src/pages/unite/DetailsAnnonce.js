@@ -856,11 +856,13 @@ const DetailsAnnonce = () => {
                     // Déterminer les statuts QCM et entretien
                     const qcmStatus = ficheCandidatService.getQcmStatus(
                       candidatData.envoisQcm || [], 
-                      candidatData.reponsesQcm?.length > 0 ? candidatData.reponsesQcm[0].reponses : []
+                      candidatData.reponsesQcm?.length > 0 ? candidatData.reponsesQcm[0].reponses : [],
+                      candidatData.score_qcm // Score calculé par le backend
                     );
                     
                     const entretienStatus = ficheCandidatService.getEntretienStatus(
-                      candidatData.unite_entretiens || []
+                      candidatData.unite_entretiens || [],
+                      candidatData.score_entretien // Score calculé par le backend
                     );
 
                     // Calculer l'âge à partir de la date de naissance

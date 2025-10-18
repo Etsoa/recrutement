@@ -42,6 +42,8 @@ const StatusUniteEntretien = require('../../models/statusUniteEntretiensModel');
 const TypeStatusEntretien = require('../../models/typeStatusEntretiensModel');
 const ScoreUniteEntretien = require('../../models/scoreUniteEntretiensModel');
 
+const { evaluerCandidatCV } = require('../evaluationCandidatService');
+
 
 // ByIdUnite
 exports.getAllAnnonces = async (id) => {
@@ -116,6 +118,10 @@ exports.getAnnonceById = async (id) => {
             'id_tiers', 'nom', 'prenom', 'date_naissance', 'contact', 
             'email', 'cin', 'photo', 'id_genre', 'id_situation_matrimoniale', 
             'nombre_enfants', 'id_ville'
+          ],
+          include: [
+            { model: Genre, as: 'Genre', attributes: ['valeur'] },
+            { model: Ville, as: 'Ville', attributes: ['valeur'] }
           ]
         }
       ]
@@ -191,6 +197,69 @@ exports.getAnnonceById = async (id) => {
           })
         );
 
+        // -------------------------
+        // ÉVALUATION CV - MATCH
+        // -------------------------
+        let evaluation = { pourcentage: 0, score: 0, criteres_total: 0 };
+        try {
+          const candidatData = {
+            id_tiers: tiersId,
+            date_naissance: c.Tier?.date_naissance,
+            id_genre: c.Tier?.id_genre,
+            id_ville: c.Tier?.id_ville,
+            genre_valeur: c.Tier?.Genre?.valeur,
+            ville_valeur: c.Tier?.Ville?.valeur,
+            formations: niveauxFiliereTiers.map(nf => ({
+              id_filiere: nf.Filiere?.id_filiere,
+              filiere: nf.Filiere?.valeur,
+              id_niveau: nf.Niveau?.id_niveau,
+              niveau: nf.Niveau?.valeur
+            })),
+            langues: languesTiers.map(lt => ({
+              id_langue: lt.Langue?.id_langue,
+              langue: lt.Langue?.valeur
+            })),
+            qualites: qualitesTiers.map(qt => ({
+              id_qualite: qt.Qualite?.id_qualite,
+              qualite: qt.Qualite?.valeur
+            })),
+            experiences: experiencesTiers.map(et => ({
+              id_domaine: et.Domaine?.id_domaine,
+              domaine: et.Domaine?.valeur,
+              duree: et.nombre_annee
+            }))
+          };
+          evaluation = await evaluerCandidatCV(candidatData, id);
+        } catch (err) {
+          console.error(`Erreur lors de l'évaluation du candidat ${candidatId}:`, err.message);
+        }
+
+        // -------------------------
+        // CALCUL SCORE QCM
+        // -------------------------
+        let scoreQcm = null;
+        if (envois.length > 0) {
+          // Prendre le dernier envoi QCM
+          const dernierEnvoi = envois[envois.length - 1];
+          if (dernierEnvoi.note !== null && dernierEnvoi.note !== undefined) {
+            scoreQcm = dernierEnvoi.note;
+          }
+        }
+
+        // -------------------------
+        // CALCUL SCORE ENTRETIEN UNITE
+        // -------------------------
+        let scoreEntretien = null;
+        if (uniteAvecScores.length > 0) {
+          // Prendre le dernier entretien
+          const dernierEntretien = uniteAvecScores[uniteAvecScores.length - 1];
+          if (dernierEntretien.scores && dernierEntretien.scores.length > 0) {
+            // Calculer la moyenne des scores
+            const totalScore = dernierEntretien.scores.reduce((sum, s) => sum + (s.note || 0), 0);
+            scoreEntretien = Math.round((totalScore / dernierEntretien.scores.length) * 100) / 100;
+          }
+        }
+
         return {
           candidat: c,
           langues: languesTiers,
@@ -200,7 +269,9 @@ exports.getAnnonceById = async (id) => {
           envoisQcm: envois.length > 0 ? envois : [],
           reponsesQcm: reponses.length > 0 ? reponses : [],
           unite_entretiens: uniteAvecScores.length > 0 ? uniteAvecScores : [],
-          pourcentage: 0
+          pourcentage: evaluation.pourcentage,
+          score_qcm: scoreQcm,
+          score_entretien: scoreEntretien
         };
       })
     );
@@ -245,6 +316,10 @@ exports.getCandidatById = async (id_candidat) => {
             'id_tiers', 'nom', 'prenom', 'date_naissance', 'contact',
             'email', 'cin', 'photo', 'id_genre', 'id_situation_matrimoniale',
             'nombre_enfants', 'id_ville'
+          ],
+          include: [
+            { model: Genre, as: 'Genre', attributes: ['valeur'] },
+            { model: Ville, as: 'Ville', attributes: ['valeur'] }
           ]
         }
       ]
@@ -353,7 +428,65 @@ exports.getCandidatById = async (id_candidat) => {
       })
     );
 
-    // 6️⃣ Résultat final
+    // 6️⃣ ÉVALUATION CV - MATCH DÉTAILLÉ
+    let evaluation = { pourcentage: 0, score: 0, criteres_total: 0, details: null };
+    try {
+      const id_annonce = candidatRecord.id_annonce;
+      const candidatData = {
+        id_tiers: tiersId,
+        date_naissance: candidatRecord.Tier?.date_naissance,
+        id_genre: candidatRecord.Tier?.id_genre,
+        id_ville: candidatRecord.Tier?.id_ville,
+        genre_valeur: candidatRecord.Tier?.Genre?.valeur,
+        ville_valeur: candidatRecord.Tier?.Ville?.valeur,
+        formations: niveauxFiliere.map(nf => ({
+          id_filiere: nf.Filiere?.id_filiere,
+          filiere: nf.Filiere?.valeur,
+          id_niveau: nf.Niveau?.id_niveau,
+          niveau: nf.Niveau?.valeur
+        })),
+        langues: langues.map(lt => ({
+          id_langue: lt.Langue?.id_langue,
+          langue: lt.Langue?.valeur
+        })),
+        qualites: qualites.map(qt => ({
+          id_qualite: qt.Qualite?.id_qualite,
+          qualite: qt.Qualite?.valeur
+        })),
+        experiences: experiences.map(et => ({
+          id_domaine: et.Domaine?.id_domaine,
+          domaine: et.Domaine?.valeur,
+          duree: et.nombre_annee
+        }))
+      };
+      evaluation = await evaluerCandidatCV(candidatData, id_annonce);
+    } catch (err) {
+      console.error(`Erreur lors de l'évaluation du candidat ${id_candidat}:`, err.message);
+    }
+
+    // 7️⃣ CALCUL SCORE QCM
+    let scoreQcm = null;
+    if (envoisAvecReponses.length > 0) {
+      // Prendre le dernier envoi QCM
+      const dernierEnvoi = envoisAvecReponses[envoisAvecReponses.length - 1];
+      if (dernierEnvoi.envoi && dernierEnvoi.envoi.note !== null && dernierEnvoi.envoi.note !== undefined) {
+        scoreQcm = dernierEnvoi.envoi.note;
+      }
+    }
+
+    // 8️⃣ CALCUL SCORE ENTRETIEN UNITE
+    let scoreEntretien = null;
+    if (uniteAvecDetails.length > 0) {
+      // Prendre le dernier entretien
+      const dernierEntretien = uniteAvecDetails[uniteAvecDetails.length - 1];
+      if (dernierEntretien.score_unite_entretien && dernierEntretien.score_unite_entretien.length > 0) {
+        // Calculer la moyenne des scores
+        const totalScore = dernierEntretien.score_unite_entretien.reduce((sum, s) => sum + (s.note || 0), 0);
+        scoreEntretien = Math.round((totalScore / dernierEntretien.score_unite_entretien.length) * 100) / 100;
+      }
+    }
+
+    // 9️⃣ Résultat final
     return {
       candidat: candidatRecord,         // ligne de la table candidats (+tiers)
       employe: employe || null,
@@ -365,7 +498,10 @@ exports.getCandidatById = async (id_candidat) => {
       autresAnnonces,
       envois_qcm: envoisAvecReponses.length > 0 ? envoisAvecReponses : [],
       unite_entretiens: uniteAvecDetails.length > 0 ? uniteAvecDetails : [],
-      pourcentage: 0
+      pourcentage: evaluation.pourcentage,
+      score_qcm: scoreQcm,
+      score_entretien: scoreEntretien,
+      match_details: evaluation.details
     };
 
   } catch (err) {

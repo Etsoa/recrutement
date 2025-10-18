@@ -64,18 +64,29 @@ export const ficheCandidatService = {
   },
 
   // Déterminer le statut d'un QCM pour un candidat
-  getQcmStatus: (envoiQcm, reponseQcm) => {
+  getQcmStatus: (envoiQcm, reponseQcm, scoreQcm = null) => {
+    // Si on a directement le score depuis le backend
+    if (scoreQcm !== null && scoreQcm !== undefined) {
+      return { 
+        type: 'completed', 
+        label: 'Terminé',
+        text: `Score: ${scoreQcm}/100`, 
+        action: 'completed' 
+      };
+    }
+
     if (!envoiQcm || !Array.isArray(envoiQcm) || envoiQcm.length === 0) {
-      return { type: 'not_sent', text: 'QCM non envoyé', action: 'send' };
+      return { type: 'not_sent', label: 'Non envoyé', text: 'QCM non envoyé', action: 'send' };
     }
     
     if (!reponseQcm || !Array.isArray(reponseQcm) || reponseQcm.length === 0) {
       const dateEnvoi = envoiQcm[0]?.date_envoi;
       if (!dateEnvoi) {
-        return { type: 'not_sent', text: 'QCM non envoyé', action: 'send' };
+        return { type: 'not_sent', label: 'Non envoyé', text: 'QCM non envoyé', action: 'send' };
       }
       return { 
         type: 'sent', 
+        label: 'Envoyé',
         text: `Envoyé le ${ficheCandidatService.formatDate(dateEnvoi)}`, 
         action: 'waiting' 
       };
@@ -85,20 +96,31 @@ export const ficheCandidatService = {
     const duree = reponseQcm[0]?.duree;
     return { 
       type: 'completed', 
+      label: 'Terminé',
       text: `Score: ${score || 0}/100 (${duree || 0}min)`, 
       action: 'completed' 
     };
   },
 
   // Déterminer le statut d'un entretien pour un candidat
-  getEntretienStatus: (uniteEntretiens) => {
+  getEntretienStatus: (uniteEntretiens, scoreEntretien = null) => {
+    // Si on a directement le score depuis le backend
+    if (scoreEntretien !== null && scoreEntretien !== undefined) {
+      return { 
+        type: 'completed',
+        label: 'Terminé', 
+        text: `Score: ${scoreEntretien}/100`, 
+        action: 'completed' 
+      };
+    }
+
     if (!uniteEntretiens || !Array.isArray(uniteEntretiens) || uniteEntretiens.length === 0) {
-      return { type: 'not_scheduled', text: 'Entretien non planifié', action: 'schedule' };
+      return { type: 'not_scheduled', label: 'Non planifié', text: 'Entretien non planifié', action: 'schedule' };
     }
     
     const entretien = uniteEntretiens[0];
     if (!entretien?.unite_entretien?.date_entretien) {
-      return { type: 'not_scheduled', text: 'Entretien non planifié', action: 'schedule' };
+      return { type: 'not_scheduled', label: 'Non planifié', text: 'Entretien non planifié', action: 'schedule' };
     }
     
     const dateEntretien = new Date(entretien.unite_entretien.date_entretien);
@@ -108,7 +130,8 @@ export const ficheCandidatService = {
     if (entretien.scores && Array.isArray(entretien.scores) && entretien.scores.length > 0) {
       const score = entretien.scores[0]?.score;
       return { 
-        type: 'completed', 
+        type: 'completed',
+        label: 'Terminé', 
         text: `Score: ${score || 0}/100`, 
         action: 'completed' 
       };
@@ -117,7 +140,8 @@ export const ficheCandidatService = {
     // Si l'entretien est dans le futur, il est planifié
     if (dateEntretien > today) {
       return { 
-        type: 'scheduled', 
+        type: 'scheduled',
+        label: 'Planifié', 
         text: `Planifié le ${ficheCandidatService.formatDate(dateEntretien)}`, 
         action: 'scheduled' 
       };
@@ -125,7 +149,8 @@ export const ficheCandidatService = {
     
     // Si l'entretien est passé sans score, il est en attente de score
     return { 
-      type: 'waiting_score', 
+      type: 'waiting_score',
+      label: 'En attente', 
       text: `En attente de notation`, 
       action: 'waiting' 
     };

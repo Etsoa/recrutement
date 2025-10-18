@@ -123,10 +123,14 @@ const FicheCandidat = () => {
   // Déterminer les statuts QCM et entretien pour l'annonce actuelle
   const qcmStatus = ficheCandidatService.getQcmStatus(
     envois_qcm,
-    envois_qcm?.length > 0 ? envois_qcm[0].reponses : []
+    envois_qcm?.length > 0 ? envois_qcm[0].reponses : [],
+    candidatData.score_qcm // Score calculé par le backend
   );
 
-  const entretienStatus = ficheCandidatService.getEntretienStatus(unite_entretiens);
+  const entretienStatus = ficheCandidatService.getEntretienStatus(
+    unite_entretiens,
+    candidatData.score_entretien // Score calculé par le backend
+  );
 
   const exportPDF = () => {
     const element = document.querySelector(".fiche-candidat"); // le container principal
