@@ -393,13 +393,28 @@ exports.getFormAnnonceData = async (req, res) => {
 
 exports.updateStatusSuggestion = async (req, res) => {
   try {
-    const { id_rh_suggestion, id_type_status_suggestion } = req.body;
+    const { id_rh_suggestion, id_type_status_suggestion, date_entretien, duree, id_candidat } = req.body;
     
     if (!id_rh_suggestion || !id_type_status_suggestion) {
       return res.status(400).json({ 
         message: 'id_rh_suggestion et id_type_status_suggestion sont requis', 
         success: false 
       });
+    }
+
+    // Si une date/durée est fournie, créer/mettre à jour l'entretien RH associé
+    let entretienResult = null;
+    if (date_entretien) {
+      try {
+        entretienResult = await rhService.createRhEntretien({
+          id_rh_suggestion,
+          id_candidat: id_candidat || null,
+          date_entretien,
+          duree
+        });
+      } catch (e) {
+        console.error('Erreur lors du upsert entretien RH dans updateStatusSuggestion:', e.message);
+      }
     }
 
     const status = await rhService.createStatusSuggestion({
@@ -410,7 +425,7 @@ exports.updateStatusSuggestion = async (req, res) => {
 
     res.json({
       message: 'Statut de la suggestion mis à jour avec succès',
-      data: status,
+      data: { status, entretien: entretienResult?.data || null },
       success: true
     });
   } catch (err) {

@@ -12,6 +12,7 @@ const RhSuggestions = () => {
   const [disponibilites, setDisponibilites] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [duration, setDuration] = useState(60);
 
 
   useEffect(() => {
@@ -89,7 +90,8 @@ const RhSuggestions = () => {
         setDisponibilites(resp.data || []);
         setSelectedSuggestion(suggestion);
         setSelectedDate(date);
-        setSelectedTime('');
+  setSelectedTime('');
+  setDuration(60);
       } else {
         setDisponibilites([]);
         setMessage(resp.message || 'Pas de créneaux disponibles');
@@ -105,7 +107,8 @@ const RhSuggestions = () => {
   // === Changer la date pour voir les créneaux ===
   const handleDateChange = async (date) => {
     setSelectedDate(date);
-    setSelectedTime('');
+  setSelectedTime('');
+  setDuration(60);
     if (!selectedSuggestion) return;
 
     try {
@@ -139,7 +142,9 @@ const RhSuggestions = () => {
         response = await rhService.updateStatusSuggestion({
           id_rh_suggestion: selectedSuggestion.id_rh_suggestion,
           id_type_status_suggestion: 1, // Status "Validé"
-          date_entretien: `${selectedDate} ${selectedTime}`
+          date_entretien: `${selectedDate} ${selectedTime}`,
+          duree: duration,
+          id_candidat: selectedSuggestion.candidat.id_candidat
         });
         alert("Entretien mis à jour avec succès!");
       } else {
@@ -148,7 +153,7 @@ const RhSuggestions = () => {
           id_rh_suggestion: selectedSuggestion.id_rh_suggestion,
           id_candidat: selectedSuggestion.candidat.id_candidat,
           date_entretien: `${selectedDate} ${selectedTime}`,
-          duree: 60
+          duree: duration
         });
         alert("Nouvel entretien créé avec succès!");
       }
@@ -303,6 +308,15 @@ const RhSuggestions = () => {
                   {disponibilites.map((heure) => (
                     <option key={heure} value={heure}>{heure}</option>
                   ))}
+                </select>
+              </div>
+              <div className="rh-suggestions__form-group">
+                <label>Durée (minutes)</label>
+                <select value={duration} onChange={(e) => setDuration(parseInt(e.target.value, 10))}>
+                  <option value={30}>30</option>
+                  <option value={45}>45</option>
+                  <option value={60}>60</option>
+                  <option value={90}>90</option>
                 </select>
               </div>
               <div className="rh-suggestions__modal-actions">

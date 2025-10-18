@@ -181,32 +181,42 @@ const createAnnonceRh = async (annonceData) => {
 
 const createRhEntretien = async ({ id_rh_suggestion, id_candidat, date_entretien, duree }) => {
   try {
-    // S'assurer que la date est au bon format
+    if (!id_rh_suggestion || !id_candidat || !date_entretien) {
+      throw new Error('id_rh_suggestion, id_candidat et date_entretien sont requis');
+    }
+
     const formattedDate = new Date(date_entretien).toISOString();
-    
-    const entretien = await RhEntretien.create({
-      id_rh_suggestion,
-      id_candidat,
-      date_entretien: formattedDate,
-      duree
-    });
 
-    await StatusRhEntretien.create({
-      id_rh_entretien: entretien.id_rh_entretien,
-      id_type_status_entretien: 1,
-      date_changement: new Date()
-    });
+    // Vérifier s'il existe déjà un entretien pour cette suggestion
+    let entretien = await RhEntretien.findOne({ where: { id_rh_suggestion } });
 
-    return {
-      success: true,
-      data: entretien
-    };
+    if (entretien) {
+      // Mettre à jour
+      entretien.date_entretien = formattedDate;
+      if (duree) entretien.duree = duree;
+      if (id_candidat) entretien.id_candidat = id_candidat;
+      await entretien.save();
+    } else {
+      // Créer
+      entretien = await RhEntretien.create({
+        id_rh_suggestion,
+        id_candidat,
+        date_entretien: formattedDate,
+        duree: duree || 60
+      });
+
+      // Créer un statut initial "à venir" (id=1)
+      await StatusRhEntretien.create({
+        id_rh_entretien: entretien.id_rh_entretien,
+        id_type_status_entretien: 1,
+        date_changement: new Date()
+      });
+    }
+
+    return { success: true, data: entretien };
   } catch (err) {
-    console.error("Erreur dans createRhEntretien:", err);
-    return {
-      success: false,
-      message: err.message
-    };
+    console.error('Erreur dans createRhEntretien:', err);
+    return { success: false, message: err.message };
   }
 };
 
