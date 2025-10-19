@@ -94,12 +94,46 @@
   padding: 0 var(--space-lg) var(--space-xl);
 }
 
+/* Sections avec titres */
+.stats-section {
+  margin-bottom: var(--space-2xl);
+}
+
+.stats-section-title {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--primary-accent-dark);
+  margin: 0 0 var(--space-lg);
+  padding-bottom: var(--space-sm);
+  border-bottom: 3px solid var(--primary-accent-light);
+  letter-spacing: -0.02em;
+}
+
 /* Grille moderne */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
   gap: var(--space-lg);
   margin-top: var(--space-lg);
+}
+
+/* Grille de 3 colonnes pour les répartitions */
+.stats-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+@media (max-width: 1200px) {
+  .stats-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid-3 {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Cartes élégantes */
@@ -142,7 +176,6 @@
 
 /* Carte résumé principale */
 .stats-summary {
-  grid-column: 1 / -1;
   background: linear-gradient(135deg, var(--color-white) 0%, #f8fff8 100%);
   border: 2px solid var(--primary-accent-light);
 }

@@ -30,7 +30,7 @@ exports.sendQcmCandidat = async (id_candidat) => {
 
   // Générer token et lien
   const token = crypto.randomBytes(32).toString('hex');
-  const link = 'http://localhost:5000/qcm/' + token;
+  const link = 'http://localhost:3000/qcm/' + token;
   const date_envoi = new Date();
 
   // Récupérer objet et parties du mail
