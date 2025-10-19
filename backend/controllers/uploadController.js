@@ -4,10 +4,19 @@ const fs = require('fs');
 // Upload d'une photo de profil
 const uploadProfilePhoto = async (req, res) => {
   try {
+    // Vérifier si un fichier a été fourni
     if (!req.file) {
       return res.status(400).json({
         success: false,
         message: 'Aucun fichier fourni'
+      });
+    }
+    
+    // Vérifier le type MIME du fichier
+    if (!req.file.mimetype.startsWith('image/')) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le fichier doit être une image'
       });
     }
 

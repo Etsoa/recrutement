@@ -51,13 +51,13 @@ CREATE TABLE villes (
 );
 
 CREATE TABLE question_qcms (
-    id_question SERIAL PRIMARY KEY,
+    id_question_qcm SERIAL PRIMARY KEY,
     intitule VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE reponse_qcms (
     id_reponse_qcm SERIAL PRIMARY KEY,
-    id_question_qcm INTEGER REFERENCES question_qcms(id_question) ON DELETE CASCADE,
+    id_question_qcm INTEGER REFERENCES question_qcms(id_question_qcm) ON DELETE CASCADE,
     reponse VARCHAR(255) NOT NULL,
     modalite BOOLEAN NOT NULL
 );
@@ -68,25 +68,26 @@ CREATE TABLE annonces (
     id_ville INTEGER REFERENCES villes(id_ville) ON DELETE CASCADE,
     age_min INTEGER,
     age_max INTEGER,
-    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE
+    id_genre INTEGER REFERENCES genres(id_genre) ON DELETE CASCADE,
+    id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE
 );
 
 CREATE TABLE qcm_annonces (
     id_qcm_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
-    id_question_qcm INTEGER REFERENCES question_qcms(id_question) ON DELETE CASCADE
+    id_question_qcm INTEGER REFERENCES question_qcms(id_question_qcm) ON DELETE CASCADE
 );
 
 CREATE TABLE type_status_annonces (
-    id_type_status SERIAL PRIMARY KEY,
+    id_type_status_annonce SERIAL PRIMARY KEY,
     valeur VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE status_annonces (
     id_status_annonce SERIAL PRIMARY KEY,
     id_annonce INTEGER REFERENCES annonces(id_annonce) ON DELETE CASCADE,
-    id_type_status_annonce INTEGER REFERENCES type_status_annonces(id_type_status) ON DELETE CASCADE,
-    date_changement DATE NOT NULL,
+    id_type_status_annonce INTEGER REFERENCES type_status_annonces(id_type_status_annonce) ON DELETE CASCADE,
+    date_changement TIMESTAMP NOT NULL,
     id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE
 );
 
@@ -203,7 +204,7 @@ CREATE TABLE envoi_qcm_candidats (
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
     lien VARCHAR(255) NOT NULL,
     token VARCHAR(255) NOT NULL,
-    date_envoi DATE NOT NULL
+    date_envoi TIMESTAMP NOT NULL
 );
 
 CREATE TABLE reponse_qcm_candidats (
@@ -225,7 +226,7 @@ CREATE TABLE unite_entretiens (
     id_unite_entretien SERIAL PRIMARY KEY,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
     id_unite INTEGER REFERENCES unites(id_unite) ON DELETE CASCADE,
-    date_entretien DATE NOT NULL,
+    date_entretien TIMESTAMP NOT NULL,
     duree INTEGER NOT NULL
 );
 
@@ -240,7 +241,7 @@ CREATE TABLE score_unite_entretiens (
     id_score_unite_entretien SERIAL PRIMARY KEY,
     id_unite_entretien INTEGER REFERENCES unite_entretiens(id_unite_entretien) ON DELETE CASCADE,
     score INTEGER NOT NULL,
-    date_score DATE NOT NULL
+    date_score TIMESTAMP NOT NULL
 );
 
 CREATE TABLE type_status_suggestions (
@@ -266,7 +267,7 @@ CREATE TABLE rh_entretiens (
     id_rh_entretien SERIAL PRIMARY KEY,
     id_rh_suggestion INTEGER REFERENCES rh_suggestions(id_rh_suggestion) ON DELETE CASCADE,
     id_candidat INTEGER REFERENCES candidats(id_candidat) ON DELETE CASCADE,
-    date_entretien DATE NOT NULL,
+    date_entretien TIMESTAMP NOT NULL,
     duree INTEGER NOT NULL
 );
 
@@ -281,7 +282,7 @@ CREATE TABLE score_rh_entretiens (
     id_score_rh_entretien SERIAL PRIMARY KEY,
     id_rh_entretien INTEGER REFERENCES rh_entretiens(id_rh_entretien) ON DELETE CASCADE,
     score INTEGER NOT NULL,
-    date_score DATE NOT NULL
+    date_score TIMESTAMP NOT NULL
 );
 
 CREATE TABLE ceo_suggestions (
@@ -329,4 +330,21 @@ CREATE TABLE score_minimum_qcm (
 
 CREATE TABLE pourcentage_minimum_cv (
     valeur INTEGER PRIMARY KEY NOT NULL
+);
+
+CREATE TABLE adresse_mail (
+    valeur VARCHAR(100) PRIMARY KEY NOT NULL,
+    mot_de_passe VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE jours_feries (
+    id_jour_ferie SERIAL PRIMARY KEY,
+    date_ferie DATE NOT NULL UNIQUE,
+    description VARCHAR(255)
+);
+
+CREATE TABLE horaires_ouvres (
+    id_horaire_ouvre SERIAL PRIMARY KEY,
+    heure_debut TIME NOT NULL,
+    heure_fin TIME NOT NULL
 );

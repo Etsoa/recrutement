@@ -31,8 +31,19 @@ const FileUploader = ({ formData, updateFormData, errors = {} }) => {
       try {
         setUploadStatus('Upload en cours...');
         
+        // Vérifier la taille du fichier avant l'upload
+        const fileSizeMB = file.size / (1024 * 1024);
+        if (fileSizeMB > 5) {
+          throw new Error(`La taille du fichier (${fileSizeMB.toFixed(2)}MB) dépasse la limite de 5MB`);
+        }
+        
         // Upload vers le serveur
         const savedImage = await saveProfileImage(file);
+        
+        // Vérifier la réponse du serveur
+        if (!savedImage || !savedImage.fullPath) {
+          throw new Error('Réponse invalide du serveur');
+        }
         
         // Créer un aperçu depuis l'URL du serveur
         setImagePreview(savedImage.fullPath);
@@ -55,7 +66,22 @@ const FileUploader = ({ formData, updateFormData, errors = {} }) => {
         
       } catch (error) {
         console.error('Erreur lors de l\'upload de l\'image:', error);
-        setUploadStatus('Erreur lors de l\'upload: ' + error.message);
+        
+        // Formater le message d'erreur pour l'utilisateur
+        let errorMessage = 'Erreur lors de l\'upload: ';
+        
+        if (error.response) {
+          // Erreur de réponse du serveur
+          errorMessage += error.response.data?.message || 'Erreur serveur';
+        } else if (error.request) {
+          // Pas de réponse du serveur
+          errorMessage += 'Impossible de contacter le serveur';
+        } else {
+          // Erreur de validation ou autre
+          errorMessage += error.message;
+        }
+        
+        setUploadStatus(errorMessage);
       }
     }
   };

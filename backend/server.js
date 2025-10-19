@@ -5,6 +5,9 @@ require('dotenv').config();
 const publicRoutes = require('./routes/publicRoutes');
 const tokenInfoRoutes = require('./routes/tokenInfoRoutes');
 
+// Import des associations de modèles
+require('./models/associations');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 

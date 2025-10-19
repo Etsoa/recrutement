@@ -2,11 +2,13 @@
 import axios from 'axios';
 
 // Configuration de base pour axios
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL + '/public';
+// there was the problem
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+const UPLOAD_URL = `${API_BASE_URL}/api/public`;  // Ajout du préfixe /api
 
 // Instance axios pour les uploads
 const uploadClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: UPLOAD_URL,
   timeout: 30000, // 30 secondes pour les uploads
 });
 
@@ -21,6 +23,11 @@ export const saveProfileImage = async (file) => {
       throw new Error('Le fichier doit être une image');
     }
 
+    // Log de débogage
+    console.log('Tentative d\'upload vers:', `${UPLOAD_URL}/upload/photo`);
+    console.log('Type du fichier:', file.type);
+    console.log('Taille du fichier:', file.size);
+
     // Créer un FormData pour l'upload
     const formData = new FormData();
     formData.append('photo', file);
@@ -29,6 +36,11 @@ export const saveProfileImage = async (file) => {
     const response = await uploadClient.post('/upload/photo', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
+      },
+      // Ajouter un handler de progression
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+        console.log('Progression upload:', percentCompleted + '%');
       }
     });
 
@@ -49,12 +61,32 @@ export const saveProfileImage = async (file) => {
 
   } catch (error) {
     console.error('Erreur saveProfileImage:', error);
-    // Gérer les erreurs axios
+    
+    // Log détaillé des erreurs
     if (error.response) {
-      throw new Error(error.response.data?.message || 'Erreur serveur lors de l\'upload');
+      // Le serveur a répondu avec un code d'erreur
+      console.error('Réponse erreur du serveur:', {
+        status: error.response.status,
+        statusText: error.response.statusText,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+      throw new Error(
+        error.response.data?.message || 
+        `Erreur serveur (${error.response.status}): ${error.response.statusText}`
+      );
     } else if (error.request) {
-      throw new Error('Impossible de contacter le serveur');
+      // La requête a été faite mais pas de réponse
+      console.error('Erreur de connexion:', {
+        request: error.request,
+        config: error.config
+      });
+      throw new Error(
+        `Impossible de contacter le serveur. Vérifiez votre connexion et l'URL: ${UPLOAD_URL}`
+      );
     } else {
+      // Erreur lors de la configuration de la requête
+      console.error('Erreur de configuration:', error.message);
       throw error;
     }
   }

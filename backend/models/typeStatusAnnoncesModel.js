@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
 const TypeStatusAnnonce = db.define('TypeStatusAnnonce', {
-  id_type_status: {
+  id_type_status_annonce: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true

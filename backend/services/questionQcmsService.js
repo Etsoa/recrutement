@@ -27,13 +27,12 @@ async function getQuestionsByAnnonce(id_annonce) {
     // Récupérer les questions avec leurs réponses
     const questions = await QuestionQcm.findAll({
       where: {
-        id_question: questionIds // Utiliser les IDs des questions
+        id_question: questionIds
       },
       include: [
         {
           model: ReponseQcm,
-          as: 'ReponseQcms',
-          attributes: ['id_reponse_qcm', 'reponse']
+          attributes: ['id_reponse_qcm', 'reponse', 'modalite']
         }
       ],
       order: [['id_question', 'ASC']]
@@ -45,7 +44,8 @@ async function getQuestionsByAnnonce(id_annonce) {
       question: question.intitule,
       reponses: question.ReponseQcms.map(reponse => ({
         id: reponse.id_reponse_qcm,
-        texte: reponse.reponse
+        texte: reponse.reponse,
+        modalite: reponse.modalite
       }))
     }));
     

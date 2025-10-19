@@ -28,6 +28,10 @@ async function createEnvoiQcm(id_candidat) {
       where: { id_candidat },
       include: [
         {
+          model: Tiers,
+          attributes: ['nom', 'prenom', 'email']
+        },
+        {
           model: Annonce,
           include: [
             {
@@ -43,22 +47,13 @@ async function createEnvoiQcm(id_candidat) {
       throw new Error('Candidat introuvable');
     }
 
-    // Récupérer les informations du tiers séparément
-    const tiers = await Tiers.findByPk(candidat.id_tiers, {
-      attributes: ['nom', 'prenom', 'email']
-    });
-
-    if (!tiers) {
-      throw new Error('Tiers introuvable');
-    }
-
     console.log('=== DEBUG CANDIDAT ===');
     console.log('candidat:', candidat ? 'trouvé' : 'null');
-    console.log('tiers:', tiers ? 'trouvé' : 'null/undefined');
+    console.log('tiers:', candidat.Tiers ? 'trouvé' : 'null/undefined');
     console.log('candidat.Annonce:', candidat.Annonce ? 'trouvé' : 'null/undefined');
-    if (tiers) {
-      console.log('Tiers nom:', tiers.nom);
-      console.log('Tiers email:', tiers.email);
+    if (candidat.Tiers) {
+      console.log('Tiers nom:', candidat.Tiers.nom);
+      console.log('Tiers email:', candidat.Tiers.email);
     }
     if (candidat.Annonce && candidat.Annonce.Poste) {
       console.log('Poste:', candidat.Annonce.Poste.valeur);
@@ -93,9 +88,9 @@ async function createEnvoiQcm(id_candidat) {
 
     // Préparer les données pour l'email
     const emailData = {
-      nom: tiers.nom,
-      prenom: tiers.prenom,
-      email: tiers.email,
+      nom: candidat.Tiers.nom,
+      prenom: candidat.Tiers.prenom,
+      email: candidat.Tiers.email,
       poste: candidat.Annonce.Poste.valeur,
       token: token,
       lienQcm: lienQcm
@@ -397,7 +392,7 @@ async function getQcmQuestionsByToken(token) {
       return verification; // Retourner l'erreur si le token n'est pas valide
     }
     
-    // Récupérer les questions QCM spécifiques à cette annonce
+    // Récupérer les questions QCM spécifiques à cette annonce avec leurs réponses
   const questionsQcm = await QcmAnnonce.findAll({
       where: { id_annonce: verification.id_annonce },
       include: [
@@ -405,14 +400,16 @@ async function getQcmQuestionsByToken(token) {
           model: QuestionQcm,
           include: [
             {
-              model: ReponseQcm, // Les options de réponse
+              model: ReponseQcm,
               attributes: ['id_reponse_qcm', 'reponse']
-              // Note: ne pas inclure 'modalite' pour la sécurité
             }
           ]
         }
       ],
-      order: [['id_qcm_annonce', 'ASC']] // Ordre par ID
+      order: [
+        ['id_qcm_annonce', 'ASC'],
+        [QuestionQcm, ReponseQcm, 'id_reponse_qcm', 'ASC']
+      ]
     });
     
     // Formater les données pour le frontend
@@ -443,14 +440,6 @@ async function getQcmQuestionsByToken(token) {
     throw error;
   }
 }
-
-module.exports = {
-  createEnvoiQcm,
-  verifyTokenQcm,
-  creerReponseQcmAbandon,
-  getQcmQuestionsByToken,
-  checkQcmCompleted
-};
 
 module.exports = {
   createEnvoiQcm,

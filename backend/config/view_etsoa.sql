@@ -29,7 +29,7 @@ LEFT JOIN (
     FROM status_annonces 
     ORDER BY id_annonce, date_changement DESC
 ) sa ON a.id_annonce = sa.id_annonce
-LEFT JOIN type_status_annonces tsa ON sa.id_type_status_annonce = tsa.id_type_status;
+LEFT JOIN type_status_annonces tsa ON sa.id_type_status_annonce = tsa.id_type_status_annonce;
 
 -- Vue pour les formations requises par annonce
 CREATE OR REPLACE VIEW v_annonces_formations AS
@@ -223,7 +223,7 @@ JOIN v_annonces_base ab ON c.id_annonce = ab.id_annonce;
 -- Vue pour les questions QCM avec leurs réponses
 CREATE OR REPLACE VIEW v_questions_qcm_complete AS
 SELECT 
-    qq.id_question,
+    qq.id_question_qcm,
     qq.intitule,
     JSON_AGG(
         JSONB_BUILD_OBJECT(
@@ -233,18 +233,18 @@ SELECT
         ) ORDER BY rq.id_reponse_qcm
     ) AS reponses
 FROM question_qcms qq
-JOIN reponse_qcms rq ON qq.id_question = rq.id_question_qcm
-GROUP BY qq.id_question, qq.intitule;
+JOIN reponse_qcms rq ON qq.id_question_qcm = rq.id_question_qcm
+GROUP BY qq.id_question_qcm, qq.intitule;
 
 -- Vue pour les QCM d'une annonce spécifique
 CREATE OR REPLACE VIEW v_qcm_par_annonce AS
 SELECT 
     qa.id_annonce,
-    qc.id_question,
+    qc.id_question_qcm,
     qc.intitule,
     qc.reponses
 FROM qcm_annonces qa
-JOIN v_questions_qcm_complete qc ON qa.id_question_qcm = qc.id_question;
+JOIN v_questions_qcm_complete qc ON qa.id_question_qcm = qc.id_question_qcm;
 
 -- Vue pour l'envoi de QCM avec informations candidat
 CREATE OR REPLACE VIEW v_envoi_qcm_complete AS
@@ -310,10 +310,25 @@ UNION ALL
 SELECT 
     'pourcentage_minimum_cv' AS parametre,
     valeur::text AS valeur
-FROM pourcentage_minimum_cv;
+FROM pourcentage_minimum_cv
+UNION ALL
+SELECT 
+    'adresse_mail' AS parametre,
+    valeur::text AS valeur
+FROM adresse_mail;
 
 -- Index pour améliorer les performances
 CREATE INDEX IF NOT EXISTS idx_annonces_status ON status_annonces(id_annonce, date_changement DESC);
 CREATE INDEX IF NOT EXISTS idx_tiers_cin ON tiers(cin);
 CREATE INDEX IF NOT EXISTS idx_candidats_annonce ON candidats(id_annonce);
 CREATE INDEX IF NOT EXISTS idx_envoi_qcm_token ON envoi_qcm_candidats(token);
+
+-- Vue pour les jours fériés et horaires ouvrés
+CREATE OR REPLACE VIEW v_horaires_travail AS
+SELECT 
+    jf.date_ferie,
+    jf.description AS description_ferie,
+    ho.heure_debut,
+    ho.heure_fin
+FROM jours_feries jf
+CROSS JOIN horaires_ouvres ho;

@@ -90,6 +90,10 @@ INSERT INTO type_status_annonces (valeur) VALUES ('En cours de demande');
 INSERT INTO type_status_annonces (valeur) VALUES ('Publie');
 INSERT INTO type_status_annonces (valeur) VALUES ('Non publie');
 
+INSERT INTO adresse_mail (valeur, mot_de_passe) VALUES ('recrutement@example.com', 'password123');
+
+INSERT INTO horaires_ouvres (heure_debut, heure_fin) VALUES ('08:00', '17:00');
+
 INSERT INTO type_status_employes (valeur) VALUES ('Actif');
 INSERT INTO type_status_employes (valeur) VALUES ('Demission');
 INSERT INTO type_status_employes (valeur) VALUES ('Renvoi');
@@ -116,6 +120,14 @@ INSERT INTO pourcentage_minimum_cv (valeur) VALUES (10);
 
 -- ANNONCES ET LEURS RELATIONS
 
+-- Jours fériés exemple
+INSERT INTO jours_feries (date_ferie, description) VALUES 
+('2025-01-01', 'Nouvel An'),
+('2025-04-21', 'Lundi de Pâques'),
+('2025-05-01', 'Fête du Travail'),
+('2025-05-29', 'Ascension'),
+('2025-12-25', 'Noël');
+
 -- Questions QCM
 INSERT INTO question_qcms (intitule) VALUES 
 ('Quelle est la différence entre recrutement et sélection ?'),
@@ -132,7 +144,7 @@ INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre)
 VALUES (4, 1, 25, 35, 1); -- Responsable RH à Antananarivo, 25-35 ans, Homme
 
 INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
-VALUES (1, 2, CURRENT_DATE, 2); -- Statut "Publié" par l'unité RH
+VALUES (1, 2, CURRENT_TIMESTAMP, 2); -- Statut "Publié" par l'unité RH
 
 INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
 (1, 7, 4), -- Gestion + Licence Pro
@@ -163,7 +175,7 @@ INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre)
 VALUES (7, 1, 28, 40, 2); -- Chef Comptable à Antananarivo, 28-40 ans, Femme
 
 INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
-VALUES (2, 2, CURRENT_DATE, 3); -- Statut "Publié" par l'unité Comptabilité
+VALUES (2, 2, CURRENT_TIMESTAMP, 3); -- Statut "Publié" par l'unité Comptabilité
 
 INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
 (2, 7, 5), -- Gestion + Master
@@ -193,7 +205,7 @@ INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre)
 VALUES (14, 2, 23, 30, 1); -- Commercial à Fianarantsoa, 23-30 ans, Homme
 
 INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
-VALUES (3, 2, CURRENT_DATE, 5); -- Statut "Publié" par l'unité Commercial
+VALUES (3, 2, CURRENT_TIMESTAMP, 5); -- Statut "Publié" par l'unité Commercial
 
 INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
 (3, 7, 3), -- Gestion + Licence
@@ -222,7 +234,7 @@ INSERT INTO annonces (id_poste, id_ville, age_min, age_max, id_genre)
 VALUES (12, 3, 20, 35, 1); -- Technicien à Toamasina, 20-35 ans, Homme
 
 INSERT INTO status_annonces (id_annonce, id_type_status_annonce, date_changement, id_unite) 
-VALUES (4, 1, CURRENT_DATE, 4); -- Statut "En cours de demande" par l'unité Production
+VALUES (4, 1, CURRENT_TIMESTAMP, 4); -- Statut "En cours de demande" par l'unité Production
 
 INSERT INTO niveau_filiere_annonces (id_annonce, id_filiere, id_niveau) VALUES 
 (4, 10, 3), -- Génie Civil + Licence

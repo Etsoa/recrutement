@@ -95,9 +95,19 @@ async function calculateQcmStats(id_envoi_qcm_candidat, id_annonce) {
   try {
     console.log('Calcul des statistiques pour l\'envoi QCM:', id_envoi_qcm_candidat);
     
-    // Récupérer toutes les réponses du candidat
+    // Récupérer toutes les réponses du candidat avec les questions associées
     const reponses = await ReponseQcmCandidat.findAll({
-      where: { id_envoi_qcm_candidat }
+      where: { id_envoi_qcm_candidat },
+      include: [
+        {
+          model: QcmAnnonce,
+          include: [
+            {
+              model: QuestionQcm
+            }
+          ]
+        }
+      ]
     });
     
     if (!reponses.length) {

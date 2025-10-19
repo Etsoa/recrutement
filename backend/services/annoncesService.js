@@ -18,7 +18,14 @@ const QuestionQcm = require('../models/questionQcmsModel');
 
 async function getAllAnnonces() {
 	try {
-		const annonces = await Annonce.findAll();
+		const annonces = await Annonce.findAll({
+			include: [
+				{ model: Poste },
+				{ model: Ville },
+				{ model: Genre },
+				{ model: StatusAnnonce, include: [{ model: TypeStatusAnnonce }] }
+			]
+		});
 		return annonces;
 	} catch (error) {
 		console.error('Erreur getAllAnnonces:', error);
@@ -27,45 +34,59 @@ async function getAllAnnonces() {
 }
 
 async function getAllAnnoncesActives() {
-	try {
-		const typeStatusActive = await TypeStatusAnnonce.findOne({ where: { valeur: 'Publie' } });
-		if (!typeStatusActive) return [];
-		const annonces = await Annonce.findAll({
-			include: [
-				{
-					model: StatusAnnonce,
-					required: true,
-					where: { id_type_status_annonce: typeStatusActive.id_type_status },
-				},
-				{ model: Poste },
-				{ model: Ville },
-				{ model: Genre },
-				{
-					model: NiveauFiliereAnnonce,
-					include: [
-						{ model: Filiere },
-						{ model: Niveau }
-					]
-				},
-				{
-					model: LangueAnnonce,
-					include: [ { model: Langue } ]
-				},
-				{
-					model: QualiteAnnonce,
-					include: [ { model: Qualite } ]
-				},
-				{
-					model: ExperienceAnnonce,
-					include: [ { model: Domaine } ]
-				}
-			]
-		});
-		return annonces;
-	} catch (error) {
-		console.error('Erreur getAllAnnoncesActives:', error);
-		throw error;
-	}
+    try {
+        const typeStatusActive = await TypeStatusAnnonce.findOne({ where: { valeur: 'Publie' } });
+        if (!typeStatusActive) return [];
+
+        const annonces = await Annonce.findAll({
+            include: [
+                {
+                    model: StatusAnnonce,
+                    as: 'StatusAnnonces',
+                    required: true,
+                    where: { id_type_status_annonce: typeStatusActive.id_type_status_annonce },
+                    include: [{ model: TypeStatusAnnonce }]
+                },
+                { 
+                    model: Poste,
+                    attributes: ['id_poste', 'valeur']
+                },
+                { 
+                    model: Ville,
+                    attributes: ['id_ville', 'valeur']
+                },
+                { 
+                    model: Genre,
+                    attributes: ['id_genre', 'valeur']
+                },
+                {
+                    model: NiveauFiliereAnnonce,
+                    include: [
+                        { model: Filiere, attributes: ['id_filiere', 'valeur'] },
+                        { model: Niveau, attributes: ['id_niveau', 'valeur'] }
+                    ]
+                },
+                {
+                    model: LangueAnnonce,
+                    include: [{ model: Langue, attributes: ['id_langue', 'valeur'] }]
+                },
+                {
+                    model: QualiteAnnonce,
+                    include: [{ model: Qualite, attributes: ['id_qualite', 'valeur'] }]
+                },
+                {
+                    model: ExperienceAnnonce,
+                    include: [{ model: Domaine, attributes: ['id_domaine', 'valeur'] }]
+                }
+            ],
+            order: [['id_annonce', 'DESC']]
+        });
+
+        return annonces;
+    } catch (error) {
+        console.error('Erreur getAllAnnoncesActives:', error);
+        throw error;
+    }
 }
 
 async function getAnnonceById(id_annonce) {

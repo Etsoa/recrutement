@@ -1,9 +1,6 @@
 const { DataTypes } = require('sequelize');
 const db = require('../config/db');
 
-const Annonce = require('./annoncesModel');
-const TypeStatusAnnonce = require('./typeStatusAnnoncesModel');
-
 const StatusAnnonce = db.define('StatusAnnonce', {
   id_status_annonce: {
     type: DataTypes.INTEGER,
@@ -12,13 +9,7 @@ const StatusAnnonce = db.define('StatusAnnonce', {
   },
   id_annonce: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Annonce,
-      key: 'id_annonce'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+    allowNull: false
   },
   date_changement: {
     type: DataTypes.DATE,
@@ -26,24 +17,15 @@ const StatusAnnonce = db.define('StatusAnnonce', {
   },
   id_type_status_annonce: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: TypeStatusAnnonce,
-      key: 'id_type_status'
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+    allowNull: false
+  },
+  id_unite: {
+    type: DataTypes.INTEGER,
+    allowNull: true
   }
 }, {
   tableName: 'status_annonces',
   timestamps: false
 });
-
-// Associations
-StatusAnnonce.belongsTo(Annonce, { foreignKey: 'id_annonce' });
-StatusAnnonce.belongsTo(TypeStatusAnnonce, { foreignKey: 'id_type_status_annonce' });
-
-// Reverse association
-Annonce.hasMany(StatusAnnonce, { foreignKey: 'id_annonce' });
 
 module.exports = StatusAnnonce;
