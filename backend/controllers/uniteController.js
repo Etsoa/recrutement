@@ -165,17 +165,27 @@ exports.sendQcmCandidat = async (req, res) => {
 
 exports.sendUniteEntretien = async (req, res) => {
   try {
-    const id = req.query.id;
-    const data = await traitementDossierService.sendUniteEntretien(id);
+    const id_candidat = req.query.id;
+    const id_unite = req.user?.id_unite || req.query.id_unite || req.body.id_unite;
+    
+    if (!id_unite) {
+      return res.status(400).json({
+        message: "Paramètre 'id_unite' manquant",
+        data: null,
+        success: false
+      });
+    }
+    
+    const data = await traitementDossierService.sendUniteEntretien(id_candidat, id_unite);
     res.status(201).json({
-      message: 'Unité d\'entretien envoyée avec succès',
+      message: 'Convocation d\'entretien envoyée avec succès',
       data,
       success: true
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({
-      message: 'Erreur lors de l\'envoi de l\'entretien unité',
+      message: err.message || 'Erreur lors de l\'envoi de l\'entretien unité',
       data: null,
       success: false
     });

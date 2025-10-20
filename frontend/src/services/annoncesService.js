@@ -106,8 +106,16 @@ export const annoncesService = {
   // Envoyer une convocation d'entretien
   sendUniteEntretien: async (idCandidat, dateEntretien, duree) => {
     try {
+      // Récupérer l'id_unite depuis le localStorage
+      const idUnite = annoncesService.getIdUnite();
+      
+      if (!idUnite) {
+        throw new Error('ID unité requis. Veuillez vous reconnecter.');
+      }
+      
       const response = await api.post(ANNONCES_ENDPOINTS.SEND_ENTRETIEN, {}, {
-        id: idCandidat
+        id: idCandidat,
+        id_unite: idUnite
       });
       return response;
     } catch (error) {
