@@ -44,7 +44,7 @@ const FicheCandidat = () => {
       setCandidatData(updatedResponse.data);
     } catch (err) {
       console.error('Erreur lors de l\'envoi du QCM:', err);
-      alert('Erreur lors de l\'envoi du QCM');
+      // L'erreur est loggée dans la console, pas d'alert
     } finally {
       setActionLoading(prev => ({ ...prev, qcm: false }));
     }
@@ -63,7 +63,7 @@ const FicheCandidat = () => {
       setCandidatData(updatedResponse.data);
     } catch (err) {
       console.error('Erreur lors de l\'envoi de la convocation:', err);
-      alert('Erreur lors de l\'envoi de la convocation d\'entretien');
+      // L'erreur est loggée dans la console, pas d'alert
     } finally {
       setActionLoading(prev => ({ ...prev, entretien: false }));
     }

@@ -340,7 +340,19 @@ INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (4, 1, 
 
 -- Status employe Paul
 INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES 
-(1, 1, '2025-02-01'); -- Actif a partir du 1er fevrier
+(1, 1, '2025-02-01'); 
+
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (4, 1, 2);
+
+-- Status employe Paul
+INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES 
+(2, 1, '2025-02-01');
+
+INSERT INTO employes (id_tiers, id_type_status_employe, id_poste) VALUES (4, 1, 1);
+
+-- Status employe Paul
+INSERT INTO status_employes (id_employe, id_type_status_employe, date_changement) VALUES 
+(3, 1, '2025-02-01'); -- Actif a partir du 1er fevrier
 
 -- Contrat d'essai Paul
 INSERT INTO contrat_essais (id_employe, date_debut, duree) VALUES 
@@ -349,6 +361,30 @@ INSERT INTO contrat_essais (id_employe, date_debut, duree) VALUES
 -- Historique du poste
 INSERT INTO historique_poste_employes (id_employe, id_poste, date_changement) VALUES 
 (1, 7, '2025-02-01'); -- Poste actuel sans date de fin
+
+INSERT INTO envoi_qcm_candidats (id_candidat, lien, token, date_envoi) 
+VALUES (3, 'http://localhost:3000/qcm/TOKEN789GHI', 'TOKEN789GHI', '2025-01-15 10:30:00');
+
+INSERT INTO reponse_qcm_candidats (id_envoi_qcm_candidat, id_qcm_annonce, debut, fin, duree, score) 
+VALUES (1, 1, '2025-01-15 14:00:00', '2025-01-15 14:15:00', 15, 3);
+
+-- Question 2: Couleurs du drapeau - CORRECTE
+INSERT INTO reponse_qcm_candidats (id_envoi_qcm_candidat, id_qcm_annonce, debut, fin, duree, score) 
+VALUES (1, 2, '2025-01-15 14:00:00', '2025-01-15 14:15:00', 15, 3);
+
+-- Question 3: Annee d'independance - INCORRECTE
+INSERT INTO reponse_qcm_candidats (id_envoi_qcm_candidat, id_qcm_annonce, debut, fin, duree, score) 
+VALUES (1, 3, '2025-01-15 14:00:00', '2025-01-15 14:15:00', 15, -1);
+
+insert into unite_entretiens (id_candidat, date_entretien, duree) values (6, '2025-10-15 10:00:00', 30);
+
+
+ insert into rh_suggestions (id_unite_entretien, id_candidat,date_suggestion) values (1, 6, '2025-10-18');
+
+insert into rh_entretiens (id_rh_suggestion, id_candidat, date_entretien, duree) values (1, 6, '2025-10-18 14:00:00', 30);
+
+ insert into ceo_suggestions (id_rh_entretien, id_candidat,date_suggestion) values (1, 6, '2025-10-18');
+
 
 -- ===============================================
 -- 8. MAILS ET COMMUNICATIONS

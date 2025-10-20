@@ -412,7 +412,7 @@ exports.getCandidatById = async (id_candidat) => {
         // statuses liés à cette unite_entretien (avec type)
         const statuses = await StatusUniteEntretien.findAll({
           where: { id_unite_entretien: u.id_unite_entretien },
-          include: [{ model: TypeStatusEntretien, attributes: ['valeur'] }]
+          include: [{ model: TypeStatusEntretien, as: 'TypeStatusEntretien', attributes: ['valeur'] }]
         });
 
         // scores liés à cette unite_entretien

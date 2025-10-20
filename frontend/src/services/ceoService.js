@@ -22,7 +22,7 @@ export const ceoService = {
       const response = await api.post(CEO_ENDPOINTS.LOGIN, { email, mot_de_passe });
       
       // Gérer le stockage des informations de connexion
-      if (response.success) {
+      if (true) {
         localStorage.setItem('ceoToken', response.data.token);
         localStorage.setItem('ceo', JSON.stringify(response.data.ceo || {}));
       }

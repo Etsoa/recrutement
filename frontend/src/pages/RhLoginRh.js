@@ -27,7 +27,7 @@ const LoginRh = () => {
         setMessage(data.message || 'Identifiants incorrects');
       }
     } catch (err) {
-      setMessage('Erreur de connexion au serveur');
+      setMessage('Erreur de connexion au serveuréééé');
     } finally {
       setLoading(false);
     }
